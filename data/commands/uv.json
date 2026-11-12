@@ -1,0 +1,853 @@
+[
+  {
+    "id": "uv-init",
+    "name": "uv init",
+    "description": "Create a new Python project with pyproject.toml",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--app",
+        "description": "Create an application project (default)"
+      },
+      {
+        "flag": "--lib",
+        "description": "Create a library with a src/ layout and build system"
+      },
+      {
+        "flag": "--package",
+        "description": "Create a packaged application with a build system"
+      },
+      {
+        "flag": "--python",
+        "description": "Set the Python version requirement",
+        "example": "uv init --python 3.12"
+      },
+      {
+        "flag": "--script",
+        "description": "Create a single-file script with inline metadata"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv init my-app",
+        "description": "Create a new application project"
+      },
+      {
+        "command": "uv init --lib my-lib",
+        "description": "Create a library project"
+      },
+      {
+        "command": "uv init",
+        "description": "Initialize a project in the current directory"
+      },
+      {
+        "command": "uv init --script fetch.py --python 3.12",
+        "description": "Create a standalone script with inline dependencies"
+      }
+    ],
+    "relatedCommands": [
+      "uv-add",
+      "uv-sync",
+      "uv-run"
+    ]
+  },
+  {
+    "id": "uv-add",
+    "name": "uv add",
+    "description": "Add dependencies to the project and install them",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--dev",
+        "description": "Add to the dev dependency group"
+      },
+      {
+        "flag": "--group",
+        "description": "Add to a named dependency group"
+      },
+      {
+        "flag": "--optional",
+        "description": "Add to an optional extra"
+      },
+      {
+        "flag": "-r, --requirements",
+        "description": "Add all packages from a requirements file"
+      },
+      {
+        "flag": "--editable",
+        "description": "Add as an editable dependency"
+      },
+      {
+        "flag": "--script",
+        "description": "Add to a script's inline metadata"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv add requests",
+        "description": "Add a dependency"
+      },
+      {
+        "command": "uv add 'fastapi[standard]>=0.115'",
+        "description": "Add with extras and a version constraint"
+      },
+      {
+        "command": "uv add --dev pytest ruff",
+        "description": "Add development dependencies"
+      },
+      {
+        "command": "uv add -r requirements.txt",
+        "description": "Import dependencies from a requirements file"
+      },
+      {
+        "command": "uv add git+https://github.com/<org>/<repo>",
+        "description": "Add a dependency from git"
+      },
+      {
+        "command": "uv add --script fetch.py httpx",
+        "description": "Add a dependency to a single-file script"
+      }
+    ],
+    "relatedCommands": [
+      "uv-remove",
+      "uv-sync",
+      "uv-lock"
+    ]
+  },
+  {
+    "id": "uv-remove",
+    "name": "uv remove",
+    "description": "Remove dependencies from the project",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--dev",
+        "description": "Remove from the dev group"
+      },
+      {
+        "flag": "--group",
+        "description": "Remove from a named group"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv remove requests",
+        "description": "Remove a dependency"
+      },
+      {
+        "command": "uv remove --dev pytest",
+        "description": "Remove a dev dependency"
+      }
+    ],
+    "relatedCommands": [
+      "uv-add"
+    ]
+  },
+  {
+    "id": "uv-sync",
+    "name": "uv sync",
+    "description": "Install the locked dependencies into the project environment (.venv)",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--locked",
+        "description": "Fail if uv.lock is out of date with pyproject.toml"
+      },
+      {
+        "flag": "--frozen",
+        "description": "Use uv.lock as-is without checking it"
+      },
+      {
+        "flag": "--no-dev",
+        "description": "Exclude the dev dependency group"
+      },
+      {
+        "flag": "--all-extras",
+        "description": "Include all optional extras"
+      },
+      {
+        "flag": "--extra",
+        "description": "Include a specific extra"
+      },
+      {
+        "flag": "--group",
+        "description": "Include a dependency group"
+      },
+      {
+        "flag": "--no-install-project",
+        "description": "Install dependencies but not the project itself (Docker layer caching)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv sync",
+        "description": "Create/update .venv to match uv.lock"
+      },
+      {
+        "command": "uv sync --locked",
+        "description": "CI install that fails if the lockfile is stale"
+      },
+      {
+        "command": "uv sync --frozen --no-dev",
+        "description": "Production install from the lockfile"
+      },
+      {
+        "command": "uv sync --all-extras",
+        "description": "Install with every optional extra"
+      }
+    ],
+    "notes": [
+      "uv sync removes packages that are not in the lockfile (exact sync) unless you pass --inexact"
+    ],
+    "relatedCommands": [
+      "uv-lock",
+      "uv-run",
+      "uv-add"
+    ]
+  },
+  {
+    "id": "uv-lock",
+    "name": "uv lock",
+    "description": "Create or update the uv.lock lockfile",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--upgrade",
+        "description": "Upgrade all packages to the latest allowed versions"
+      },
+      {
+        "flag": "-P, --upgrade-package",
+        "description": "Upgrade only the named package",
+        "example": "uv lock -P requests"
+      },
+      {
+        "flag": "--check",
+        "description": "Exit non-zero if the lockfile is out of date"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv lock",
+        "description": "Resolve and write uv.lock"
+      },
+      {
+        "command": "uv lock --upgrade",
+        "description": "Upgrade all locked versions"
+      },
+      {
+        "command": "uv lock --upgrade-package django",
+        "description": "Upgrade a single package"
+      }
+    ],
+    "notes": [
+      "uv.lock is cross-platform and should be committed"
+    ],
+    "relatedCommands": [
+      "uv-sync",
+      "uv-tree"
+    ]
+  },
+  {
+    "id": "uv-run",
+    "name": "uv run",
+    "description": "Run a command or script in the project environment, syncing it first",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--with",
+        "description": "Include extra packages for this run only",
+        "example": "uv run --with rich script.py"
+      },
+      {
+        "flag": "--python",
+        "description": "Use a specific Python version"
+      },
+      {
+        "flag": "--no-sync",
+        "description": "Skip syncing the environment first"
+      },
+      {
+        "flag": "--env-file",
+        "description": "Load environment variables from a file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv run python main.py",
+        "description": "Run a script in the project's venv"
+      },
+      {
+        "command": "uv run pytest -x",
+        "description": "Run a tool installed in the project"
+      },
+      {
+        "command": "uv run --with httpx python -c 'import httpx; print(httpx.__version__)'",
+        "description": "Run with a temporary extra dependency"
+      },
+      {
+        "command": "uv run fetch.py",
+        "description": "Run a script with inline dependency metadata in an isolated env"
+      }
+    ],
+    "notes": [
+      "No need to activate .venv; uv run locks and syncs automatically before running"
+    ],
+    "relatedCommands": [
+      "uv-sync",
+      "uv-tool-run",
+      "uv-venv"
+    ]
+  },
+  {
+    "id": "uv-tree",
+    "name": "uv tree",
+    "description": "Display the project's dependency tree",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--depth",
+        "description": "Limit the depth of the tree"
+      },
+      {
+        "flag": "--invert",
+        "description": "Show which packages depend on each package"
+      },
+      {
+        "flag": "--outdated",
+        "description": "Show the latest available version next to each package"
+      },
+      {
+        "flag": "--package",
+        "description": "Show the tree for a specific package"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv tree",
+        "description": "Show the full dependency tree"
+      },
+      {
+        "command": "uv tree --depth 1",
+        "description": "Show direct dependencies only"
+      },
+      {
+        "command": "uv tree --outdated",
+        "description": "Spot packages with newer versions"
+      },
+      {
+        "command": "uv tree --invert --package urllib3",
+        "description": "See what pulls in urllib3"
+      }
+    ],
+    "relatedCommands": [
+      "uv-lock"
+    ]
+  },
+  {
+    "id": "uv-export",
+    "name": "uv export",
+    "description": "Export the lockfile to another format such as requirements.txt",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "-o, --output-file",
+        "description": "Write to a file"
+      },
+      {
+        "flag": "--no-hashes",
+        "description": "Omit hashes"
+      },
+      {
+        "flag": "--no-dev",
+        "description": "Exclude the dev group"
+      },
+      {
+        "flag": "--frozen",
+        "description": "Do not update the lockfile first"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv export -o requirements.txt",
+        "description": "Export locked deps to requirements.txt"
+      },
+      {
+        "command": "uv export --no-dev --no-hashes -o requirements.txt",
+        "description": "Production requirements without hashes"
+      }
+    ],
+    "relatedCommands": [
+      "uv-lock",
+      "uv-pip-compile"
+    ]
+  },
+  {
+    "id": "uv-version",
+    "name": "uv version",
+    "description": "Read or bump the project's version in pyproject.toml",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--bump",
+        "description": "Bump major, minor, or patch"
+      },
+      {
+        "flag": "--short",
+        "description": "Print only the version number"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv version",
+        "description": "Show the project version"
+      },
+      {
+        "command": "uv version --bump minor",
+        "description": "Bump the minor version"
+      },
+      {
+        "command": "uv version 2.0.0",
+        "description": "Set an explicit version"
+      }
+    ],
+    "notes": [
+      "To see uv's own version use uv self version or uv --version"
+    ],
+    "relatedCommands": [
+      "uv-build",
+      "uv-self-update"
+    ]
+  },
+  {
+    "id": "uv-venv",
+    "name": "uv venv",
+    "description": "Create a virtual environment",
+    "category": "Environments",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "-p, --python",
+        "description": "Python version or interpreter to use",
+        "example": "uv venv --python 3.12"
+      },
+      {
+        "flag": "--seed",
+        "description": "Install pip, setuptools, and wheel into the venv"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv venv",
+        "description": "Create .venv in the current directory"
+      },
+      {
+        "command": "uv venv --python 3.12",
+        "description": "Create a venv with a specific Python"
+      },
+      {
+        "command": "source .venv/bin/activate",
+        "description": "Activate the venv (macOS/Linux)"
+      }
+    ],
+    "notes": [
+      "uv venvs do not include pip by default; use uv pip install or pass --seed"
+    ],
+    "relatedCommands": [
+      "uv-pip-install",
+      "uv-python"
+    ]
+  },
+  {
+    "id": "uv-pip-install",
+    "name": "uv pip install",
+    "description": "Install packages into an environment with a pip-compatible interface",
+    "category": "pip Interface",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "-r, --requirement",
+        "description": "Install from a requirements file"
+      },
+      {
+        "flag": "-e, --editable",
+        "description": "Install a local project in editable mode"
+      },
+      {
+        "flag": "--system",
+        "description": "Install into the system Python instead of a venv"
+      },
+      {
+        "flag": "-U, --upgrade",
+        "description": "Upgrade packages"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv pip install requests",
+        "description": "Install a package into the active or ./.venv environment"
+      },
+      {
+        "command": "uv pip install -r requirements.txt",
+        "description": "Install from requirements"
+      },
+      {
+        "command": "uv pip install -e .",
+        "description": "Editable install of the current project"
+      },
+      {
+        "command": "uv pip install --system ruff",
+        "description": "Install into the system Python (e.g. in Docker)"
+      }
+    ],
+    "notes": [
+      "Unlike uv add, this does not modify pyproject.toml or uv.lock"
+    ],
+    "relatedCommands": [
+      "uv-pip-sync",
+      "uv-pip-compile",
+      "uv-venv"
+    ]
+  },
+  {
+    "id": "uv-pip-compile",
+    "name": "uv pip compile",
+    "description": "Compile requirements.in or pyproject.toml into a pinned requirements file",
+    "category": "pip Interface",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "-o, --output-file",
+        "description": "Write the output to a file"
+      },
+      {
+        "flag": "--universal",
+        "description": "Resolve for all platforms and Python versions"
+      },
+      {
+        "flag": "--upgrade",
+        "description": "Allow upgrading all packages"
+      },
+      {
+        "flag": "--generate-hashes",
+        "description": "Include hashes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv pip compile requirements.in -o requirements.txt",
+        "description": "Pin requirements"
+      },
+      {
+        "command": "uv pip compile pyproject.toml -o requirements.txt",
+        "description": "Pin from pyproject dependencies"
+      },
+      {
+        "command": "uv pip compile requirements.in --universal -o requirements.txt",
+        "description": "Platform-independent pins"
+      }
+    ],
+    "relatedCommands": [
+      "uv-pip-sync",
+      "uv-export"
+    ]
+  },
+  {
+    "id": "uv-pip-sync",
+    "name": "uv pip sync",
+    "description": "Make the environment exactly match a requirements file",
+    "category": "pip Interface",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "uv pip sync requirements.txt",
+        "description": "Install and remove packages to match the file exactly"
+      }
+    ],
+    "notes": [
+      "Removes any installed package not listed in the file"
+    ],
+    "relatedCommands": [
+      "uv-pip-compile",
+      "uv-pip-install"
+    ]
+  },
+  {
+    "id": "uv-pip-list",
+    "name": "uv pip list",
+    "description": "List or freeze installed packages",
+    "category": "pip Interface",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "uv pip list",
+        "description": "List installed packages"
+      },
+      {
+        "command": "uv pip list --outdated",
+        "description": "Show packages with newer versions"
+      },
+      {
+        "command": "uv pip freeze > requirements.txt",
+        "description": "Write installed packages in requirements format"
+      }
+    ],
+    "relatedCommands": [
+      "uv-pip-install"
+    ]
+  },
+  {
+    "id": "uv-python",
+    "name": "uv python",
+    "description": "Install, list, find, and pin Python versions",
+    "category": "Python Versions",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "uv python install 3.13",
+        "description": "Install Python 3.13"
+      },
+      {
+        "command": "uv python install 3.11 3.12",
+        "description": "Install multiple versions"
+      },
+      {
+        "command": "uv python list",
+        "description": "List available and installed versions"
+      },
+      {
+        "command": "uv python pin 3.12",
+        "description": "Write .python-version for this project"
+      },
+      {
+        "command": "uv python find 3.12",
+        "description": "Print the path to a matching interpreter"
+      }
+    ],
+    "notes": [
+      "uv downloads managed Python builds automatically when a project needs one"
+    ],
+    "relatedCommands": [
+      "uv-venv",
+      "uv-init"
+    ]
+  },
+  {
+    "id": "uv-tool-run",
+    "name": "uvx",
+    "description": "Run a Python CLI tool in a temporary, isolated environment (uv tool run)",
+    "category": "Tools",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--from",
+        "description": "Specify the package providing the command",
+        "example": "uvx --from httpie http"
+      },
+      {
+        "flag": "--with",
+        "description": "Include extra packages"
+      },
+      {
+        "flag": "--python",
+        "description": "Python version to use"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uvx ruff check .",
+        "description": "Run ruff without installing it"
+      },
+      {
+        "command": "uvx ruff@0.8.0 check .",
+        "description": "Run a specific version"
+      },
+      {
+        "command": "uvx --from httpie http GET example.com",
+        "description": "Run a command whose name differs from the package"
+      },
+      {
+        "command": "uv tool run black .",
+        "description": "Long form of uvx"
+      }
+    ],
+    "relatedCommands": [
+      "uv-tool-install",
+      "uv-run"
+    ]
+  },
+  {
+    "id": "uv-tool-install",
+    "name": "uv tool install",
+    "description": "Install a Python CLI tool globally in its own isolated environment",
+    "category": "Tools",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "uv tool install ruff",
+        "description": "Install a tool onto your PATH"
+      },
+      {
+        "command": "uv tool install 'httpie>3'",
+        "description": "Install with a version constraint"
+      },
+      {
+        "command": "uv tool list",
+        "description": "List installed tools"
+      },
+      {
+        "command": "uv tool upgrade --all",
+        "description": "Upgrade all installed tools"
+      },
+      {
+        "command": "uv tool uninstall ruff",
+        "description": "Remove a tool"
+      }
+    ],
+    "notes": [
+      "Run uv tool update-shell if the tool directory is not on your PATH"
+    ],
+    "relatedCommands": [
+      "uv-tool-run"
+    ]
+  },
+  {
+    "id": "uv-build",
+    "name": "uv build",
+    "description": "Build source distributions and wheels for the project",
+    "category": "Publishing",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--wheel",
+        "description": "Build only a wheel"
+      },
+      {
+        "flag": "--sdist",
+        "description": "Build only a source distribution"
+      },
+      {
+        "flag": "-o, --out-dir",
+        "description": "Output directory (default dist/)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv build",
+        "description": "Build sdist and wheel into dist/"
+      },
+      {
+        "command": "uv build --wheel",
+        "description": "Build only a wheel"
+      }
+    ],
+    "relatedCommands": [
+      "uv-publish",
+      "uv-version"
+    ]
+  },
+  {
+    "id": "uv-publish",
+    "name": "uv publish",
+    "description": "Upload distributions to PyPI or another index",
+    "category": "Publishing",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--token",
+        "description": "Authenticate with an API token (or set UV_PUBLISH_TOKEN)"
+      },
+      {
+        "flag": "--publish-url",
+        "description": "Upload to a different index URL"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv publish",
+        "description": "Upload everything in dist/ to PyPI"
+      },
+      {
+        "command": "UV_PUBLISH_TOKEN=<pypi-token> uv publish",
+        "description": "Publish using a token from the environment"
+      },
+      {
+        "command": "uv publish --publish-url https://test.pypi.org/legacy/",
+        "description": "Publish to TestPyPI"
+      }
+    ],
+    "notes": [
+      "PyPI versions are immutable; a filename can never be re-uploaded, even after deletion",
+      "In GitHub Actions, prefer trusted publishing over long-lived tokens"
+    ],
+    "relatedCommands": [
+      "uv-build"
+    ]
+  },
+  {
+    "id": "uv-cache",
+    "name": "uv cache",
+    "description": "Manage uv's global cache",
+    "category": "Maintenance",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "uv cache clean",
+        "description": "Remove all cache entries"
+      },
+      {
+        "command": "uv cache clean requests",
+        "description": "Remove cache entries for one package"
+      },
+      {
+        "command": "uv cache prune",
+        "description": "Remove unused entries only"
+      },
+      {
+        "command": "uv cache prune --ci",
+        "description": "Prune for CI caching (keeps built wheels, drops downloads)"
+      },
+      {
+        "command": "uv cache dir",
+        "description": "Print the cache directory"
+      }
+    ],
+    "notes": [
+      "uv cache clean deletes everything; future installs must re-download"
+    ],
+    "relatedCommands": [
+      "uv-self-update"
+    ]
+  },
+  {
+    "id": "uv-self-update",
+    "name": "uv self update",
+    "description": "Update uv to the latest version",
+    "category": "Maintenance",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "uv self update",
+        "description": "Upgrade uv"
+      },
+      {
+        "command": "uv self version",
+        "description": "Show the installed uv version"
+      }
+    ],
+    "notes": [
+      "Only works when uv was installed with the standalone installer; otherwise use brew upgrade uv, pipx upgrade uv, etc."
+    ],
+    "relatedCommands": [
+      "uv-cache"
+    ]
+  }
+]

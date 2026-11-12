@@ -1,0 +1,1095 @@
+[
+  {
+    "id": "psql",
+    "name": "psql",
+    "description": "PostgreSQL interactive terminal",
+    "category": "Connection",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-h",
+        "description": "Specify database server host"
+      },
+      {
+        "flag": "-p",
+        "description": "Specify database server port"
+      },
+      {
+        "flag": "-U",
+        "description": "Connect as specified database user"
+      },
+      {
+        "flag": "-d",
+        "description": "Specify database name to connect to"
+      },
+      {
+        "flag": "-c",
+        "description": "Execute a single command and exit"
+      },
+      {
+        "flag": "-f",
+        "description": "Execute commands from a file"
+      },
+      {
+        "flag": "-X",
+        "description": "Don't read ~/.psqlrc (predictable output in scripts)"
+      },
+      {
+        "flag": "-v ON_ERROR_STOP=1",
+        "description": "Stop a script at the first error"
+      }
+    ],
+    "examples": [
+      {
+        "command": "psql -U postgres",
+        "description": "Connect as postgres user"
+      },
+      {
+        "command": "psql -h localhost -U myuser -d mydb",
+        "description": "Connect to specific database on localhost"
+      },
+      {
+        "command": "psql -c 'SELECT version();'",
+        "description": "Execute single query and exit"
+      },
+      {
+        "command": "psql -f script.sql mydb",
+        "description": "Run SQL script on database"
+      },
+      {
+        "command": "psql \"postgresql://user@db.example.com:5432/mydb?sslmode=require\"",
+        "description": "Connect with a connection URI"
+      },
+      {
+        "command": "psql -X -v ON_ERROR_STOP=1 -d mydb -f migrate.sql",
+        "description": "Run a script safely, stopping on the first error"
+      }
+    ],
+    "notes": [
+      "Use \\q to quit psql",
+      "Use \\? for help on psql commands",
+      "Use ~/.pgpass or the PGPASSWORD env var rather than typing passwords in commands"
+    ],
+    "relatedCommands": [
+      "pg-dump",
+      "pg-restore",
+      "createdb",
+      "pg-isready"
+    ]
+  },
+  {
+    "id": "pg-isready",
+    "name": "pg_isready",
+    "description": "Check whether a PostgreSQL server is accepting connections",
+    "category": "Connection",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-h",
+        "description": "Host"
+      },
+      {
+        "flag": "-p",
+        "description": "Port"
+      },
+      {
+        "flag": "-d",
+        "description": "Database name"
+      },
+      {
+        "flag": "-t",
+        "description": "Seconds to wait (default 3)"
+      },
+      {
+        "flag": "-q",
+        "description": "Quiet: only set the exit code"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pg_isready -h localhost -p 5432",
+        "description": "Check a server",
+        "output": "localhost:5432 - accepting connections"
+      },
+      {
+        "command": "until pg_isready -h db -q; do sleep 1; done",
+        "description": "Wait for a database in a startup script or CI"
+      }
+    ],
+    "notes": [
+      "Exit codes: 0 accepting, 1 rejecting (e.g. starting up), 2 no response, 3 no attempt made (bad parameters)",
+      "Doesn't check credentials; it only tests that the server accepts connections"
+    ],
+    "relatedCommands": [
+      "psql",
+      "pg-ctl"
+    ]
+  },
+  {
+    "id": "createdb",
+    "name": "createdb",
+    "description": "Create a new PostgreSQL database",
+    "category": "Database Management",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-O",
+        "description": "Specify the owner of the new database"
+      },
+      {
+        "flag": "-T",
+        "description": "Specify template database to copy"
+      },
+      {
+        "flag": "-E",
+        "description": "Specify character encoding"
+      }
+    ],
+    "examples": [
+      {
+        "command": "createdb myapp",
+        "description": "Create database named myapp"
+      },
+      {
+        "command": "createdb -O myuser myapp",
+        "description": "Create database with specific owner"
+      },
+      {
+        "command": "createdb -E UTF8 myapp",
+        "description": "Create database with UTF-8 encoding"
+      }
+    ],
+    "notes": [
+      "Requires appropriate PostgreSQL privileges"
+    ],
+    "relatedCommands": [
+      "dropdb",
+      "psql"
+    ]
+  },
+  {
+    "id": "dropdb",
+    "name": "dropdb",
+    "description": "Remove a PostgreSQL database",
+    "category": "Database Management",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Prompt before deleting"
+      },
+      {
+        "flag": "--if-exists",
+        "description": "Don't error if database doesn't exist"
+      },
+      {
+        "flag": "--force",
+        "description": "Terminate existing connections first (PostgreSQL 13+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "dropdb myapp",
+        "description": "Drop database named myapp"
+      },
+      {
+        "command": "dropdb -i myapp",
+        "description": "Drop with confirmation prompt"
+      },
+      {
+        "command": "dropdb --if-exists myapp",
+        "description": "Drop only if exists"
+      }
+    ],
+    "notes": [
+      "Cannot drop a database you are connected to",
+      "This action is irreversible",
+      "WARNING: permanently deletes the database and all its data; take a pg_dump first",
+      "Use --force (PostgreSQL 13+) to terminate existing connections"
+    ],
+    "relatedCommands": [
+      "createdb",
+      "psql"
+    ]
+  },
+  {
+    "id": "pg-dump",
+    "name": "pg_dump",
+    "description": "Backup a PostgreSQL database",
+    "category": "Backup & Restore",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-F",
+        "description": "Output format (p=plain, c=custom, d=directory, t=tar)"
+      },
+      {
+        "flag": "-f",
+        "description": "Output file or directory name"
+      },
+      {
+        "flag": "--schema-only",
+        "description": "Dump only schema, no data"
+      },
+      {
+        "flag": "--data-only",
+        "description": "Dump only data, no schema"
+      },
+      {
+        "flag": "-t",
+        "description": "Dump specific table only"
+      },
+      {
+        "flag": "-j",
+        "description": "Parallel jobs (directory format -Fd only)"
+      },
+      {
+        "flag": "-n",
+        "description": "Dump only the given schema"
+      },
+      {
+        "flag": "-T",
+        "description": "Exclude a table"
+      },
+      {
+        "flag": "--no-owner",
+        "description": "Don't output ownership commands"
+      },
+      {
+        "flag": "--filter=FILE",
+        "description": "Include/exclude objects listed in a file (PostgreSQL 17+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pg_dump -Fc -d mydb -f mydb.dump",
+        "description": "Recommended: compressed custom-format backup for pg_restore"
+      },
+      {
+        "command": "pg_dump -Fd -j 4 -d mydb -f mydb_dir",
+        "description": "Parallel dump into a directory"
+      },
+      {
+        "command": "pg_dump -h db.example.com -U app -Fc -d mydb -f mydb.dump",
+        "description": "Back up a remote database"
+      },
+      {
+        "command": "pg_dump mydb > backup.sql",
+        "description": "Dump database to SQL file"
+      },
+      {
+        "command": "pg_dump -Fc mydb > backup.dump",
+        "description": "Create custom format backup"
+      },
+      {
+        "command": "pg_dump -t users mydb > users.sql",
+        "description": "Dump only users table"
+      },
+      {
+        "command": "pg_dump --schema-only mydb > schema.sql",
+        "description": "Dump schema without data"
+      }
+    ],
+    "notes": [
+      "Custom format (-Fc) allows selective restore",
+      "Use pg_dumpall to backup all databases",
+      "Plain SQL dumps (the default) are restored with psql, not pg_restore",
+      "Use the pg_dump from the newest PostgreSQL version involved; it can dump older servers but not newer ones",
+      "pg_dump doesn't include roles; dump them separately with pg_dumpall --globals-only"
+    ],
+    "relatedCommands": [
+      "pg-restore",
+      "pg-dumpall"
+    ]
+  },
+  {
+    "id": "pg-restore",
+    "name": "pg_restore",
+    "description": "Restore a PostgreSQL database from archive",
+    "category": "Backup & Restore",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-d",
+        "description": "Database to restore into"
+      },
+      {
+        "flag": "-c",
+        "description": "Clean (drop) objects before recreating"
+      },
+      {
+        "flag": "-j",
+        "description": "Number of parallel jobs"
+      },
+      {
+        "flag": "--no-owner",
+        "description": "Skip restoration of object ownership"
+      },
+      {
+        "flag": "-t",
+        "description": "Restore specific table only"
+      },
+      {
+        "flag": "--if-exists",
+        "description": "With -c, use DROP ... IF EXISTS"
+      },
+      {
+        "flag": "--no-privileges",
+        "description": "Skip GRANT/REVOKE"
+      },
+      {
+        "flag": "-l",
+        "description": "List the archive's table of contents"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pg_restore -d mydb backup.dump",
+        "description": "Restore from custom format backup"
+      },
+      {
+        "command": "pg_restore -c -d mydb backup.dump",
+        "description": "Clean and restore database"
+      },
+      {
+        "command": "pg_restore -j 4 -d mydb backup.dump",
+        "description": "Parallel restore with 4 jobs"
+      },
+      {
+        "command": "pg_restore -t users -d mydb backup.dump",
+        "description": "Restore only users table"
+      },
+      {
+        "command": "pg_restore -d mydb -j 4 --no-owner --no-privileges mydb.dump",
+        "description": "Fast parallel restore into another environment"
+      },
+      {
+        "command": "createdb mydb_copy && pg_restore -d mydb_copy mydb.dump",
+        "description": "Restore into a new database"
+      },
+      {
+        "command": "pg_restore -l mydb.dump",
+        "description": "List what's inside an archive"
+      }
+    ],
+    "notes": [
+      "Only works with non-plain-text dumps",
+      "For plain SQL, use psql -f instead",
+      "-j works with custom (-Fc) and directory (-Fd) archives",
+      "WARNING: -c drops existing objects in the target database before recreating them"
+    ],
+    "relatedCommands": [
+      "pg-dump",
+      "psql"
+    ]
+  },
+  {
+    "id": "pg-dumpall",
+    "name": "pg_dumpall",
+    "description": "Backup all PostgreSQL databases",
+    "category": "Backup & Restore",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "--globals-only",
+        "description": "Dump only global objects (roles, tablespaces)"
+      },
+      {
+        "flag": "--roles-only",
+        "description": "Dump only roles"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pg_dumpall > all_databases.sql",
+        "description": "Backup all databases"
+      },
+      {
+        "command": "pg_dumpall --globals-only > globals.sql",
+        "description": "Backup only roles and tablespaces"
+      }
+    ],
+    "notes": [
+      "Output is always plain SQL format",
+      "Includes all databases, roles, and tablespaces"
+    ],
+    "relatedCommands": [
+      "pg-dump",
+      "pg-restore"
+    ]
+  },
+  {
+    "id": "pg-basebackup",
+    "name": "pg_basebackup",
+    "description": "Take a physical base backup of a whole cluster (for replicas or PITR)",
+    "category": "Backup & Restore",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-D",
+        "description": "Target directory"
+      },
+      {
+        "flag": "-Ft",
+        "description": "Tar format"
+      },
+      {
+        "flag": "-z",
+        "description": "Compress tar output"
+      },
+      {
+        "flag": "-X stream",
+        "description": "Stream WAL during the backup (default)"
+      },
+      {
+        "flag": "-P",
+        "description": "Show progress"
+      },
+      {
+        "flag": "-R",
+        "description": "Write replica config (standby.signal + primary_conninfo)"
+      },
+      {
+        "flag": "--incremental=MANIFEST",
+        "description": "Incremental backup against a previous backup's manifest (PostgreSQL 17+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pg_basebackup -h primary.example.com -U replicator -D /var/lib/postgresql/data -R -P",
+        "description": "Seed a streaming replica"
+      },
+      {
+        "command": "pg_basebackup -D /backups/base -Ft -z -P",
+        "description": "Compressed tar backup of the local cluster"
+      }
+    ],
+    "notes": [
+      "Copies the entire cluster (all databases); for single databases use pg_dump",
+      "Restore incremental backups by merging them with pg_combinebackup (PostgreSQL 17+)"
+    ],
+    "relatedCommands": [
+      "pg-dump",
+      "pg-ctl"
+    ]
+  },
+  {
+    "id": "createuser",
+    "name": "createuser",
+    "description": "Create a new PostgreSQL user",
+    "category": "User Management",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-s",
+        "description": "Create superuser"
+      },
+      {
+        "flag": "-d",
+        "description": "Allow user to create databases"
+      },
+      {
+        "flag": "-r",
+        "description": "Allow user to create roles"
+      },
+      {
+        "flag": "-P",
+        "description": "Prompt for password"
+      },
+      {
+        "flag": "-l",
+        "description": "Allow user to login (default)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "createuser myuser",
+        "description": "Create basic user"
+      },
+      {
+        "command": "createuser -P myuser",
+        "description": "Create user with password prompt"
+      },
+      {
+        "command": "createuser -s admin",
+        "description": "Create superuser"
+      },
+      {
+        "command": "createuser -d developer",
+        "description": "Create user who can create databases"
+      }
+    ],
+    "notes": [
+      "Equivalent to CREATE ROLE with LOGIN"
+    ],
+    "relatedCommands": [
+      "dropuser",
+      "psql"
+    ]
+  },
+  {
+    "id": "dropuser",
+    "name": "dropuser",
+    "description": "Remove a PostgreSQL user",
+    "category": "User Management",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Prompt before deletion"
+      },
+      {
+        "flag": "--if-exists",
+        "description": "Don't error if user doesn't exist"
+      }
+    ],
+    "examples": [
+      {
+        "command": "dropuser myuser",
+        "description": "Remove user"
+      },
+      {
+        "command": "dropuser -i myuser",
+        "description": "Remove with confirmation"
+      }
+    ],
+    "notes": [
+      "Cannot drop a user that owns objects"
+    ],
+    "relatedCommands": [
+      "createuser",
+      "psql"
+    ]
+  },
+  {
+    "id": "psql-list-databases",
+    "name": "\\l",
+    "description": "List all databases in psql",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\l",
+        "description": "List all databases"
+      },
+      {
+        "command": "\\l+",
+        "description": "List databases with size and description"
+      }
+    ],
+    "notes": [
+      "Run within psql interactive terminal"
+    ],
+    "relatedCommands": [
+      "psql",
+      "psql-connect-db"
+    ]
+  },
+  {
+    "id": "psql-connect-db",
+    "name": "\\c",
+    "description": "Connect to a database in psql",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\c mydb",
+        "description": "Connect to mydb database"
+      },
+      {
+        "command": "\\c mydb myuser",
+        "description": "Connect as different user"
+      }
+    ],
+    "notes": [
+      "Switches current database connection"
+    ],
+    "relatedCommands": [
+      "psql",
+      "psql-list-databases"
+    ]
+  },
+  {
+    "id": "psql-list-tables",
+    "name": "\\dt",
+    "description": "List tables in current database",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\dt",
+        "description": "List all tables"
+      },
+      {
+        "command": "\\dt+",
+        "description": "List tables with size info"
+      },
+      {
+        "command": "\\dt public.*",
+        "description": "List tables in public schema"
+      }
+    ],
+    "notes": [
+      "Use \\d tablename to describe a specific table"
+    ],
+    "relatedCommands": [
+      "psql-describe",
+      "psql"
+    ]
+  },
+  {
+    "id": "psql-describe",
+    "name": "\\d",
+    "description": "Describe table structure",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\d users",
+        "description": "Show users table structure"
+      },
+      {
+        "command": "\\d+ users",
+        "description": "Show detailed table info including storage"
+      },
+      {
+        "command": "\\di",
+        "description": "List indexes"
+      },
+      {
+        "command": "\\ds",
+        "description": "List sequences"
+      }
+    ],
+    "notes": [
+      "\\d without argument lists all relations"
+    ],
+    "relatedCommands": [
+      "psql-list-tables",
+      "psql"
+    ]
+  },
+  {
+    "id": "psql-list-users",
+    "name": "\\du",
+    "description": "List PostgreSQL users/roles",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\du",
+        "description": "List all users and roles"
+      },
+      {
+        "command": "\\du+",
+        "description": "List with additional info"
+      }
+    ],
+    "notes": [
+      "Shows role attributes like superuser, createdb"
+    ],
+    "relatedCommands": [
+      "createuser",
+      "psql"
+    ]
+  },
+  {
+    "id": "psql-execute-file",
+    "name": "\\i",
+    "description": "Execute SQL from file in psql",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\i script.sql",
+        "description": "Run SQL file"
+      },
+      {
+        "command": "\\ir relative/path/script.sql",
+        "description": "Run file relative to current script"
+      }
+    ],
+    "notes": [
+      "\\ir is useful for including files within scripts"
+    ],
+    "relatedCommands": [
+      "psql"
+    ]
+  },
+  {
+    "id": "psql-timing",
+    "name": "\\timing",
+    "description": "Toggle query execution timing",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\timing",
+        "description": "Toggle timing on/off"
+      },
+      {
+        "command": "\\timing on",
+        "description": "Enable query timing"
+      },
+      {
+        "command": "psql -c '\\timing on' -c 'SELECT count(*) FROM orders;' mydb",
+        "description": "Time a single query from the shell"
+      }
+    ],
+    "notes": [
+      "Useful for performance analysis",
+      "Add \\timing on to ~/.psqlrc to enable it always",
+      "Measures round-trip time as seen by the client; use EXPLAIN ANALYZE for server-side execution time"
+    ],
+    "relatedCommands": [
+      "psql"
+    ]
+  },
+  {
+    "id": "psql-expanded",
+    "name": "\\x",
+    "description": "Toggle expanded display mode",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\x",
+        "description": "Toggle expanded display"
+      },
+      {
+        "command": "\\x auto",
+        "description": "Auto-expand for wide tables"
+      }
+    ],
+    "notes": [
+      "Displays rows vertically for better readability"
+    ],
+    "relatedCommands": [
+      "psql"
+    ]
+  },
+  {
+    "id": "psql-list-schemas",
+    "name": "\\dn",
+    "description": "List schemas in the current database",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\dn",
+        "description": "List schemas"
+      },
+      {
+        "command": "\\dn+",
+        "description": "List schemas with owners and privileges"
+      },
+      {
+        "command": "\\dt myschema.*",
+        "description": "List tables in a specific schema"
+      }
+    ],
+    "relatedCommands": [
+      "psql-list-tables",
+      "psql-describe"
+    ]
+  },
+  {
+    "id": "psql-list-indexes",
+    "name": "\\di",
+    "description": "List indexes",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\di",
+        "description": "List indexes in the search path"
+      },
+      {
+        "command": "\\di+ orders*",
+        "description": "Indexes matching a pattern, with sizes"
+      }
+    ],
+    "notes": [
+      "\\d tablename also shows a table's indexes"
+    ],
+    "relatedCommands": [
+      "psql-describe",
+      "pg-explain-analyze"
+    ]
+  },
+  {
+    "id": "psql-copy",
+    "name": "\\copy",
+    "description": "Import or export CSV data between a client-side file and a table",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\copy users TO 'users.csv' WITH (FORMAT csv, HEADER)",
+        "description": "Export a table to a local CSV"
+      },
+      {
+        "command": "\\copy (SELECT id, email FROM users WHERE active) TO 'active.csv' CSV HEADER",
+        "description": "Export query results"
+      },
+      {
+        "command": "\\copy users(name, email) FROM 'import.csv' CSV HEADER",
+        "description": "Import a local CSV into specific columns"
+      }
+    ],
+    "notes": [
+      "\\copy reads/writes files on the client machine; SQL COPY uses the server's filesystem and needs extra privileges",
+      "Must be written on a single line"
+    ],
+    "relatedCommands": [
+      "psql",
+      "psql-execute-file"
+    ]
+  },
+  {
+    "id": "pg-vacuum",
+    "name": "vacuumdb",
+    "description": "Garbage-collect and analyze PostgreSQL database",
+    "category": "Maintenance",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Vacuum all databases"
+      },
+      {
+        "flag": "-z",
+        "description": "Also update optimizer statistics"
+      },
+      {
+        "flag": "-f",
+        "description": "Full vacuum (reclaims more space)"
+      },
+      {
+        "flag": "-j",
+        "description": "Number of parallel jobs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "vacuumdb mydb",
+        "description": "Vacuum specific database"
+      },
+      {
+        "command": "vacuumdb -a -z",
+        "description": "Vacuum all databases with analyze"
+      },
+      {
+        "command": "vacuumdb -f mydb",
+        "description": "Full vacuum for maximum space recovery"
+      }
+    ],
+    "notes": [
+      "Regular vacuum is non-blocking",
+      "Full vacuum requires exclusive lock",
+      "WARNING: -f (VACUUM FULL) rewrites tables under an ACCESS EXCLUSIVE lock, blocking reads and writes",
+      "Autovacuum normally handles routine vacuuming; run vacuumdb -z after big imports or a pg_upgrade"
+    ],
+    "relatedCommands": [
+      "pg-reindex"
+    ]
+  },
+  {
+    "id": "pg-reindex",
+    "name": "reindexdb",
+    "description": "Rebuild PostgreSQL database indexes",
+    "category": "Maintenance",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Reindex all databases"
+      },
+      {
+        "flag": "-t",
+        "description": "Reindex specific table"
+      },
+      {
+        "flag": "-i",
+        "description": "Reindex specific index"
+      }
+    ],
+    "examples": [
+      {
+        "command": "reindexdb mydb",
+        "description": "Reindex all indexes in database"
+      },
+      {
+        "command": "reindexdb -t users mydb",
+        "description": "Reindex only users table"
+      }
+    ],
+    "notes": [
+      "Useful after bulk operations",
+      "Can improve query performance"
+    ],
+    "relatedCommands": [
+      "pg-vacuum"
+    ]
+  },
+  {
+    "id": "pg-ctl",
+    "name": "pg_ctl",
+    "description": "Control PostgreSQL server",
+    "category": "Server Control",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-D",
+        "description": "Data directory location"
+      },
+      {
+        "flag": "-l",
+        "description": "Log file location"
+      },
+      {
+        "flag": "-m",
+        "description": "Shutdown mode (smart, fast, immediate)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pg_ctl start -D /var/lib/postgresql/data",
+        "description": "Start PostgreSQL server"
+      },
+      {
+        "command": "pg_ctl stop -D /var/lib/postgresql/data",
+        "description": "Stop server gracefully"
+      },
+      {
+        "command": "pg_ctl restart -D /var/lib/postgresql/data",
+        "description": "Restart server"
+      },
+      {
+        "command": "pg_ctl status -D /var/lib/postgresql/data",
+        "description": "Check server status"
+      },
+      {
+        "command": "pg_ctl reload -D /var/lib/postgresql/data",
+        "description": "Reload configuration"
+      }
+    ],
+    "notes": [
+      "Requires appropriate permissions",
+      "Use -m immediate only as last resort",
+      "On packaged installs, use the service manager instead, e.g. sudo systemctl restart postgresql or brew services restart postgresql@17"
+    ],
+    "relatedCommands": [
+      "psql"
+    ]
+  },
+  {
+    "id": "pg-explain-analyze",
+    "name": "EXPLAIN ANALYZE",
+    "description": "Run a query and show its actual execution plan, row counts and timings",
+    "category": "Performance",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "BUFFERS",
+        "description": "Show shared buffer hits/reads (included by default with ANALYZE in PostgreSQL 18+)"
+      },
+      {
+        "flag": "VERBOSE",
+        "description": "Show output columns and more detail"
+      },
+      {
+        "flag": "FORMAT JSON",
+        "description": "Machine-readable output for plan visualizers"
+      }
+    ],
+    "examples": [
+      {
+        "command": "EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 42;",
+        "description": "Show the real plan and timing"
+      },
+      {
+        "command": "EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM orders WHERE created_at > now() - interval '1 day';",
+        "description": "Include buffer usage (PostgreSQL 17 and earlier)"
+      },
+      {
+        "command": "EXPLAIN SELECT * FROM orders WHERE customer_id = 42;",
+        "description": "Estimated plan only, without running the query"
+      },
+      {
+        "command": "BEGIN; EXPLAIN ANALYZE DELETE FROM sessions WHERE expires_at < now(); ROLLBACK;",
+        "description": "Analyze a write query without keeping its changes"
+      }
+    ],
+    "notes": [
+      "WARNING: ANALYZE actually executes the statement; wrap INSERT/UPDATE/DELETE in a transaction and roll back",
+      "Compare estimated vs actual rows to spot stale statistics"
+    ],
+    "relatedCommands": [
+      "pg-vacuum-analyze",
+      "psql-timing",
+      "pg-stat-activity"
+    ]
+  },
+  {
+    "id": "pg-vacuum-analyze",
+    "name": "VACUUM ANALYZE",
+    "description": "Reclaim dead-row space and refresh planner statistics from SQL",
+    "category": "Performance",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "VACUUM ANALYZE orders;",
+        "description": "Vacuum and analyze one table"
+      },
+      {
+        "command": "ANALYZE;",
+        "description": "Refresh statistics for the whole database (fast, no vacuum)"
+      },
+      {
+        "command": "VACUUM (VERBOSE, ANALYZE) orders;",
+        "description": "Show detailed progress"
+      },
+      {
+        "command": "SELECT relname, last_autovacuum, last_autoanalyze FROM pg_stat_user_tables ORDER BY relname;",
+        "description": "Check when autovacuum last ran"
+      }
+    ],
+    "notes": [
+      "Plain VACUUM doesn't block reads or writes; VACUUM FULL rewrites the table under an exclusive lock",
+      "Can't run inside a transaction block"
+    ],
+    "relatedCommands": [
+      "pg-vacuum",
+      "pg-explain-analyze"
+    ]
+  },
+  {
+    "id": "pg-stat-activity",
+    "name": "pg_stat_activity",
+    "description": "Show current connections and running queries, and cancel or terminate them",
+    "category": "Performance",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "SELECT pid, usename, state, now() - query_start AS runtime, query FROM pg_stat_activity WHERE state <> 'idle' ORDER BY runtime DESC;",
+        "description": "Show active queries, longest first"
+      },
+      {
+        "command": "SELECT pg_cancel_backend(12345);",
+        "description": "Cancel a running query by pid"
+      },
+      {
+        "command": "SELECT pg_terminate_backend(12345);",
+        "description": "Terminate a connection by pid"
+      }
+    ],
+    "notes": [
+      "WARNING: pg_terminate_backend kills the session and rolls back its open transaction; try pg_cancel_backend first"
+    ],
+    "relatedCommands": [
+      "pg-explain-analyze",
+      "psql"
+    ]
+  }
+]

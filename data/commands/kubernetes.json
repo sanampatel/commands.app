@@ -1,0 +1,1706 @@
+[
+  {
+    "id": "kubectl-get",
+    "name": "kubectl get",
+    "description": "Display resources",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-o",
+        "description": "Output format (json, yaml, wide, name)"
+      },
+      {
+        "flag": "-n",
+        "description": "Namespace"
+      },
+      {
+        "flag": "-A",
+        "description": "All namespaces"
+      },
+      {
+        "flag": "-l",
+        "description": "Label selector"
+      },
+      {
+        "flag": "-w",
+        "description": "Watch for changes"
+      },
+      {
+        "flag": "--show-labels",
+        "description": "Show all labels as the last column"
+      },
+      {
+        "flag": "--sort-by",
+        "description": "Sort by a JSONPath expression, e.g. .metadata.creationTimestamp"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl get pods",
+        "description": "List all pods in current namespace"
+      },
+      {
+        "command": "kubectl get pods -A",
+        "description": "List pods in all namespaces"
+      },
+      {
+        "command": "kubectl get pods -o wide",
+        "description": "List pods with more details"
+      },
+      {
+        "command": "kubectl get svc,deploy,pods",
+        "description": "List multiple resource types"
+      },
+      {
+        "command": "kubectl get pods -l app=nginx",
+        "description": "List pods with specific label"
+      },
+      {
+        "command": "kubectl get pod mypod -o yaml",
+        "description": "Get pod definition as YAML"
+      },
+      {
+        "command": "kubectl get pods -o jsonpath='{.items[*].metadata.name}'",
+        "description": "Extract fields with JSONPath"
+      },
+      {
+        "command": "kubectl get pods --field-selector=status.phase!=Running -A",
+        "description": "Find pods that are not running across all namespaces"
+      }
+    ],
+    "notes": [
+      "Common resources: pods, services, deployments, nodes, configmaps, secrets"
+    ],
+    "relatedCommands": [
+      "kubectl-describe",
+      "kubectl-delete"
+    ]
+  },
+  {
+    "id": "kubectl-describe",
+    "name": "kubectl describe",
+    "description": "Show detailed resource information",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl describe pod mypod",
+        "description": "Describe specific pod"
+      },
+      {
+        "command": "kubectl describe node mynode",
+        "description": "Describe node"
+      },
+      {
+        "command": "kubectl describe svc myservice",
+        "description": "Describe service"
+      }
+    ],
+    "notes": [
+      "Shows events, conditions, and detailed state"
+    ],
+    "relatedCommands": [
+      "kubectl-get",
+      "kubectl-logs"
+    ]
+  },
+  {
+    "id": "kubectl-apply",
+    "name": "kubectl apply",
+    "description": "Apply configuration to resources",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Filename, directory, or URL"
+      },
+      {
+        "flag": "-k",
+        "description": "Kustomize directory"
+      },
+      {
+        "flag": "-R",
+        "description": "Process the directory given with -f recursively"
+      },
+      {
+        "flag": "--dry-run=client|server",
+        "description": "Preview changes without persisting them"
+      },
+      {
+        "flag": "--server-side",
+        "description": "Use server-side apply (field ownership tracked by the API server)"
+      },
+      {
+        "flag": "--prune",
+        "description": "Delete resources no longer in the config (requires -l or --all; use with care)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl apply -f deployment.yaml",
+        "description": "Apply single file"
+      },
+      {
+        "command": "kubectl apply -f ./manifests/",
+        "description": "Apply all files in directory"
+      },
+      {
+        "command": "kubectl apply -k ./kustomize/",
+        "description": "Apply kustomize configuration"
+      },
+      {
+        "command": "kubectl apply -f - <<EOF\napiVersion: v1\nkind: Pod\n...\nEOF",
+        "description": "Apply from stdin"
+      }
+    ],
+    "notes": [
+      "Preferred for declarative config management",
+      "Creates or updates resources",
+      "Run 'kubectl diff -f' first to see what will change",
+      "WARNING: --prune can delete live resources that are missing from your files; always test with --dry-run=server"
+    ],
+    "relatedCommands": [
+      "kubectl-create",
+      "kubectl-delete",
+      "kubectl-diff",
+      "kubectl-kustomize"
+    ]
+  },
+  {
+    "id": "kubectl-create",
+    "name": "kubectl create",
+    "description": "Create resources from file or stdin",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Filename or URL"
+      },
+      {
+        "flag": "--dry-run=client|server",
+        "description": "Preview without creating; combine with -o yaml to generate manifests"
+      },
+      {
+        "flag": "-o",
+        "description": "Output format (yaml, json, name)"
+      },
+      {
+        "flag": "-n",
+        "description": "Namespace"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl create -f deployment.yaml",
+        "description": "Create from YAML file"
+      },
+      {
+        "command": "kubectl create namespace mynamespace",
+        "description": "Create namespace"
+      },
+      {
+        "command": "kubectl create deployment myapp --image=nginx:1.27 --replicas=2",
+        "description": "Create a deployment imperatively"
+      },
+      {
+        "command": "kubectl create deployment myapp --image=nginx:1.27 --dry-run=client -o yaml > deployment.yaml",
+        "description": "Generate a manifest to edit and commit"
+      },
+      {
+        "command": "kubectl create job manual-run --from=cronjob/nightly-report",
+        "description": "Trigger a CronJob manually"
+      }
+    ],
+    "notes": [
+      "Fails if the resource already exists; use 'apply' for declarative management",
+      "For secrets and configmaps see the dedicated 'kubectl create secret' and 'kubectl create configmap' entries"
+    ],
+    "relatedCommands": [
+      "kubectl-apply",
+      "kubectl-delete",
+      "kubectl-create-secret",
+      "kubectl-create-configmap"
+    ]
+  },
+  {
+    "id": "kubectl-delete",
+    "name": "kubectl delete",
+    "description": "Delete resources",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Delete from file"
+      },
+      {
+        "flag": "--grace-period",
+        "description": "Seconds to wait before force delete"
+      },
+      {
+        "flag": "--force",
+        "description": "Force deletion"
+      },
+      {
+        "flag": "-l",
+        "description": "Delete by label selector"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl delete pod mypod",
+        "description": "Delete specific pod"
+      },
+      {
+        "command": "kubectl delete -f deployment.yaml",
+        "description": "Delete resources from file"
+      },
+      {
+        "command": "kubectl delete pods -l app=nginx",
+        "description": "Delete pods by label"
+      },
+      {
+        "command": "kubectl delete pod mypod --force --grace-period=0",
+        "description": "Force delete immediately"
+      }
+    ],
+    "notes": [
+      "Pods managed by deployments will be recreated",
+      "WARNING: deleting a namespace deletes everything inside it",
+      "--force --grace-period=0 skips graceful shutdown and may leave the process running on the node; use only for stuck pods",
+      "kubectl delete -f/-k removes everything defined in the manifests, including PVCs (and possibly their data)"
+    ],
+    "relatedCommands": [
+      "kubectl-get",
+      "kubectl-create"
+    ]
+  },
+  {
+    "id": "kubectl-edit",
+    "name": "kubectl edit",
+    "description": "Edit resource in editor",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl edit deployment myapp",
+        "description": "Edit deployment"
+      },
+      {
+        "command": "kubectl edit svc myservice",
+        "description": "Edit service"
+      },
+      {
+        "command": "KUBE_EDITOR=nano kubectl edit deployment myapp",
+        "description": "Use specific editor"
+      }
+    ],
+    "notes": [
+      "Uses $KUBE_EDITOR, then $EDITOR, then vi",
+      "Edits are applied to the live object and will be overwritten by the next 'kubectl apply' from your manifests"
+    ],
+    "relatedCommands": [
+      "kubectl-apply",
+      "kubectl-patch"
+    ]
+  },
+  {
+    "id": "kubectl-patch",
+    "name": "kubectl patch",
+    "description": "Update specific fields of a resource in place",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-p",
+        "description": "The patch to apply (JSON or YAML)"
+      },
+      {
+        "flag": "--type",
+        "description": "Patch type: strategic (default), merge, or json"
+      },
+      {
+        "flag": "--subresource",
+        "description": "Patch a subresource such as status or scale"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl patch deployment myapp -p '{\"spec\":{\"replicas\":3}}'",
+        "description": "Change replicas with a strategic merge patch"
+      },
+      {
+        "command": "kubectl patch deployment myapp --type=json -p='[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"myimage:v2\"}]'",
+        "description": "Replace a value with a JSON patch"
+      },
+      {
+        "command": "kubectl patch svc myservice -p '{\"spec\":{\"type\":\"LoadBalancer\"}}'",
+        "description": "Change a service type"
+      },
+      {
+        "command": "kubectl patch pvc my-pvc --type=merge -p '{\"metadata\":{\"finalizers\":null}}'",
+        "description": "Remove finalizers from a stuck resource"
+      }
+    ],
+    "notes": [
+      "Strategic merge patch only works on built-in types; use --type=merge for custom resources",
+      "WARNING: removing finalizers skips cleanup logic and can leave orphaned external resources; only do it when you understand why it is stuck",
+      "Patched live objects drift from your manifests until you update and re-apply them"
+    ],
+    "relatedCommands": [
+      "kubectl-edit",
+      "kubectl-apply",
+      "kubectl-set"
+    ]
+  },
+  {
+    "id": "kubectl-diff",
+    "name": "kubectl diff",
+    "description": "Show the difference between live objects and local manifests",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Filename, directory, or URL"
+      },
+      {
+        "flag": "-k",
+        "description": "Kustomize directory"
+      },
+      {
+        "flag": "--server-side",
+        "description": "Use server-side apply for the comparison"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl diff -f deployment.yaml",
+        "description": "Preview what 'kubectl apply' would change"
+      },
+      {
+        "command": "kubectl diff -k overlays/prod",
+        "description": "Diff a kustomize overlay against the cluster"
+      },
+      {
+        "command": "KUBECTL_EXTERNAL_DIFF='diff -u --color' kubectl diff -f ./manifests/",
+        "description": "Use a custom diff program"
+      }
+    ],
+    "notes": [
+      "Exit code is 0 for no differences, 1 when differences exist, >1 on error, which is handy in CI"
+    ],
+    "relatedCommands": [
+      "kubectl-apply",
+      "kubectl-kustomize"
+    ]
+  },
+  {
+    "id": "kubectl-kustomize",
+    "name": "kubectl kustomize",
+    "description": "Render a kustomization directory to YAML without applying it",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl kustomize overlays/prod",
+        "description": "Print the rendered manifests"
+      },
+      {
+        "command": "kubectl apply -k overlays/prod",
+        "description": "Render and apply in one step"
+      },
+      {
+        "command": "kubectl kustomize overlays/prod | kubectl diff -f -",
+        "description": "Preview changes from an overlay"
+      },
+      {
+        "command": "kubectl delete -k overlays/staging",
+        "description": "Delete everything defined in an overlay"
+      }
+    ],
+    "notes": [
+      "The kustomize bundled with kubectl can lag behind the standalone kustomize CLI",
+      "Helm chart inflation needs the --enable-helm flag",
+      "WARNING: 'kubectl delete -k' deletes every resource in the overlay"
+    ],
+    "relatedCommands": [
+      "kubectl-apply",
+      "kubectl-diff"
+    ]
+  },
+  {
+    "id": "kubectl-run",
+    "name": "kubectl run",
+    "description": "Run a pod",
+    "category": "Resource Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--image",
+        "description": "Container image"
+      },
+      {
+        "flag": "--rm",
+        "description": "Delete pod after exit"
+      },
+      {
+        "flag": "-it",
+        "description": "Interactive with TTY"
+      },
+      {
+        "flag": "--restart",
+        "description": "Restart policy (Always, OnFailure, Never)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl run nginx --image=nginx",
+        "description": "Run nginx pod"
+      },
+      {
+        "command": "kubectl run -it --rm debug --image=busybox --restart=Never -- sh",
+        "description": "Run a temporary debug pod that is deleted on exit"
+      },
+      {
+        "command": "kubectl run curl --image=curlimages/curl --rm -it --restart=Never -- curl http://myservice",
+        "description": "Test service connectivity from inside the cluster"
+      }
+    ],
+    "notes": [
+      "Useful for quick debugging",
+      "kubectl run only creates pods; use 'kubectl create deployment' for deployments"
+    ],
+    "relatedCommands": [
+      "kubectl-create",
+      "kubectl-exec",
+      "kubectl-debug"
+    ]
+  },
+  {
+    "id": "kubectl-logs",
+    "name": "kubectl logs",
+    "description": "Print container logs",
+    "category": "Debugging",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Follow log output"
+      },
+      {
+        "flag": "-c",
+        "description": "Container name (for multi-container pods)"
+      },
+      {
+        "flag": "--tail",
+        "description": "Number of lines to show"
+      },
+      {
+        "flag": "--since",
+        "description": "Only show logs since duration"
+      },
+      {
+        "flag": "-p",
+        "description": "Show previous container logs"
+      },
+      {
+        "flag": "--all-containers",
+        "description": "Get logs from all containers in the pod"
+      },
+      {
+        "flag": "--timestamps",
+        "description": "Prefix each line with its timestamp"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl logs mypod",
+        "description": "Get pod logs"
+      },
+      {
+        "command": "kubectl logs -f mypod",
+        "description": "Follow logs in real-time"
+      },
+      {
+        "command": "kubectl logs mypod -c mycontainer",
+        "description": "Logs from specific container"
+      },
+      {
+        "command": "kubectl logs mypod --tail=100",
+        "description": "Last 100 lines"
+      },
+      {
+        "command": "kubectl logs mypod --since=1h",
+        "description": "Logs from last hour"
+      },
+      {
+        "command": "kubectl logs -l app=nginx",
+        "description": "Logs from pods with label"
+      },
+      {
+        "command": "kubectl logs deploy/myapp --all-containers -f",
+        "description": "Follow logs from a pod of a deployment"
+      }
+    ],
+    "notes": [
+      "Use -p to view logs from crashed container"
+    ],
+    "relatedCommands": [
+      "kubectl-describe",
+      "kubectl-exec",
+      "kubectl-events"
+    ]
+  },
+  {
+    "id": "kubectl-exec",
+    "name": "kubectl exec",
+    "description": "Execute command in container",
+    "category": "Debugging",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-it",
+        "description": "Interactive TTY"
+      },
+      {
+        "flag": "-c",
+        "description": "Container name"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl exec mypod -- ls /app",
+        "description": "Run command in pod"
+      },
+      {
+        "command": "kubectl exec -it mypod -- /bin/bash",
+        "description": "Interactive shell in pod"
+      },
+      {
+        "command": "kubectl exec -it mypod -c mycontainer -- sh",
+        "description": "Shell in specific container"
+      }
+    ],
+    "notes": [
+      "Use -- to separate kubectl args from command",
+      "Distroless images have no shell; use 'kubectl debug' with an ephemeral container instead"
+    ],
+    "relatedCommands": [
+      "kubectl-logs",
+      "kubectl-cp",
+      "kubectl-debug"
+    ]
+  },
+  {
+    "id": "kubectl-events",
+    "name": "kubectl events",
+    "description": "List cluster events such as scheduling failures, image pull errors and OOM kills",
+    "category": "Debugging",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--for",
+        "description": "Only events for a specific object, e.g. pod/mypod"
+      },
+      {
+        "flag": "--types",
+        "description": "Filter by type: Normal, Warning"
+      },
+      {
+        "flag": "-w",
+        "description": "Watch for new events"
+      },
+      {
+        "flag": "-A",
+        "description": "All namespaces"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl events -n myns",
+        "description": "List events sorted by time"
+      },
+      {
+        "command": "kubectl events --for pod/mypod",
+        "description": "Events for one pod"
+      },
+      {
+        "command": "kubectl events -A --types=Warning",
+        "description": "Warnings across the cluster"
+      },
+      {
+        "command": "kubectl get events --sort-by=.lastTimestamp",
+        "description": "Older equivalent using kubectl get"
+      }
+    ],
+    "notes": [
+      "Events are kept only for a short time (default 1 hour)"
+    ],
+    "relatedCommands": [
+      "kubectl-describe",
+      "kubectl-logs",
+      "kubectl-get"
+    ]
+  },
+  {
+    "id": "kubectl-debug",
+    "name": "kubectl debug",
+    "description": "Debug pods and nodes using ephemeral containers or pod copies",
+    "category": "Debugging",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "-it",
+        "description": "Attach an interactive terminal"
+      },
+      {
+        "flag": "--image",
+        "description": "Image for the debug container"
+      },
+      {
+        "flag": "--target",
+        "description": "Share the process namespace of this container"
+      },
+      {
+        "flag": "--copy-to",
+        "description": "Create a copy of the pod instead of modifying it"
+      },
+      {
+        "flag": "--profile",
+        "description": "Security profile: legacy, general, baseline, restricted, netadmin, sysadmin"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl debug -it mypod --image=busybox --target=app",
+        "description": "Attach a debug shell to a running (e.g. distroless) pod"
+      },
+      {
+        "command": "kubectl debug mypod -it --copy-to=mypod-debug --container=app -- sh",
+        "description": "Copy a pod and start a shell in it, overriding the command"
+      },
+      {
+        "command": "kubectl debug node/mynode -it --image=ubuntu",
+        "description": "Open a shell on a node (host filesystem at /host)"
+      },
+      {
+        "command": "kubectl debug -it mypod --image=nicolaka/netshoot --profile=netadmin",
+        "description": "Debug networking with extra capabilities"
+      }
+    ],
+    "notes": [
+      "Ephemeral containers cannot be removed from a pod once added; they exit when you quit the shell",
+      "Delete pods created with --copy-to or for node debugging when done"
+    ],
+    "relatedCommands": [
+      "kubectl-exec",
+      "kubectl-logs",
+      "kubectl-run"
+    ]
+  },
+  {
+    "id": "kubectl-cp",
+    "name": "kubectl cp",
+    "description": "Copy files to/from containers",
+    "category": "Debugging",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl cp mypod:/app/logs.txt ./logs.txt",
+        "description": "Copy from pod to local"
+      },
+      {
+        "command": "kubectl cp ./config.txt mypod:/app/config.txt",
+        "description": "Copy from local to pod"
+      },
+      {
+        "command": "kubectl cp mypod:/data ./data -c mycontainer",
+        "description": "Copy from specific container"
+      }
+    ],
+    "notes": [
+      "Requires tar in container"
+    ],
+    "relatedCommands": [
+      "kubectl-exec"
+    ]
+  },
+  {
+    "id": "kubectl-rollout",
+    "name": "kubectl rollout",
+    "description": "Manage deployment rollouts",
+    "category": "Deployments",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl rollout status deployment/myapp",
+        "description": "Check rollout status"
+      },
+      {
+        "command": "kubectl rollout history deployment/myapp",
+        "description": "View rollout history"
+      },
+      {
+        "command": "kubectl rollout undo deployment/myapp",
+        "description": "Rollback to previous version"
+      },
+      {
+        "command": "kubectl rollout undo deployment/myapp --to-revision=2",
+        "description": "Rollback to specific revision"
+      },
+      {
+        "command": "kubectl rollout restart deployment/myapp",
+        "description": "Restart all pods"
+      },
+      {
+        "command": "kubectl rollout pause deployment/myapp",
+        "description": "Pause rollout"
+      },
+      {
+        "command": "kubectl rollout resume deployment/myapp",
+        "description": "Resume a paused rollout"
+      }
+    ],
+    "notes": [
+      "Works with deployments, daemonsets and statefulsets",
+      "See the dedicated status, undo, restart and history entries for details"
+    ],
+    "relatedCommands": [
+      "kubectl-rollout-status",
+      "kubectl-rollout-undo",
+      "kubectl-rollout-restart",
+      "kubectl-rollout-history",
+      "kubectl-set"
+    ]
+  },
+  {
+    "id": "kubectl-rollout-status",
+    "name": "kubectl rollout status",
+    "description": "Watch a rollout until it completes or fails",
+    "category": "Deployments",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--timeout",
+        "description": "Give up after this duration, e.g. 5m"
+      },
+      {
+        "flag": "--watch=false",
+        "description": "Print the current status and exit"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl rollout status deployment/myapp",
+        "description": "Wait for a deployment rollout to finish"
+      },
+      {
+        "command": "kubectl rollout status deployment/myapp --timeout=5m",
+        "description": "Fail if the rollout takes longer than 5 minutes (good in CI)"
+      },
+      {
+        "command": "kubectl rollout status statefulset/postgres",
+        "description": "Watch a statefulset rollout"
+      }
+    ],
+    "notes": [
+      "Exits non-zero if the rollout fails or exceeds progressDeadlineSeconds, so it can gate deploy pipelines"
+    ],
+    "relatedCommands": [
+      "kubectl-rollout-undo",
+      "kubectl-rollout-history",
+      "kubectl-wait"
+    ]
+  },
+  {
+    "id": "kubectl-rollout-restart",
+    "name": "kubectl rollout restart",
+    "description": "Restart all pods of a workload with a rolling update",
+    "category": "Deployments",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl rollout restart deployment/myapp",
+        "description": "Rolling restart of a deployment"
+      },
+      {
+        "command": "kubectl rollout restart deployment -n myns",
+        "description": "Restart all deployments in a namespace"
+      },
+      {
+        "command": "kubectl rollout restart daemonset/fluent-bit -n logging",
+        "description": "Restart a daemonset"
+      }
+    ],
+    "notes": [
+      "Common after updating a ConfigMap or Secret that pods read at startup",
+      "Works by adding a restartedAt annotation to the pod template, so it respects maxUnavailable/maxSurge"
+    ],
+    "relatedCommands": [
+      "kubectl-rollout-status",
+      "kubectl-rollout",
+      "kubectl-create-configmap"
+    ]
+  },
+  {
+    "id": "kubectl-rollout-undo",
+    "name": "kubectl rollout undo",
+    "description": "Roll back a deployment, daemonset, or statefulset to a previous revision",
+    "category": "Deployments",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--to-revision",
+        "description": "Revision to roll back to (default: previous)"
+      },
+      {
+        "flag": "--dry-run=server",
+        "description": "Preview the rollback"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl rollout undo deployment/myapp",
+        "description": "Roll back to the previous revision"
+      },
+      {
+        "command": "kubectl rollout undo deployment/myapp --to-revision=3",
+        "description": "Roll back to revision 3"
+      }
+    ],
+    "notes": [
+      "Only the pod template is rolled back; ConfigMaps, Secrets and other resources are not",
+      "If you deploy with GitOps or 'kubectl apply', the next sync/apply will undo the rollback; revert in Git instead"
+    ],
+    "relatedCommands": [
+      "kubectl-rollout-history",
+      "kubectl-rollout-status",
+      "kubectl-rollout"
+    ]
+  },
+  {
+    "id": "kubectl-rollout-history",
+    "name": "kubectl rollout history",
+    "description": "View revision history of a workload",
+    "category": "Deployments",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--revision",
+        "description": "Show details of a specific revision"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl rollout history deployment/myapp",
+        "description": "List revisions"
+      },
+      {
+        "command": "kubectl rollout history deployment/myapp --revision=3",
+        "description": "Show the pod template of revision 3"
+      },
+      {
+        "command": "kubectl annotate deployment/myapp kubernetes.io/change-cause='bump to v2.1'",
+        "description": "Record a change cause shown in history"
+      }
+    ],
+    "notes": [
+      "The CHANGE-CAUSE column comes from the kubernetes.io/change-cause annotation (the old --record flag is deprecated)",
+      "Number of revisions kept is set by spec.revisionHistoryLimit (default 10)"
+    ],
+    "relatedCommands": [
+      "kubectl-rollout-undo",
+      "kubectl-rollout-status"
+    ]
+  },
+  {
+    "id": "kubectl-set",
+    "name": "kubectl set",
+    "description": "Set resource attributes",
+    "category": "Deployments",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl set image deployment/myapp mycontainer=myimage:v2",
+        "description": "Update container image"
+      },
+      {
+        "command": "kubectl set env deployment/myapp KEY=value",
+        "description": "Set environment variable"
+      },
+      {
+        "command": "kubectl set resources deployment/myapp -c=mycontainer --limits=cpu=200m,memory=512Mi",
+        "description": "Set resource limits"
+      }
+    ],
+    "notes": [
+      "Triggers rollout when changing deployment"
+    ],
+    "relatedCommands": [
+      "kubectl-rollout",
+      "kubectl-edit",
+      "kubectl-rollout-status"
+    ]
+  },
+  {
+    "id": "kubectl-wait",
+    "name": "kubectl wait",
+    "description": "Block until resources reach a condition",
+    "category": "Deployments",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--for",
+        "description": "Condition to wait for: condition=X, delete, jsonpath=..., or create"
+      },
+      {
+        "flag": "--timeout",
+        "description": "Maximum time to wait (default 30s)"
+      },
+      {
+        "flag": "-l",
+        "description": "Label selector"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl wait --for=condition=Ready pod -l app=myapp --timeout=120s",
+        "description": "Wait for matching pods to be ready"
+      },
+      {
+        "command": "kubectl wait --for=condition=Available deployment/myapp --timeout=5m",
+        "description": "Wait for a deployment to become available"
+      },
+      {
+        "command": "kubectl wait --for=condition=Complete job/db-migrate --timeout=10m",
+        "description": "Wait for a job to finish"
+      },
+      {
+        "command": "kubectl wait --for=delete pod/mypod --timeout=60s",
+        "description": "Wait for a pod to be deleted"
+      },
+      {
+        "command": "kubectl wait --for=jsonpath='{.status.phase}'=Running pod/mypod",
+        "description": "Wait for a field to have a value"
+      }
+    ],
+    "notes": [
+      "Fails immediately if no resources match a selector yet; '--for=create' (kubectl 1.31+) waits for creation",
+      "A failed Job never becomes Complete; wait with a timeout or also check condition=Failed"
+    ],
+    "relatedCommands": [
+      "kubectl-rollout-status",
+      "kubectl-get"
+    ]
+  },
+  {
+    "id": "kubectl-config",
+    "name": "kubectl config",
+    "description": "Manage kubeconfig settings",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl config view",
+        "description": "View merged kubeconfig"
+      },
+      {
+        "command": "kubectl config current-context",
+        "description": "Display current context"
+      },
+      {
+        "command": "kubectl config use-context mycluster",
+        "description": "Switch context"
+      },
+      {
+        "command": "kubectl config get-contexts",
+        "description": "List available contexts"
+      },
+      {
+        "command": "kubectl config set-context --current --namespace=myns",
+        "description": "Set default namespace"
+      },
+      {
+        "command": "kubectl config view --minify",
+        "description": "Show only the current context's config"
+      },
+      {
+        "command": "kubectl config delete-context old-cluster",
+        "description": "Remove a context"
+      }
+    ],
+    "notes": [
+      "Config file: ~/.kube/config (override with KUBECONFIG, which can list multiple files separated by :)",
+      "kubectl config view redacts credentials; add --raw to see them (avoid sharing the output)"
+    ],
+    "relatedCommands": [
+      "kubectl-config-get-contexts",
+      "kubectl-config-use-context",
+      "kubectl-config-set-context",
+      "kubectl-cluster-info"
+    ]
+  },
+  {
+    "id": "kubectl-config-get-contexts",
+    "name": "kubectl config get-contexts",
+    "description": "List the contexts (cluster/user/namespace combos) in your kubeconfig",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl config get-contexts",
+        "description": "List contexts; the current one is marked with *"
+      },
+      {
+        "command": "kubectl config get-contexts -o name",
+        "description": "Print only context names"
+      },
+      {
+        "command": "kubectl config current-context",
+        "description": "Print just the current context"
+      }
+    ],
+    "relatedCommands": [
+      "kubectl-config-use-context",
+      "kubectl-config-set-context",
+      "kubectl-config"
+    ]
+  },
+  {
+    "id": "kubectl-config-use-context",
+    "name": "kubectl config use-context",
+    "description": "Switch kubectl to a different context (cluster)",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl config use-context staging",
+        "description": "Switch to the staging context"
+      },
+      {
+        "command": "kubectl --context=prod get pods",
+        "description": "Run a single command against another context without switching"
+      }
+    ],
+    "notes": [
+      "The change is written to your kubeconfig and affects every terminal using it; prefer --context for one-off commands against production",
+      "Third-party tools kubectx/kubens make switching faster"
+    ],
+    "relatedCommands": [
+      "kubectl-config-get-contexts",
+      "kubectl-config-set-context"
+    ]
+  },
+  {
+    "id": "kubectl-config-set-context",
+    "name": "kubectl config set-context",
+    "description": "Create or modify a context, e.g. to change its default namespace",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--current",
+        "description": "Modify the current context"
+      },
+      {
+        "flag": "--namespace",
+        "description": "Default namespace for the context"
+      },
+      {
+        "flag": "--cluster / --user",
+        "description": "Cluster and user entries for the context"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl config set-context --current --namespace=myapp",
+        "description": "Set the default namespace for the current context"
+      },
+      {
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}'",
+        "description": "Show the current default namespace"
+      },
+      {
+        "command": "kubectl config set-context dev --cluster=dev-cluster --user=dev-user --namespace=dev",
+        "description": "Create a new context"
+      }
+    ],
+    "relatedCommands": [
+      "kubectl-config-use-context",
+      "kubectl-config-get-contexts",
+      "kubectl-config"
+    ]
+  },
+  {
+    "id": "kubectl-create-secret",
+    "name": "kubectl create secret",
+    "description": "Create a Secret from literals, files, or TLS certificates",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl create secret generic db-creds --from-literal=username=app --from-literal=password='<password>'",
+        "description": "Create a secret from literal values"
+      },
+      {
+        "command": "kubectl create secret generic app-env --from-env-file=.env",
+        "description": "Create a secret from a .env file"
+      },
+      {
+        "command": "kubectl create secret tls my-tls --cert=tls.crt --key=tls.key",
+        "description": "Create a TLS secret for an Ingress"
+      },
+      {
+        "command": "kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-username=<user> --docker-password=<token>",
+        "description": "Create an image pull secret"
+      },
+      {
+        "command": "kubectl get secret db-creds -o jsonpath='{.data.password}' | base64 -d",
+        "description": "Read a secret value"
+      }
+    ],
+    "notes": [
+      "Secret data is only base64-encoded, not encrypted; enable encryption at rest and restrict access with RBAC",
+      "Literal values end up in shell history; prefer --from-file or --from-env-file",
+      "To update an existing secret: add --dry-run=client -o yaml and pipe to 'kubectl apply -f -'"
+    ],
+    "relatedCommands": [
+      "kubectl-create-configmap",
+      "kubectl-create"
+    ]
+  },
+  {
+    "id": "kubectl-create-configmap",
+    "name": "kubectl create configmap",
+    "description": "Create a ConfigMap from literals, files, or env files",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl create configmap app-config --from-literal=LOG_LEVEL=info --from-literal=FEATURE_X=true",
+        "description": "Create from key/value pairs"
+      },
+      {
+        "command": "kubectl create configmap nginx-conf --from-file=nginx.conf",
+        "description": "Create from a file (key is the file name)"
+      },
+      {
+        "command": "kubectl create configmap app-env --from-env-file=app.env",
+        "description": "Create one key per line of an env file"
+      },
+      {
+        "command": "kubectl create configmap app-config --from-file=config/ --dry-run=client -o yaml | kubectl apply -f -",
+        "description": "Create or update a configmap from a directory"
+      }
+    ],
+    "notes": [
+      "Pods do not restart automatically when a ConfigMap changes; env vars need a restart (kubectl rollout restart)",
+      "Mounted ConfigMap files update eventually, except when mounted with subPath",
+      "Size limit is 1 MiB"
+    ],
+    "relatedCommands": [
+      "kubectl-create-secret",
+      "kubectl-rollout-restart"
+    ]
+  },
+  {
+    "id": "kubectl-port-forward",
+    "name": "kubectl port-forward",
+    "description": "Forward local port to pod",
+    "category": "Networking",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--address",
+        "description": "Addresses to listen on (default localhost)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl port-forward mypod 8080:80",
+        "description": "Forward local 8080 to pod 80"
+      },
+      {
+        "command": "kubectl port-forward svc/myservice 8080:80",
+        "description": "Forward to service"
+      },
+      {
+        "command": "kubectl port-forward deploy/myapp 8080:80",
+        "description": "Forward to deployment"
+      },
+      {
+        "command": "kubectl port-forward mypod 8080:80 --address 0.0.0.0",
+        "description": "Listen on all interfaces"
+      }
+    ],
+    "notes": [
+      "Useful for debugging services locally",
+      "When forwarding to a service or deployment, kubectl picks one pod; traffic is not load-balanced",
+      "The forward stops if the pod restarts; re-run the command",
+      "Exposing on 0.0.0.0 makes the port reachable from your network"
+    ],
+    "relatedCommands": [
+      "kubectl-expose",
+      "kubectl-get"
+    ]
+  },
+  {
+    "id": "kubectl-expose",
+    "name": "kubectl expose",
+    "description": "Expose resource as service",
+    "category": "Networking",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--port",
+        "description": "Service port"
+      },
+      {
+        "flag": "--target-port",
+        "description": "Container port"
+      },
+      {
+        "flag": "--type",
+        "description": "Service type (ClusterIP, NodePort, LoadBalancer)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl expose deployment myapp --port=80",
+        "description": "Create ClusterIP service"
+      },
+      {
+        "command": "kubectl expose deployment myapp --port=80 --type=LoadBalancer",
+        "description": "Create LoadBalancer service"
+      },
+      {
+        "command": "kubectl expose pod mypod --port=80 --target-port=8080",
+        "description": "Expose with port mapping"
+      }
+    ],
+    "notes": [
+      "Creates a service for the resource"
+    ],
+    "relatedCommands": [
+      "kubectl-create",
+      "kubectl-get"
+    ]
+  },
+  {
+    "id": "kubectl-scale",
+    "name": "kubectl scale",
+    "description": "Scale deployment replicas",
+    "category": "Scaling",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl scale deployment myapp --replicas=3",
+        "description": "Scale to 3 replicas"
+      },
+      {
+        "command": "kubectl scale deployment myapp --replicas=0",
+        "description": "Scale down to zero"
+      },
+      {
+        "command": "kubectl scale --replicas=5 -f deployment.yaml",
+        "description": "Scale from file"
+      }
+    ],
+    "notes": [
+      "Also works with replicasets and statefulsets"
+    ],
+    "relatedCommands": [
+      "kubectl-autoscale",
+      "kubectl-rollout"
+    ]
+  },
+  {
+    "id": "kubectl-autoscale",
+    "name": "kubectl autoscale",
+    "description": "Auto-scale deployment based on metrics",
+    "category": "Scaling",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--min",
+        "description": "Minimum replicas"
+      },
+      {
+        "flag": "--max",
+        "description": "Maximum replicas"
+      },
+      {
+        "flag": "--cpu-percent",
+        "description": "Target CPU utilization"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl autoscale deployment myapp --min=2 --max=10 --cpu-percent=80",
+        "description": "Create HPA with CPU target"
+      }
+    ],
+    "notes": [
+      "Creates HorizontalPodAutoscaler",
+      "Requires metrics-server and CPU requests set on the containers",
+      "Recent kubectl versions add --cpu/--memory targets and deprecate --cpu-percent; check 'kubectl autoscale --help' for your version"
+    ],
+    "relatedCommands": [
+      "kubectl-scale",
+      "kubectl-get"
+    ]
+  },
+  {
+    "id": "kubectl-top",
+    "name": "kubectl top",
+    "description": "Display resource usage",
+    "category": "Monitoring",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl top nodes",
+        "description": "Show node resource usage"
+      },
+      {
+        "command": "kubectl top pods",
+        "description": "Show pod resource usage"
+      },
+      {
+        "command": "kubectl top pods --containers",
+        "description": "Show container-level usage"
+      },
+      {
+        "command": "kubectl top pods -l app=nginx",
+        "description": "Show usage for labeled pods"
+      }
+    ],
+    "notes": [
+      "Requires metrics-server installed"
+    ],
+    "relatedCommands": [
+      "kubectl-describe",
+      "kubectl-get"
+    ]
+  },
+  {
+    "id": "kubectl-label",
+    "name": "kubectl label",
+    "description": "Add or update labels",
+    "category": "Labels & Annotations",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl label pods mypod env=production",
+        "description": "Add label to pod"
+      },
+      {
+        "command": "kubectl label pods mypod env-",
+        "description": "Remove label"
+      },
+      {
+        "command": "kubectl label pods --all env=test",
+        "description": "Label all pods"
+      },
+      {
+        "command": "kubectl label pods mypod env=staging --overwrite",
+        "description": "Update existing label"
+      }
+    ],
+    "notes": [
+      "Labels are key-value pairs for organization"
+    ],
+    "relatedCommands": [
+      "kubectl-annotate",
+      "kubectl-get"
+    ]
+  },
+  {
+    "id": "kubectl-annotate",
+    "name": "kubectl annotate",
+    "description": "Add or update annotations",
+    "category": "Labels & Annotations",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl annotate pods mypod description=\"My app\"",
+        "description": "Add annotation"
+      },
+      {
+        "command": "kubectl annotate pods mypod description-",
+        "description": "Remove annotation"
+      }
+    ],
+    "notes": [
+      "Annotations store non-identifying metadata"
+    ],
+    "relatedCommands": [
+      "kubectl-label"
+    ]
+  },
+  {
+    "id": "kubectl-cordon",
+    "name": "kubectl cordon",
+    "description": "Mark node as unschedulable",
+    "category": "Node Management",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl cordon mynode",
+        "description": "Prevent new pods from being scheduled on a node"
+      },
+      {
+        "command": "kubectl cordon -l node-pool=old",
+        "description": "Cordon all nodes with a label"
+      }
+    ],
+    "notes": [
+      "Existing pods continue running"
+    ],
+    "relatedCommands": [
+      "kubectl-drain",
+      "kubectl-uncordon",
+      "kubectl-taint"
+    ]
+  },
+  {
+    "id": "kubectl-uncordon",
+    "name": "kubectl uncordon",
+    "description": "Mark a node as schedulable again",
+    "category": "Node Management",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl uncordon mynode",
+        "description": "Allow new pods on the node after maintenance"
+      },
+      {
+        "command": "kubectl get nodes",
+        "description": "Check that STATUS no longer shows SchedulingDisabled"
+      }
+    ],
+    "notes": [
+      "Pods evicted during drain do not move back automatically; new pods will be scheduled here over time"
+    ],
+    "relatedCommands": [
+      "kubectl-cordon",
+      "kubectl-drain"
+    ]
+  },
+  {
+    "id": "kubectl-drain",
+    "name": "kubectl drain",
+    "description": "Drain node for maintenance",
+    "category": "Node Management",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--ignore-daemonsets",
+        "description": "Ignore DaemonSet pods"
+      },
+      {
+        "flag": "--delete-emptydir-data",
+        "description": "Delete emptyDir data"
+      },
+      {
+        "flag": "--force",
+        "description": "Force drain"
+      },
+      {
+        "flag": "--timeout",
+        "description": "Give up after this duration, e.g. 5m"
+      },
+      {
+        "flag": "--pod-selector",
+        "description": "Only evict pods matching a label selector"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl drain mynode --ignore-daemonsets",
+        "description": "Drain node safely"
+      },
+      {
+        "command": "kubectl drain mynode --ignore-daemonsets --delete-emptydir-data",
+        "description": "Drain including emptyDir pods"
+      }
+    ],
+    "notes": [
+      "Evicts pods and cordons node; run 'kubectl uncordon' when maintenance is done",
+      "Respects PodDisruptionBudgets, so it can block if a PDB would be violated",
+      "WARNING: --delete-emptydir-data discards data in emptyDir volumes, and --force deletes pods not managed by a controller (they won't be recreated)"
+    ],
+    "relatedCommands": [
+      "kubectl-cordon",
+      "kubectl-uncordon"
+    ]
+  },
+  {
+    "id": "kubectl-taint",
+    "name": "kubectl taint",
+    "description": "Add or remove node taints",
+    "category": "Node Management",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl taint nodes mynode key=value:NoSchedule",
+        "description": "Add taint to node"
+      },
+      {
+        "command": "kubectl taint nodes mynode key:NoSchedule-",
+        "description": "Remove taint"
+      }
+    ],
+    "notes": [
+      "Effects: NoSchedule, PreferNoSchedule, NoExecute"
+    ],
+    "relatedCommands": [
+      "kubectl-cordon",
+      "kubectl-drain"
+    ]
+  },
+  {
+    "id": "kubectl-cluster-info",
+    "name": "kubectl cluster-info",
+    "description": "Show control plane and core service endpoints",
+    "category": "Cluster Info",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl cluster-info",
+        "description": "Show the API server and CoreDNS addresses"
+      },
+      {
+        "command": "kubectl version",
+        "description": "Show client and server versions"
+      },
+      {
+        "command": "kubectl get --raw='/readyz?verbose'",
+        "description": "Check API server readiness checks"
+      },
+      {
+        "command": "kubectl cluster-info dump --output-directory=./cluster-state",
+        "description": "Dump cluster state for debugging"
+      }
+    ],
+    "notes": [
+      "kubectl supports API servers within one minor version (older or newer) of itself"
+    ],
+    "relatedCommands": [
+      "kubectl-config",
+      "kubectl-api-resources"
+    ]
+  },
+  {
+    "id": "kubectl-api-resources",
+    "name": "kubectl api-resources",
+    "description": "List available API resources",
+    "category": "Cluster Info",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl api-resources",
+        "description": "List all resources"
+      },
+      {
+        "command": "kubectl api-resources --namespaced=true",
+        "description": "List namespaced resources"
+      },
+      {
+        "command": "kubectl api-resources -o wide",
+        "description": "Show with verbs and versions"
+      }
+    ],
+    "notes": [
+      "Useful for discovering resource types"
+    ],
+    "relatedCommands": [
+      "kubectl-explain",
+      "kubectl-auth-can-i"
+    ]
+  },
+  {
+    "id": "kubectl-explain",
+    "name": "kubectl explain",
+    "description": "Documentation for resources",
+    "category": "Cluster Info",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl explain pods",
+        "description": "Explain pod resource"
+      },
+      {
+        "command": "kubectl explain pods.spec",
+        "description": "Explain pod spec"
+      },
+      {
+        "command": "kubectl explain pods.spec.containers",
+        "description": "Explain containers field"
+      },
+      {
+        "command": "kubectl explain pods --recursive",
+        "description": "Show all fields"
+      }
+    ],
+    "notes": [
+      "Great for learning resource schemas"
+    ],
+    "relatedCommands": [
+      "kubectl-api-resources"
+    ]
+  },
+  {
+    "id": "kubectl-auth-can-i",
+    "name": "kubectl auth can-i",
+    "description": "Check whether an action is allowed by RBAC",
+    "category": "Cluster Info",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--as",
+        "description": "Impersonate a user or service account"
+      },
+      {
+        "flag": "-n",
+        "description": "Namespace to check in"
+      },
+      {
+        "flag": "--list",
+        "description": "List all allowed actions"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl auth can-i create deployments -n prod",
+        "description": "Check if you can create deployments in prod"
+      },
+      {
+        "command": "kubectl auth can-i '*' '*' --all-namespaces",
+        "description": "Check for cluster-admin-like access"
+      },
+      {
+        "command": "kubectl auth can-i list secrets --as=system:serviceaccount:myns:my-sa -n myns",
+        "description": "Check a service account's permissions"
+      },
+      {
+        "command": "kubectl auth can-i --list -n myns",
+        "description": "List everything you can do in a namespace"
+      },
+      {
+        "command": "kubectl auth whoami",
+        "description": "Show the identity the cluster sees for you"
+      }
+    ],
+    "notes": [
+      "Impersonation with --as requires the 'impersonate' permission"
+    ],
+    "relatedCommands": [
+      "kubectl-api-resources",
+      "kubectl-config"
+    ]
+  }
+]

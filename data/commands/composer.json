@@ -1,0 +1,890 @@
+[
+  {
+    "id": "composer-create-project",
+    "name": "composer create-project",
+    "description": "Create a new project from a package (installs it into a new directory).",
+    "category": "Project Setup",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--prefer-dist",
+        "description": "Install from dist archives (default)"
+      },
+      {
+        "flag": "--no-dev",
+        "description": "Skip installing require-dev packages"
+      },
+      {
+        "flag": "--no-install",
+        "description": "Create the project without installing dependencies"
+      },
+      {
+        "flag": "--stability <stable|dev|...>",
+        "description": "Minimum stability for the root package"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer create-project laravel/laravel my-app",
+        "description": "Create a new Laravel app"
+      },
+      {
+        "command": "composer create-project symfony/skeleton my-api \"7.*\"",
+        "description": "Create a Symfony project at a version constraint"
+      },
+      {
+        "command": "composer create-project laravel/laravel my-app --no-install",
+        "description": "Scaffold without running install"
+      }
+    ],
+    "relatedCommands": [
+      "composer-init",
+      "composer-install"
+    ]
+  },
+  {
+    "id": "composer-init",
+    "name": "composer init",
+    "description": "Interactively create a composer.json in the current directory.",
+    "category": "Project Setup",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--name <vendor/package>",
+        "description": "Package name"
+      },
+      {
+        "flag": "--type <type>",
+        "description": "Package type, e.g. library or project"
+      },
+      {
+        "flag": "--require <pkg:ver>",
+        "description": "Add a requirement (repeatable)"
+      },
+      {
+        "flag": "--autoload <path>",
+        "description": "Add a PSR-4 autoload mapping to the given directory"
+      },
+      {
+        "flag": "-n, --no-interaction",
+        "description": "Accept defaults without prompting"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer init",
+        "description": "Answer prompts to create composer.json"
+      },
+      {
+        "command": "composer init --name acme/my-lib --type library --autoload src/ -n",
+        "description": "Non-interactive library setup"
+      }
+    ],
+    "relatedCommands": [
+      "composer-create-project",
+      "composer-require",
+      "composer-validate"
+    ]
+  },
+  {
+    "id": "composer-install",
+    "name": "composer install",
+    "description": "Install dependencies exactly as recorded in composer.lock.",
+    "category": "Dependencies",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--no-dev",
+        "description": "Skip require-dev packages (use in production)"
+      },
+      {
+        "flag": "-o, --optimize-autoloader",
+        "description": "Generate an optimized classmap autoloader"
+      },
+      {
+        "flag": "-a, --classmap-authoritative",
+        "description": "Only load classes from the classmap (implies -o)"
+      },
+      {
+        "flag": "--no-scripts",
+        "description": "Skip running composer.json scripts"
+      },
+      {
+        "flag": "--prefer-dist / --prefer-source",
+        "description": "Install from archives or from VCS source"
+      },
+      {
+        "flag": "--ignore-platform-req=<req>",
+        "description": "Ignore a specific platform requirement, e.g. ext-redis"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer install",
+        "description": "Install dependencies for development"
+      },
+      {
+        "command": "composer install --no-dev --optimize-autoloader --no-interaction",
+        "description": "Production / deployment install"
+      },
+      {
+        "command": "composer install --ignore-platform-req=ext-imagick",
+        "description": "Install when an extension is missing locally"
+      }
+    ],
+    "notes": [
+      "Without composer.lock, install behaves like update and creates the lock file",
+      "Commit composer.lock for applications so every environment gets the same versions"
+    ],
+    "relatedCommands": [
+      "composer-update",
+      "composer-require",
+      "composer-dump-autoload"
+    ]
+  },
+  {
+    "id": "composer-require",
+    "name": "composer require",
+    "description": "Add packages to composer.json and install them.",
+    "category": "Dependencies",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--dev",
+        "description": "Add to require-dev"
+      },
+      {
+        "flag": "-W, --with-all-dependencies",
+        "description": "Allow updating dependencies of the new package, including root requirements"
+      },
+      {
+        "flag": "-w, --with-dependencies",
+        "description": "Allow updating dependencies of the new package except root requirements"
+      },
+      {
+        "flag": "--no-update",
+        "description": "Only edit composer.json, do not install"
+      },
+      {
+        "flag": "--sort-packages",
+        "description": "Keep packages sorted in composer.json"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer require guzzlehttp/guzzle",
+        "description": "Add a runtime dependency"
+      },
+      {
+        "command": "composer require --dev phpunit/phpunit",
+        "description": "Add a dev dependency"
+      },
+      {
+        "command": "composer require monolog/monolog:^3.0",
+        "description": "Require a specific version constraint"
+      },
+      {
+        "command": "composer require laravel/framework:^12.0 -W",
+        "description": "Upgrade a framework, allowing dependents to move too"
+      }
+    ],
+    "relatedCommands": [
+      "composer-remove",
+      "composer-update",
+      "composer-install"
+    ]
+  },
+  {
+    "id": "composer-remove",
+    "name": "composer remove",
+    "description": "Remove packages from composer.json and uninstall them.",
+    "category": "Dependencies",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--dev",
+        "description": "Remove from require-dev"
+      },
+      {
+        "flag": "--unused",
+        "description": "Remove packages that are no longer required by anything"
+      },
+      {
+        "flag": "-w, --update-with-dependencies",
+        "description": "Also update dependencies of the removed packages"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer remove guzzlehttp/guzzle",
+        "description": "Remove a dependency"
+      },
+      {
+        "command": "composer remove --dev barryvdh/laravel-debugbar",
+        "description": "Remove a dev dependency"
+      }
+    ],
+    "notes": [
+      "Alias: composer rm"
+    ],
+    "relatedCommands": [
+      "composer-require"
+    ]
+  },
+  {
+    "id": "composer-update",
+    "name": "composer update",
+    "description": "Update dependencies to the latest versions allowed by composer.json and rewrite composer.lock.",
+    "category": "Dependencies",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-w, --with-dependencies",
+        "description": "Also update the named packages' dependencies (except root requirements)"
+      },
+      {
+        "flag": "-W, --with-all-dependencies",
+        "description": "Also update dependencies including those that are root requirements"
+      },
+      {
+        "flag": "--lock",
+        "description": "Only refresh the lock file hash without updating packages"
+      },
+      {
+        "flag": "--no-dev",
+        "description": "Skip installing require-dev packages"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Show what would change without doing it"
+      },
+      {
+        "flag": "--prefer-lowest",
+        "description": "Install the lowest allowed versions (for testing libraries)"
+      },
+      {
+        "flag": "-i, --interactive",
+        "description": "Choose packages to update interactively"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer update",
+        "description": "Update everything within constraints"
+      },
+      {
+        "command": "composer update monolog/monolog",
+        "description": "Update one package only"
+      },
+      {
+        "command": "composer update \"symfony/*\" --with-dependencies",
+        "description": "Update all Symfony packages and their deps"
+      },
+      {
+        "command": "composer update --lock",
+        "description": "Fix 'lock file is not up to date' after manual composer.json edits"
+      }
+    ],
+    "notes": [
+      "Alias: composer u / upgrade",
+      "Running a bare update on production is risky; update locally, commit composer.lock, then run install on servers"
+    ],
+    "relatedCommands": [
+      "composer-install",
+      "composer-outdated",
+      "composer-bump"
+    ]
+  },
+  {
+    "id": "composer-outdated",
+    "name": "composer outdated",
+    "description": "List installed packages that have newer versions available.",
+    "category": "Inspection",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-D, --direct",
+        "description": "Only show packages directly required by the root"
+      },
+      {
+        "flag": "-m, --minor-only",
+        "description": "Only show minor/patch updates (semver-compatible)"
+      },
+      {
+        "flag": "--major-only",
+        "description": "Only show major updates"
+      },
+      {
+        "flag": "--strict",
+        "description": "Return a non-zero exit code if any package is outdated"
+      },
+      {
+        "flag": "-f, --format <text|json>",
+        "description": "Output format"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer outdated --direct",
+        "description": "Show outdated direct dependencies"
+      },
+      {
+        "command": "composer outdated --major-only",
+        "description": "Find packages with new major releases"
+      },
+      {
+        "command": "composer outdated --strict --direct",
+        "description": "Fail CI when direct deps are outdated"
+      }
+    ],
+    "relatedCommands": [
+      "composer-update",
+      "composer-show"
+    ]
+  },
+  {
+    "id": "composer-show",
+    "name": "composer show",
+    "description": "Show information about installed or available packages.",
+    "category": "Inspection",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-t, --tree",
+        "description": "Show the dependency tree"
+      },
+      {
+        "flag": "-a, --all",
+        "description": "Show all available packages from repositories"
+      },
+      {
+        "flag": "-D, --direct",
+        "description": "Only show direct dependencies"
+      },
+      {
+        "flag": "-l, --latest",
+        "description": "Show the latest version next to the installed one"
+      },
+      {
+        "flag": "-p, --platform",
+        "description": "Show platform packages (PHP, extensions)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer show",
+        "description": "List installed packages"
+      },
+      {
+        "command": "composer show monolog/monolog",
+        "description": "Show details for one package"
+      },
+      {
+        "command": "composer show --tree laravel/framework",
+        "description": "Show the dependency tree of a package"
+      },
+      {
+        "command": "composer show -p",
+        "description": "List PHP version and extensions Composer sees"
+      }
+    ],
+    "notes": [
+      "Alias: composer info"
+    ],
+    "relatedCommands": [
+      "composer-outdated",
+      "composer-why"
+    ]
+  },
+  {
+    "id": "composer-why",
+    "name": "composer why",
+    "description": "Show which packages depend on a given package.",
+    "category": "Inspection",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Recursively resolve up to the root package"
+      },
+      {
+        "flag": "-t, --tree",
+        "description": "Print results as a nested tree"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer why psr/log",
+        "description": "Find what requires psr/log"
+      },
+      {
+        "command": "composer why -t symfony/console",
+        "description": "Show the dependency chain as a tree"
+      }
+    ],
+    "notes": [
+      "Alias: composer depends"
+    ],
+    "relatedCommands": [
+      "composer-why-not",
+      "composer-show"
+    ]
+  },
+  {
+    "id": "composer-why-not",
+    "name": "composer why-not",
+    "description": "Show which packages prevent a given package version from being installed.",
+    "category": "Inspection",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Recursively resolve up to the root package"
+      },
+      {
+        "flag": "-t, --tree",
+        "description": "Print results as a nested tree"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer why-not laravel/framework 12.0",
+        "description": "See what blocks upgrading to Laravel 12"
+      },
+      {
+        "command": "composer why-not php 8.4",
+        "description": "Check which packages are incompatible with PHP 8.4"
+      }
+    ],
+    "notes": [
+      "Alias: composer prohibits"
+    ],
+    "relatedCommands": [
+      "composer-why",
+      "composer-update"
+    ]
+  },
+  {
+    "id": "composer-licenses",
+    "name": "composer licenses",
+    "description": "List the licenses of all installed dependencies.",
+    "category": "Inspection",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-f, --format <text|json|summary>",
+        "description": "Output format"
+      },
+      {
+        "flag": "--no-dev",
+        "description": "Exclude dev dependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer licenses",
+        "description": "Table of packages and their licenses"
+      },
+      {
+        "command": "composer licenses --format=summary --no-dev",
+        "description": "Count production licenses by type"
+      }
+    ],
+    "relatedCommands": [
+      "composer-show"
+    ]
+  },
+  {
+    "id": "composer-dump-autoload",
+    "name": "composer dump-autoload",
+    "description": "Regenerate the autoloader (vendor/autoload.php) without installing packages.",
+    "category": "Autoloading",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-o, --optimize",
+        "description": "Convert PSR-0/4 autoloading to a classmap for faster loading"
+      },
+      {
+        "flag": "-a, --classmap-authoritative",
+        "description": "Only load classes from the classmap"
+      },
+      {
+        "flag": "--apcu",
+        "description": "Use APCu to cache found/not-found classes"
+      },
+      {
+        "flag": "--no-dev",
+        "description": "Exclude autoload-dev rules"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer dump-autoload",
+        "description": "Pick up new classes or autoload changes"
+      },
+      {
+        "command": "composer dump-autoload -o",
+        "description": "Optimized autoloader for production"
+      },
+      {
+        "command": "composer dump-autoload --classmap-authoritative --no-dev",
+        "description": "Fastest production autoloader"
+      }
+    ],
+    "notes": [
+      "Alias: composer dumpautoload",
+      "Run after editing the autoload section or adding files to a classmap directory"
+    ],
+    "relatedCommands": [
+      "composer-install"
+    ]
+  },
+  {
+    "id": "composer-validate",
+    "name": "composer validate",
+    "description": "Check that composer.json is valid and the lock file is in sync.",
+    "category": "Maintenance",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--strict",
+        "description": "Treat warnings as errors"
+      },
+      {
+        "flag": "--no-check-publish",
+        "description": "Skip errors that only matter for publishing"
+      },
+      {
+        "flag": "--no-check-lock",
+        "description": "Skip the lock file freshness check"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer validate",
+        "description": "Validate composer.json"
+      },
+      {
+        "command": "composer validate --strict",
+        "description": "Fail CI on any warning"
+      }
+    ],
+    "relatedCommands": [
+      "composer-init",
+      "composer-audit"
+    ]
+  },
+  {
+    "id": "composer-audit",
+    "name": "composer audit",
+    "description": "Check installed packages for reported security vulnerabilities.",
+    "category": "Maintenance",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--no-dev",
+        "description": "Only audit production packages"
+      },
+      {
+        "flag": "-f, --format <table|plain|json|summary>",
+        "description": "Output format"
+      },
+      {
+        "flag": "--locked",
+        "description": "Audit from composer.lock instead of vendor"
+      },
+      {
+        "flag": "--abandoned <ignore|report|fail>",
+        "description": "How to treat abandoned packages"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer audit",
+        "description": "Report known vulnerabilities"
+      },
+      {
+        "command": "composer audit --no-dev --format=json",
+        "description": "JSON report for production deps"
+      }
+    ],
+    "notes": [
+      "Recent Composer versions also block installing packages with known advisories by default; see the audit.block-insecure config"
+    ],
+    "relatedCommands": [
+      "composer-outdated",
+      "composer-validate"
+    ]
+  },
+  {
+    "id": "composer-bump",
+    "name": "composer bump",
+    "description": "Raise the lower bound of version constraints in composer.json to the currently installed versions.",
+    "category": "Maintenance",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-D, --dev-only",
+        "description": "Only bump require-dev"
+      },
+      {
+        "flag": "-R, --no-dev-only",
+        "description": "Only bump require"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Show changes without writing them"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer bump",
+        "description": "Turn ^2.0 into ^2.4.1 based on installed versions"
+      },
+      {
+        "command": "composer bump --dry-run",
+        "description": "Preview constraint changes"
+      }
+    ],
+    "notes": [
+      "Intended for applications; bumping constraints in a library narrows compatibility for its users"
+    ],
+    "relatedCommands": [
+      "composer-update"
+    ]
+  },
+  {
+    "id": "composer-clear-cache",
+    "name": "composer clear-cache",
+    "description": "Delete Composer's download and metadata caches.",
+    "category": "Maintenance",
+    "technologyId": "composer",
+    "examples": [
+      {
+        "command": "composer clear-cache",
+        "description": "Clear all caches"
+      },
+      {
+        "command": "composer config cache-dir",
+        "description": "Show where the cache lives"
+      }
+    ],
+    "notes": [
+      "Alias: composer clearcache / cc"
+    ],
+    "relatedCommands": [
+      "composer-self-update",
+      "composer-config"
+    ]
+  },
+  {
+    "id": "composer-self-update",
+    "name": "composer self-update",
+    "description": "Update Composer itself to the latest version.",
+    "category": "Maintenance",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--rollback",
+        "description": "Roll back to the previously installed version"
+      },
+      {
+        "flag": "--2",
+        "description": "Force update to the latest 2.x stable"
+      },
+      {
+        "flag": "--preview / --snapshot",
+        "description": "Update to a pre-release or dev build"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer self-update",
+        "description": "Update to the latest stable version"
+      },
+      {
+        "command": "composer self-update 2.8.5",
+        "description": "Install a specific version"
+      },
+      {
+        "command": "composer self-update --rollback",
+        "description": "Revert the last self-update"
+      }
+    ],
+    "notes": [
+      "Alias: composer selfupdate",
+      "If Composer was installed via a package manager (e.g. Homebrew), update it there instead"
+    ],
+    "relatedCommands": [
+      "composer-clear-cache"
+    ]
+  },
+  {
+    "id": "composer-run-script",
+    "name": "composer run-script",
+    "description": "Run a script defined in the scripts section of composer.json.",
+    "category": "Scripts",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--dev / --no-dev",
+        "description": "Set dev mode for the script"
+      },
+      {
+        "flag": "-l, --list",
+        "description": "List all user-defined scripts"
+      },
+      {
+        "flag": "--timeout <seconds>",
+        "description": "Override the process timeout (0 for none)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer run-script test",
+        "description": "Run the test script"
+      },
+      {
+        "command": "composer test -- --filter=UserTest",
+        "description": "Shorthand; pass extra args after --"
+      },
+      {
+        "command": "composer run-script --list",
+        "description": "List available scripts"
+      },
+      {
+        "command": "composer run-script dev --timeout=0",
+        "description": "Run a long-lived script without the 300s timeout"
+      }
+    ],
+    "notes": [
+      "Alias: composer run",
+      "Custom script names can be called directly, e.g. composer lint"
+    ],
+    "relatedCommands": [
+      "composer-exec"
+    ]
+  },
+  {
+    "id": "composer-exec",
+    "name": "composer exec",
+    "description": "Run a binary from vendor/bin.",
+    "category": "Scripts",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-l, --list",
+        "description": "List available binaries"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer exec phpstan analyse",
+        "description": "Run a vendored binary"
+      },
+      {
+        "command": "composer exec --list",
+        "description": "List binaries in vendor/bin"
+      }
+    ],
+    "relatedCommands": [
+      "composer-run-script"
+    ]
+  },
+  {
+    "id": "composer-config",
+    "name": "composer config",
+    "description": "Read or modify configuration in composer.json or the global config.",
+    "category": "Configuration",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "-g, --global",
+        "description": "Operate on the global config.json"
+      },
+      {
+        "flag": "-l, --list",
+        "description": "Show all effective settings"
+      },
+      {
+        "flag": "--unset",
+        "description": "Remove a setting"
+      },
+      {
+        "flag": "--json",
+        "description": "Treat the value as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer config --list",
+        "description": "Show the effective configuration"
+      },
+      {
+        "command": "composer config allow-plugins.pestphp/pest-plugin true",
+        "description": "Allow a Composer plugin"
+      },
+      {
+        "command": "composer config repositories.local path ../my-package",
+        "description": "Add a local path repository"
+      },
+      {
+        "command": "composer config -g github-oauth.github.com <token>",
+        "description": "Store a GitHub token globally"
+      }
+    ],
+    "notes": [
+      "Credentials should go in auth.json or global config, never in a committed composer.json"
+    ],
+    "relatedCommands": [
+      "composer-global-require"
+    ]
+  },
+  {
+    "id": "composer-global-require",
+    "name": "composer global require",
+    "description": "Install a package into Composer's global (per-user) directory.",
+    "category": "Configuration",
+    "technologyId": "composer",
+    "examples": [
+      {
+        "command": "composer global require laravel/installer",
+        "description": "Install the Laravel installer globally"
+      },
+      {
+        "command": "composer global update",
+        "description": "Update globally installed packages"
+      },
+      {
+        "command": "composer global config bin-dir --absolute",
+        "description": "Print the global bin path to add to PATH"
+      }
+    ],
+    "notes": [
+      "Add the global vendor/bin (often ~/.composer/vendor/bin or ~/.config/composer/vendor/bin) to your PATH",
+      "Global packages share one dependency tree, so tools can conflict; consider per-project dev deps instead"
+    ],
+    "relatedCommands": [
+      "composer-require",
+      "composer-config"
+    ]
+  },
+  {
+    "id": "composer-diagnose",
+    "name": "composer diagnose",
+    "description": "Run checks to find common problems with the Composer setup.",
+    "category": "Configuration",
+    "technologyId": "composer",
+    "examples": [
+      {
+        "command": "composer diagnose",
+        "description": "Check platform, network, and config issues"
+      }
+    ],
+    "relatedCommands": [
+      "composer-self-update",
+      "composer-config"
+    ]
+  }
+]

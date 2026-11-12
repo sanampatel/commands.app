@@ -1,0 +1,834 @@
+[
+  {
+    "id": "mongosh-connect",
+    "name": "mongosh",
+    "description": "Connect to a MongoDB deployment with the MongoDB Shell.",
+    "category": "Connection",
+    "technologyId": "mongodb",
+    "flags": [
+      {
+        "flag": "--host",
+        "description": "Server hostname"
+      },
+      {
+        "flag": "--port",
+        "description": "Server port (default 27017)"
+      },
+      {
+        "flag": "-u, --username",
+        "description": "User name"
+      },
+      {
+        "flag": "-p, --password",
+        "description": "Password; omit the value to be prompted"
+      },
+      {
+        "flag": "--authenticationDatabase",
+        "description": "Database the user was created in (often admin)"
+      },
+      {
+        "flag": "--tls",
+        "description": "Use TLS for the connection"
+      },
+      {
+        "flag": "--quiet",
+        "description": "Suppress the startup banner"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mongosh",
+        "description": "Connect to mongodb://localhost:27017"
+      },
+      {
+        "command": "mongosh \"mongodb://localhost:27017/myapp\"",
+        "description": "Connect and select the myapp database"
+      },
+      {
+        "command": "mongosh \"mongodb+srv://cluster0.example.mongodb.net/myapp\" --username app_user",
+        "description": "Connect to an Atlas cluster via SRV record (prompts for password)"
+      },
+      {
+        "command": "mongosh --host db.example.com --port 27017 -u admin -p --authenticationDatabase admin",
+        "description": "Connect with explicit options and authenticate against admin"
+      }
+    ],
+    "notes": [
+      "mongosh replaced the legacy mongo shell, which was removed in MongoDB 6.0.",
+      "Quote connection strings in the shell, and URL-encode special characters (@ : / ? # [ ]) in passwords.",
+      "Don't put real passwords in the URI on shared machines; omit the password and let mongosh prompt."
+    ],
+    "relatedCommands": [
+      "mongosh-eval",
+      "mongo-show-dbs"
+    ]
+  },
+  {
+    "id": "mongosh-eval",
+    "name": "mongosh --eval",
+    "description": "Run a JavaScript expression or script file non-interactively.",
+    "category": "Connection",
+    "technologyId": "mongodb",
+    "flags": [
+      {
+        "flag": "--eval",
+        "description": "Evaluate a JavaScript expression"
+      },
+      {
+        "flag": "-f, --file",
+        "description": "Run a script file"
+      },
+      {
+        "flag": "--json=canonical|relaxed",
+        "description": "Print the --eval result as Extended JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mongosh \"mongodb://localhost/myapp\" --quiet --eval \"db.users.countDocuments()\"",
+        "description": "Print a value and exit"
+      },
+      {
+        "command": "mongosh \"mongodb://localhost/myapp\" --file seed.js",
+        "description": "Execute a script file against myapp"
+      },
+      {
+        "command": "mongosh --quiet --eval \"EJSON.stringify(db.adminCommand({ ping: 1 }))\"",
+        "description": "Health check suitable for scripts"
+      }
+    ],
+    "relatedCommands": [
+      "mongosh-connect"
+    ]
+  },
+  {
+    "id": "mongo-show-dbs",
+    "name": "show dbs",
+    "description": "List databases on the server along with their size on disk.",
+    "category": "Databases & Collections",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "show dbs",
+        "description": "List all databases"
+      },
+      {
+        "command": "db.adminCommand({ listDatabases: 1, nameOnly: true })",
+        "description": "Programmatic equivalent returning only names"
+      }
+    ],
+    "notes": [
+      "A database only appears after it contains at least one document or collection."
+    ],
+    "relatedCommands": [
+      "mongo-use",
+      "mongo-show-collections"
+    ]
+  },
+  {
+    "id": "mongo-use",
+    "name": "use",
+    "description": "Switch to a database (it is created lazily on first write).",
+    "category": "Databases & Collections",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "use myapp",
+        "description": "Switch to the myapp database"
+      },
+      {
+        "command": "db",
+        "description": "Print the current database name"
+      },
+      {
+        "command": "db.getSiblingDB(\"analytics\").events.countDocuments()",
+        "description": "Query another database without switching"
+      }
+    ],
+    "relatedCommands": [
+      "mongo-show-dbs",
+      "mongo-show-collections"
+    ]
+  },
+  {
+    "id": "mongo-show-collections",
+    "name": "show collections",
+    "description": "List collections in the current database.",
+    "category": "Databases & Collections",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "show collections",
+        "description": "List collection names"
+      },
+      {
+        "command": "db.getCollectionNames()",
+        "description": "Return collection names as an array"
+      },
+      {
+        "command": "db.createCollection(\"logs\", { capped: true, size: 10485760 })",
+        "description": "Explicitly create a 10 MB capped collection"
+      }
+    ],
+    "relatedCommands": [
+      "mongo-use",
+      "mongo-drop"
+    ]
+  },
+  {
+    "id": "mongo-stats",
+    "name": "db.stats()",
+    "description": "Show storage statistics for the current database.",
+    "category": "Databases & Collections",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.stats()",
+        "description": "Collections, objects, data size and index size"
+      },
+      {
+        "command": "db.stats(1024 * 1024)",
+        "description": "Report sizes in megabytes"
+      }
+    ],
+    "relatedCommands": [
+      "mongo-show-dbs"
+    ]
+  },
+  {
+    "id": "mongo-drop",
+    "name": "db.dropDatabase()",
+    "description": "Drop the current database or a single collection.",
+    "category": "Databases & Collections",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "use myapp_test\ndb.dropDatabase()",
+        "description": "Drop the myapp_test database"
+      },
+      {
+        "command": "db.sessions.drop()",
+        "description": "Drop just the sessions collection and its indexes"
+      }
+    ],
+    "notes": [
+      "DESTRUCTIVE: data and indexes are deleted immediately with no confirmation. Always check the output of db first.",
+      "Back up with mongodump before dropping anything in production."
+    ],
+    "relatedCommands": [
+      "mongodump",
+      "mongo-use"
+    ]
+  },
+  {
+    "id": "mongo-find",
+    "name": "db.collection.find()",
+    "description": "Query documents with a filter, projection, sort and limit.",
+    "category": "CRUD",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.find({ status: \"active\" })",
+        "description": "Find all active users"
+      },
+      {
+        "command": "db.users.find({ age: { $gte: 18 } }, { name: 1, email: 1, _id: 0 })",
+        "description": "Filter with an operator and return only selected fields"
+      },
+      {
+        "command": "db.orders.find({ status: { $in: [\"paid\", \"shipped\"] } }).sort({ createdAt: -1 }).limit(10)",
+        "description": "Latest 10 orders in a set of statuses"
+      },
+      {
+        "command": "db.users.find({ email: /@example\\.com$/i })",
+        "description": "Match with a regular expression"
+      }
+    ],
+    "notes": [
+      "Common operators: $eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $exists, $regex, $and, $or.",
+      "mongosh shows 20 results at a time; type it to iterate further."
+    ],
+    "relatedCommands": [
+      "mongo-find-one",
+      "mongo-count",
+      "mongo-explain"
+    ]
+  },
+  {
+    "id": "mongo-find-one",
+    "name": "db.collection.findOne()",
+    "description": "Return the first document matching a filter, or null.",
+    "category": "CRUD",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.findOne({ email: \"user@example.com\" })",
+        "description": "Look up a user by email"
+      },
+      {
+        "command": "db.users.findOne({ _id: ObjectId(\"<object-id>\") })",
+        "description": "Look up a document by _id"
+      }
+    ],
+    "relatedCommands": [
+      "mongo-find"
+    ]
+  },
+  {
+    "id": "mongo-insert",
+    "name": "db.collection.insertOne()",
+    "description": "Insert one or many documents into a collection.",
+    "category": "CRUD",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.insertOne({ name: \"Ada\", email: \"ada@example.com\", createdAt: new Date() })",
+        "description": "Insert a single document"
+      },
+      {
+        "command": "db.users.insertMany([{ name: \"Alan\" }, { name: \"Grace\" }])",
+        "description": "Insert several documents at once"
+      },
+      {
+        "command": "db.users.insertMany(docs, { ordered: false })",
+        "description": "Continue inserting remaining docs if one fails (e.g. duplicate key)"
+      }
+    ],
+    "notes": [
+      "Collections are created automatically on first insert.",
+      "An _id ObjectId is generated if you don't provide one."
+    ],
+    "relatedCommands": [
+      "mongo-update",
+      "mongo-find"
+    ]
+  },
+  {
+    "id": "mongo-update",
+    "name": "db.collection.updateOne()",
+    "description": "Modify matching documents using update operators.",
+    "category": "CRUD",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.updateOne({ email: \"ada@example.com\" }, { $set: { status: \"active\" } })",
+        "description": "Set a field on the first match"
+      },
+      {
+        "command": "db.users.updateMany({ lastLogin: { $lt: new Date(\"2025-01-01\") } }, { $set: { status: \"inactive\" } })",
+        "description": "Update every matching document"
+      },
+      {
+        "command": "db.products.updateOne({ sku: \"ABC-1\" }, { $inc: { stock: -1 }, $push: { history: \"sold\" } })",
+        "description": "Increment a counter and append to an array"
+      },
+      {
+        "command": "db.settings.updateOne({ key: \"theme\" }, { $set: { value: \"dark\" } }, { upsert: true })",
+        "description": "Insert the document if no match exists"
+      }
+    ],
+    "notes": [
+      "Common operators: $set, $unset, $inc, $push, $addToSet, $pull, $rename.",
+      "updateMany({}, ...) updates every document in the collection; double-check the filter.",
+      "Use replaceOne() to replace a whole document instead of modifying fields."
+    ],
+    "relatedCommands": [
+      "mongo-find",
+      "mongo-delete"
+    ]
+  },
+  {
+    "id": "mongo-delete",
+    "name": "db.collection.deleteOne()",
+    "description": "Delete one or many documents matching a filter.",
+    "category": "CRUD",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.sessions.deleteOne({ _id: ObjectId(\"<object-id>\") })",
+        "description": "Delete a single document"
+      },
+      {
+        "command": "db.logs.deleteMany({ createdAt: { $lt: new Date(\"2026-01-01\") } })",
+        "description": "Delete all documents older than a date"
+      }
+    ],
+    "notes": [
+      "DESTRUCTIVE: deleteMany({}) removes every document in the collection. Run the same filter with countDocuments() first.",
+      "To expire documents automatically, use a TTL index instead of scheduled deletes."
+    ],
+    "relatedCommands": [
+      "mongo-count",
+      "mongo-create-index"
+    ]
+  },
+  {
+    "id": "mongo-count",
+    "name": "db.collection.countDocuments()",
+    "description": "Count documents matching a filter.",
+    "category": "CRUD",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.countDocuments({ status: \"active\" })",
+        "description": "Exact count of matching documents"
+      },
+      {
+        "command": "db.users.estimatedDocumentCount()",
+        "description": "Fast approximate total from collection metadata"
+      },
+      {
+        "command": "db.orders.distinct(\"status\")",
+        "description": "List the distinct values of a field"
+      }
+    ],
+    "notes": [
+      "count() and cursor.count() are deprecated; use countDocuments() or estimatedDocumentCount()."
+    ],
+    "relatedCommands": [
+      "mongo-find"
+    ]
+  },
+  {
+    "id": "mongo-aggregate",
+    "name": "db.collection.aggregate()",
+    "description": "Run an aggregation pipeline to filter, group, join and reshape data.",
+    "category": "Aggregation & Indexes",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.orders.aggregate([{ $match: { status: \"paid\" } }, { $group: { _id: \"$customerId\", total: { $sum: \"$amount\" } } }, { $sort: { total: -1 } }, { $limit: 5 }])",
+        "description": "Top 5 customers by total paid"
+      },
+      {
+        "command": "db.orders.aggregate([{ $lookup: { from: \"users\", localField: \"userId\", foreignField: \"_id\", as: \"user\" } }, { $unwind: \"$user\" }])",
+        "description": "Join each order with its user"
+      },
+      {
+        "command": "db.events.aggregate([{ $group: { _id: { $dateToString: { format: \"%Y-%m-%d\", date: \"$createdAt\" } }, count: { $sum: 1 } } }])",
+        "description": "Count events per day"
+      }
+    ],
+    "notes": [
+      "Put $match and $sort early so the pipeline can use indexes.",
+      "Stages are limited to 100 MB of RAM unless you pass { allowDiskUse: true } (default true from MongoDB 6.0)."
+    ],
+    "relatedCommands": [
+      "mongo-find",
+      "mongo-explain"
+    ]
+  },
+  {
+    "id": "mongo-create-index",
+    "name": "db.collection.createIndex()",
+    "description": "Create an index to speed up queries or enforce uniqueness.",
+    "category": "Aggregation & Indexes",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.createIndex({ email: 1 }, { unique: true })",
+        "description": "Unique ascending index on email"
+      },
+      {
+        "command": "db.orders.createIndex({ customerId: 1, createdAt: -1 })",
+        "description": "Compound index for filtering by customer and sorting by date"
+      },
+      {
+        "command": "db.sessions.createIndex({ createdAt: 1 }, { expireAfterSeconds: 3600 })",
+        "description": "TTL index that deletes sessions after one hour"
+      },
+      {
+        "command": "db.articles.createIndex({ title: \"text\", body: \"text\" })",
+        "description": "Text index for $text search"
+      }
+    ],
+    "notes": [
+      "Order matters in compound indexes: follow the Equality, Sort, Range rule.",
+      "Index builds on large collections consume resources; schedule them off-peak."
+    ],
+    "relatedCommands": [
+      "mongo-get-indexes",
+      "mongo-drop-index",
+      "mongo-explain"
+    ]
+  },
+  {
+    "id": "mongo-get-indexes",
+    "name": "db.collection.getIndexes()",
+    "description": "List the indexes on a collection.",
+    "category": "Aggregation & Indexes",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.getIndexes()",
+        "description": "Show index definitions and names"
+      },
+      {
+        "command": "db.users.aggregate([{ $indexStats: {} }])",
+        "description": "Show how often each index has been used"
+      }
+    ],
+    "relatedCommands": [
+      "mongo-create-index",
+      "mongo-drop-index"
+    ]
+  },
+  {
+    "id": "mongo-drop-index",
+    "name": "db.collection.dropIndex()",
+    "description": "Remove an index from a collection.",
+    "category": "Aggregation & Indexes",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.users.dropIndex(\"email_1\")",
+        "description": "Drop an index by name"
+      },
+      {
+        "command": "db.users.dropIndex({ email: 1 })",
+        "description": "Drop an index by key pattern"
+      }
+    ],
+    "notes": [
+      "Dropping an index used by queries can make them dramatically slower. Consider db.collection.hideIndex() first to test the impact."
+    ],
+    "relatedCommands": [
+      "mongo-get-indexes"
+    ]
+  },
+  {
+    "id": "mongo-explain",
+    "name": "cursor.explain()",
+    "description": "Show the query plan and execution statistics for a query.",
+    "category": "Aggregation & Indexes",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.orders.find({ customerId: 42 }).explain(\"executionStats\")",
+        "description": "Check docs examined vs returned and which index was used"
+      },
+      {
+        "command": "db.orders.explain(\"executionStats\").aggregate([{ $match: { status: \"paid\" } }])",
+        "description": "Explain an aggregation pipeline"
+      }
+    ],
+    "notes": [
+      "COLLSCAN in the winning plan means a full collection scan; IXSCAN means an index was used.",
+      "Compare totalDocsExamined with nReturned to spot inefficient queries."
+    ],
+    "relatedCommands": [
+      "mongo-create-index",
+      "mongo-find"
+    ]
+  },
+  {
+    "id": "mongo-create-user",
+    "name": "db.createUser()",
+    "description": "Create a database user with roles.",
+    "category": "Users & Admin",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "use admin\ndb.createUser({ user: \"app_user\", pwd: passwordPrompt(), roles: [{ role: \"readWrite\", db: \"myapp\" }] })",
+        "description": "Create an app user with read/write on myapp (prompts for password)"
+      },
+      {
+        "command": "db.createUser({ user: \"admin\", pwd: passwordPrompt(), roles: [\"root\"] })",
+        "description": "Create a superuser in the admin database"
+      },
+      {
+        "command": "db.getUsers()",
+        "description": "List users in the current database"
+      },
+      {
+        "command": "db.grantRolesToUser(\"app_user\", [{ role: \"read\", db: \"analytics\" }])",
+        "description": "Add a role to an existing user"
+      }
+    ],
+    "notes": [
+      "Users belong to the database they are created in; clients must authenticate against it (--authenticationDatabase).",
+      "passwordPrompt() avoids leaving the password in shell history."
+    ],
+    "relatedCommands": [
+      "mongosh-connect"
+    ]
+  },
+  {
+    "id": "mongo-current-op",
+    "name": "db.currentOp()",
+    "description": "Show in-progress operations and kill long-running ones.",
+    "category": "Users & Admin",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.currentOp({ active: true, secs_running: { $gt: 5 } })",
+        "description": "Show operations running longer than 5 seconds"
+      },
+      {
+        "command": "db.killOp(<opid>)",
+        "description": "Terminate an operation by its opid"
+      },
+      {
+        "command": "db.serverStatus().connections",
+        "description": "Show current and available connection counts"
+      }
+    ],
+    "relatedCommands": [
+      "mongo-stats"
+    ]
+  },
+  {
+    "id": "mongodump",
+    "name": "mongodump",
+    "description": "Create a binary (BSON) backup of a database or deployment.",
+    "category": "Backup & Import/Export",
+    "technologyId": "mongodb",
+    "flags": [
+      {
+        "flag": "--uri",
+        "description": "Connection string"
+      },
+      {
+        "flag": "--db, -d",
+        "description": "Database to dump"
+      },
+      {
+        "flag": "--collection, -c",
+        "description": "Collection to dump"
+      },
+      {
+        "flag": "--out, -o",
+        "description": "Output directory (default ./dump)"
+      },
+      {
+        "flag": "--archive",
+        "description": "Write a single archive file (or stdout) instead of a directory"
+      },
+      {
+        "flag": "--gzip",
+        "description": "Compress output"
+      },
+      {
+        "flag": "--query, -q",
+        "description": "Only dump documents matching a JSON filter"
+      },
+      {
+        "flag": "--oplog",
+        "description": "Capture a point-in-time snapshot on replica sets"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mongodump --uri=\"mongodb://localhost:27017\" --out=./backup",
+        "description": "Dump every database to ./backup"
+      },
+      {
+        "command": "mongodump --uri=\"mongodb://localhost:27017\" --db=myapp --gzip --archive=myapp.archive.gz",
+        "description": "Dump one database to a single compressed archive"
+      },
+      {
+        "command": "mongodump --uri=\"mongodb+srv://app_user@cluster0.example.mongodb.net/myapp\" --collection=users --out=./backup",
+        "description": "Dump a single collection from Atlas"
+      }
+    ],
+    "notes": [
+      "Part of the MongoDB Database Tools, installed separately from the server and mongosh.",
+      "For large production clusters prefer filesystem snapshots or Atlas backups; mongodump can be slow and impacts performance."
+    ],
+    "relatedCommands": [
+      "mongorestore",
+      "mongoexport"
+    ]
+  },
+  {
+    "id": "mongorestore",
+    "name": "mongorestore",
+    "description": "Restore data from a mongodump backup.",
+    "category": "Backup & Import/Export",
+    "technologyId": "mongodb",
+    "flags": [
+      {
+        "flag": "--drop",
+        "description": "Drop each collection before restoring it"
+      },
+      {
+        "flag": "--nsInclude",
+        "description": "Namespace pattern to restore (db.collection)"
+      },
+      {
+        "flag": "--nsFrom / --nsTo",
+        "description": "Rename namespaces while restoring"
+      },
+      {
+        "flag": "--gzip",
+        "description": "Input is compressed"
+      },
+      {
+        "flag": "--archive",
+        "description": "Read from an archive file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mongorestore --uri=\"mongodb://localhost:27017\" ./backup",
+        "description": "Restore everything from a dump directory"
+      },
+      {
+        "command": "mongorestore --uri=\"mongodb://localhost:27017\" --gzip --archive=myapp.archive.gz --drop",
+        "description": "Restore from a compressed archive, replacing existing collections"
+      },
+      {
+        "command": "mongorestore --uri=\"mongodb://localhost:27017\" --nsInclude=\"myapp.users\" ./backup",
+        "description": "Restore only one collection"
+      },
+      {
+        "command": "mongorestore --uri=\"mongodb://localhost:27017\" --nsFrom=\"myapp.*\" --nsTo=\"myapp_staging.*\" ./backup",
+        "description": "Restore into a differently named database"
+      }
+    ],
+    "notes": [
+      "--drop is DESTRUCTIVE: existing collections in the target are deleted before restore.",
+      "Without --drop, documents with an existing _id are skipped, not overwritten.",
+      "Prefer --nsInclude over the deprecated --db/--collection options."
+    ],
+    "relatedCommands": [
+      "mongodump"
+    ]
+  },
+  {
+    "id": "mongoexport",
+    "name": "mongoexport",
+    "description": "Export a collection to JSON or CSV.",
+    "category": "Backup & Import/Export",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "mongoexport --uri=\"mongodb://localhost/myapp\" --collection=users --out=users.json",
+        "description": "Export to newline-delimited JSON"
+      },
+      {
+        "command": "mongoexport --uri=\"mongodb://localhost/myapp\" --collection=users --type=csv --fields=name,email,createdAt --out=users.csv",
+        "description": "Export selected fields to CSV"
+      },
+      {
+        "command": "mongoexport --uri=\"mongodb://localhost/myapp\" --collection=orders --query='{\"status\":\"paid\"}' --jsonArray --out=paid.json",
+        "description": "Export filtered documents as a JSON array"
+      }
+    ],
+    "notes": [
+      "Not a backup tool: JSON/CSV loses some BSON type fidelity. Use mongodump for backups."
+    ],
+    "relatedCommands": [
+      "mongoimport",
+      "mongodump"
+    ]
+  },
+  {
+    "id": "mongoimport",
+    "name": "mongoimport",
+    "description": "Import JSON, CSV or TSV data into a collection.",
+    "category": "Backup & Import/Export",
+    "technologyId": "mongodb",
+    "flags": [
+      {
+        "flag": "--jsonArray",
+        "description": "Input is a single JSON array"
+      },
+      {
+        "flag": "--headerline",
+        "description": "Use the first CSV/TSV line as field names"
+      },
+      {
+        "flag": "--drop",
+        "description": "Drop the collection before importing"
+      },
+      {
+        "flag": "--mode",
+        "description": "insert (default), upsert or merge"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mongoimport --uri=\"mongodb://localhost/myapp\" --collection=users --file=users.json",
+        "description": "Import newline-delimited JSON"
+      },
+      {
+        "command": "mongoimport --uri=\"mongodb://localhost/myapp\" --collection=users --type=csv --headerline --file=users.csv",
+        "description": "Import CSV using the first row as field names"
+      },
+      {
+        "command": "mongoimport --uri=\"mongodb://localhost/myapp\" --collection=products --jsonArray --file=products.json --mode=upsert --upsertFields=sku",
+        "description": "Upsert a JSON array matched on sku"
+      }
+    ],
+    "notes": [
+      "--drop deletes the existing collection first."
+    ],
+    "relatedCommands": [
+      "mongoexport"
+    ]
+  },
+  {
+    "id": "mongo-rs-status",
+    "name": "rs.status()",
+    "description": "Show the health and state of each replica set member.",
+    "category": "Replica Sets",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "rs.status()",
+        "description": "Show member states (PRIMARY, SECONDARY), health and optime"
+      },
+      {
+        "command": "rs.status().members.map(m => ({ name: m.name, state: m.stateStr, health: m.health }))",
+        "description": "Compact summary of members"
+      },
+      {
+        "command": "db.hello()",
+        "description": "Show whether this node is primary and list the set's hosts"
+      },
+      {
+        "command": "rs.printSecondaryReplicationInfo()",
+        "description": "Show replication lag for each secondary"
+      }
+    ],
+    "notes": [
+      "db.hello() replaces the deprecated isMaster command."
+    ],
+    "relatedCommands": [
+      "mongo-rs-admin"
+    ]
+  },
+  {
+    "id": "mongo-rs-admin",
+    "name": "rs.initiate()",
+    "description": "Initialize and manage a replica set.",
+    "category": "Replica Sets",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "rs.initiate({ _id: \"rs0\", members: [{ _id: 0, host: \"mongo1:27017\" }, { _id: 1, host: \"mongo2:27017\" }, { _id: 2, host: \"mongo3:27017\" }] })",
+        "description": "Initialize a three-member replica set"
+      },
+      {
+        "command": "rs.conf()",
+        "description": "Show the current replica set configuration"
+      },
+      {
+        "command": "rs.add(\"mongo4:27017\")",
+        "description": "Add a member"
+      },
+      {
+        "command": "rs.stepDown()",
+        "description": "Ask the primary to step down and trigger an election"
+      }
+    ],
+    "notes": [
+      "Each mongod must be started with the same --replSet name before rs.initiate().",
+      "rs.stepDown() causes a brief window with no primary; writes will fail until a new one is elected."
+    ],
+    "relatedCommands": [
+      "mongo-rs-status"
+    ]
+  }
+]

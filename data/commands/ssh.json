@@ -1,0 +1,779 @@
+[
+  {
+    "id": "ssh-connect",
+    "name": "ssh",
+    "description": "Open a secure shell session on a remote host.",
+    "category": "Connection",
+    "technologyId": "ssh",
+    "flags": [
+      {
+        "flag": "-p",
+        "description": "Remote port"
+      },
+      {
+        "flag": "-i",
+        "description": "Identity (private key) file"
+      },
+      {
+        "flag": "-l",
+        "description": "Login user name (alternative to user@host)"
+      },
+      {
+        "flag": "-J",
+        "description": "Connect through one or more jump hosts"
+      },
+      {
+        "flag": "-t",
+        "description": "Force a pseudo-terminal (needed for interactive remote commands)"
+      },
+      {
+        "flag": "-A",
+        "description": "Forward your ssh-agent to the remote host"
+      },
+      {
+        "flag": "-o",
+        "description": "Set any config option, e.g. -o StrictHostKeyChecking=accept-new"
+      },
+      {
+        "flag": "-v, -vv, -vvv",
+        "description": "Verbose debugging output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ssh user@example.com",
+        "description": "Connect as user on the default port 22"
+      },
+      {
+        "command": "ssh -p 2222 user@example.com",
+        "description": "Connect on a non-standard port"
+      },
+      {
+        "command": "ssh -i ~/.ssh/id_ed25519_work user@example.com",
+        "description": "Use a specific private key"
+      },
+      {
+        "command": "ssh myserver",
+        "description": "Connect using a Host alias from ~/.ssh/config"
+      }
+    ],
+    "notes": [
+      "Only use -A (agent forwarding) with hosts you trust: root on the remote host can use your agent while you're connected. Prefer -J for hopping through bastions.",
+      "When using -i with many keys loaded in the agent, add -o IdentitiesOnly=yes to avoid \"Too many authentication failures\"."
+    ],
+    "relatedCommands": [
+      "ssh-jump-host",
+      "ssh-config-host",
+      "ssh-remote-command",
+      "ssh-verbose"
+    ]
+  },
+  {
+    "id": "ssh-jump-host",
+    "name": "ssh -J",
+    "description": "Connect to a private host through a bastion/jump host.",
+    "category": "Connection",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh -J user@bastion.example.com user@10.0.1.20",
+        "description": "Hop through a bastion to an internal server"
+      },
+      {
+        "command": "ssh -J user@bastion1,user@bastion2 user@10.0.2.30",
+        "description": "Chain multiple jump hosts"
+      },
+      {
+        "command": "Host internal-db\n    HostName 10.0.1.20\n    User ubuntu\n    ProxyJump bastion",
+        "description": "Equivalent ~/.ssh/config entry using ProxyJump"
+      }
+    ],
+    "notes": [
+      "The connection to the target is end-to-end encrypted through the bastion; your keys never leave your machine (unlike agent forwarding).",
+      "ProxyJump/-J requires OpenSSH 7.3+; older setups used ProxyCommand ssh -W %h:%p bastion."
+    ],
+    "relatedCommands": [
+      "ssh-connect",
+      "ssh-config-host"
+    ]
+  },
+  {
+    "id": "ssh-remote-command",
+    "name": "ssh host command",
+    "description": "Run a single command on a remote host without opening an interactive shell.",
+    "category": "Connection",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh user@example.com 'df -h'",
+        "description": "Run a command and print its output locally"
+      },
+      {
+        "command": "ssh -t user@example.com 'sudo systemctl restart nginx'",
+        "description": "Run a command that needs a TTY (e.g. sudo password prompt)"
+      },
+      {
+        "command": "ssh user@example.com 'bash -s' < deploy.sh",
+        "description": "Run a local script on the remote host"
+      },
+      {
+        "command": "tar czf - ./site | ssh user@example.com 'tar xzf - -C /var/www'",
+        "description": "Stream a directory to the remote host through a pipe"
+      }
+    ],
+    "notes": [
+      "Quote the remote command so your local shell doesn't expand variables or globs first."
+    ],
+    "relatedCommands": [
+      "ssh-connect"
+    ]
+  },
+  {
+    "id": "ssh-escape-sequences",
+    "name": "~.",
+    "description": "Use SSH escape sequences to control a session, e.g. kill a frozen connection.",
+    "category": "Connection",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "~.",
+        "description": "Terminate a hung session (press Enter first, then ~ then .)"
+      },
+      {
+        "command": "~?",
+        "description": "List all available escape sequences"
+      },
+      {
+        "command": "~#",
+        "description": "List forwarded connections"
+      },
+      {
+        "command": "~^Z",
+        "description": "Suspend ssh and return to the local shell (resume with fg)"
+      }
+    ],
+    "notes": [
+      "Escape sequences are only recognized right after a newline, so press Enter before typing ~.",
+      "In nested SSH sessions, type ~~. to send the escape to the inner session.",
+      "~C (command line to add forwards) is disabled by default since OpenSSH 9.2; enable with EnableEscapeCommandline yes."
+    ],
+    "relatedCommands": [
+      "ssh-connect"
+    ]
+  },
+  {
+    "id": "ssh-keygen",
+    "name": "ssh-keygen -t ed25519",
+    "description": "Generate a new SSH key pair.",
+    "category": "Keys",
+    "technologyId": "ssh",
+    "flags": [
+      {
+        "flag": "-t",
+        "description": "Key type: ed25519 (recommended), ecdsa, rsa"
+      },
+      {
+        "flag": "-b",
+        "description": "Key size in bits (RSA: use 3072 or 4096)"
+      },
+      {
+        "flag": "-C",
+        "description": "Comment, usually an email or machine name"
+      },
+      {
+        "flag": "-f",
+        "description": "Output file path"
+      },
+      {
+        "flag": "-N",
+        "description": "New passphrase (use \"\" for none, e.g. in automation)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ssh-keygen -t ed25519 -C \"user@example.com\"",
+        "description": "Generate an Ed25519 key in ~/.ssh/id_ed25519 with a comment"
+      },
+      {
+        "command": "ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_work -C \"work laptop\"",
+        "description": "Generate a key with a custom filename"
+      },
+      {
+        "command": "ssh-keygen -t rsa -b 4096 -C \"user@example.com\"",
+        "description": "Generate an RSA key for legacy systems that don't support Ed25519"
+      }
+    ],
+    "notes": [
+      "Protect keys with a passphrase and use ssh-agent so you only type it once.",
+      "Never share the private key (the file without .pub)."
+    ],
+    "relatedCommands": [
+      "ssh-copy-id",
+      "ssh-add",
+      "ssh-keygen-fingerprint",
+      "ssh-keygen-passphrase"
+    ]
+  },
+  {
+    "id": "ssh-keygen-fingerprint",
+    "name": "ssh-keygen -lf",
+    "description": "Show the fingerprint of a key, or derive the public key from a private key.",
+    "category": "Keys",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh-keygen -lf ~/.ssh/id_ed25519.pub",
+        "description": "Show the SHA256 fingerprint of a key",
+        "output": "256 SHA256:AbC123... user@example.com (ED25519)"
+      },
+      {
+        "command": "ssh-keygen -lf ~/.ssh/id_ed25519.pub -E md5",
+        "description": "Show the legacy MD5 fingerprint"
+      },
+      {
+        "command": "ssh-keygen -y -f ~/.ssh/id_ed25519 > ~/.ssh/id_ed25519.pub",
+        "description": "Regenerate a lost public key from the private key"
+      },
+      {
+        "command": "ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub",
+        "description": "Show a server's host key fingerprint to verify first connections"
+      }
+    ],
+    "relatedCommands": [
+      "ssh-keygen",
+      "ssh-known-hosts"
+    ]
+  },
+  {
+    "id": "ssh-keygen-passphrase",
+    "name": "ssh-keygen -p",
+    "description": "Add, change or remove the passphrase on an existing private key.",
+    "category": "Keys",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh-keygen -p -f ~/.ssh/id_ed25519",
+        "description": "Change the passphrase (prompts for old and new)"
+      }
+    ],
+    "notes": [
+      "Changing the passphrase does not change the key itself, so authorized_keys entries keep working."
+    ],
+    "relatedCommands": [
+      "ssh-keygen",
+      "ssh-add"
+    ]
+  },
+  {
+    "id": "ssh-copy-id",
+    "name": "ssh-copy-id",
+    "description": "Install your public key in a remote host's authorized_keys for passwordless login.",
+    "category": "Keys",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh-copy-id user@example.com",
+        "description": "Copy your default public key(s) to the server"
+      },
+      {
+        "command": "ssh-copy-id -i ~/.ssh/id_ed25519_work.pub -p 2222 user@example.com",
+        "description": "Copy a specific key to a server on a custom port"
+      },
+      {
+        "command": "cat ~/.ssh/id_ed25519.pub | ssh user@example.com 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'",
+        "description": "Manual equivalent when ssh-copy-id isn't available"
+      }
+    ],
+    "notes": [
+      "Requires password (or another working) authentication the first time.",
+      "If key login still fails, check permissions: ~/.ssh must be 700 and authorized_keys 600, owned by the user."
+    ],
+    "relatedCommands": [
+      "ssh-keygen",
+      "ssh-connect"
+    ]
+  },
+  {
+    "id": "ssh-agent",
+    "name": "ssh-agent",
+    "description": "Start an agent that holds decrypted private keys in memory.",
+    "category": "Agent",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "eval \"$(ssh-agent -s)\"",
+        "description": "Start an agent and export its environment variables in the current shell"
+      },
+      {
+        "command": "echo $SSH_AUTH_SOCK",
+        "description": "Check whether an agent is available"
+      },
+      {
+        "command": "ssh-agent -k",
+        "description": "Kill the agent started in this shell"
+      }
+    ],
+    "notes": [
+      "macOS and most Linux desktops start an agent automatically; you usually only need ssh-add."
+    ],
+    "relatedCommands": [
+      "ssh-add"
+    ]
+  },
+  {
+    "id": "ssh-add",
+    "name": "ssh-add",
+    "description": "Add, list or remove keys in the running ssh-agent.",
+    "category": "Agent",
+    "technologyId": "ssh",
+    "flags": [
+      {
+        "flag": "-l",
+        "description": "List loaded key fingerprints"
+      },
+      {
+        "flag": "-L",
+        "description": "List loaded public keys"
+      },
+      {
+        "flag": "-d",
+        "description": "Remove a specific key"
+      },
+      {
+        "flag": "-D",
+        "description": "Remove all keys"
+      },
+      {
+        "flag": "-t",
+        "description": "Lifetime for the key"
+      },
+      {
+        "flag": "--apple-use-keychain",
+        "description": "macOS only: save the passphrase in Keychain (replaces deprecated -K)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ssh-add ~/.ssh/id_ed25519",
+        "description": "Add a key (prompts for its passphrase once)"
+      },
+      {
+        "command": "ssh-add -l",
+        "description": "List fingerprints of loaded keys"
+      },
+      {
+        "command": "ssh-add -D",
+        "description": "Remove all keys from the agent"
+      },
+      {
+        "command": "ssh-add --apple-use-keychain ~/.ssh/id_ed25519",
+        "description": "macOS: add the key and store its passphrase in the Keychain"
+      },
+      {
+        "command": "ssh-add -t 1h ~/.ssh/id_ed25519",
+        "description": "Add a key that expires from the agent after one hour"
+      }
+    ],
+    "notes": [
+      "On macOS, also add UseKeychain yes and AddKeysToAgent yes under Host * in ~/.ssh/config so keys load automatically.",
+      "\"The agent has no identities\" from -l means no keys are loaded."
+    ],
+    "relatedCommands": [
+      "ssh-agent",
+      "ssh-config-host"
+    ]
+  },
+  {
+    "id": "ssh-tunnel-local",
+    "name": "ssh -L",
+    "description": "Local port forwarding: access a remote service through a local port.",
+    "category": "Port Forwarding",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh -L 5433:localhost:5432 user@db.example.com",
+        "description": "Reach the server's PostgreSQL at localhost:5433"
+      },
+      {
+        "command": "ssh -L 8080:internal-app:80 user@bastion.example.com",
+        "description": "Reach an internal host via the bastion at localhost:8080"
+      },
+      {
+        "command": "ssh -N -L 3307:127.0.0.1:3306 user@example.com",
+        "description": "Forward MySQL without opening a shell"
+      }
+    ],
+    "notes": [
+      "Format is -L [bind_address:]local_port:target_host:target_port; target_host is resolved from the remote side.",
+      "Ports below 1024 need root locally."
+    ],
+    "relatedCommands": [
+      "ssh-tunnel-remote",
+      "ssh-tunnel-dynamic",
+      "ssh-tunnel-background"
+    ]
+  },
+  {
+    "id": "ssh-tunnel-remote",
+    "name": "ssh -R",
+    "description": "Remote port forwarding: expose a local service on a port of the remote host.",
+    "category": "Port Forwarding",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh -R 8080:localhost:3000 user@example.com",
+        "description": "Make your local port 3000 available as port 8080 on the server"
+      },
+      {
+        "command": "ssh -N -R 2222:localhost:22 user@relay.example.com",
+        "description": "Reverse tunnel so you can SSH back into this machine via the relay"
+      }
+    ],
+    "notes": [
+      "By default the remote port binds to loopback only; binding publicly requires GatewayPorts yes in the server's sshd_config.",
+      "Exposing local services publicly is a security risk; restrict who can reach the port."
+    ],
+    "relatedCommands": [
+      "ssh-tunnel-local",
+      "ssh-tunnel-background"
+    ]
+  },
+  {
+    "id": "ssh-tunnel-dynamic",
+    "name": "ssh -D",
+    "description": "Dynamic port forwarding: run a local SOCKS proxy through the remote host.",
+    "category": "Port Forwarding",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh -D 1080 -N user@example.com",
+        "description": "Start a SOCKS5 proxy on localhost:1080"
+      },
+      {
+        "command": "curl --socks5-hostname localhost:1080 https://internal.example.com",
+        "description": "Send a request through the proxy with DNS resolved remotely"
+      }
+    ],
+    "notes": [
+      "Configure your browser or tool to use SOCKS5 proxy localhost:1080."
+    ],
+    "relatedCommands": [
+      "ssh-tunnel-local"
+    ]
+  },
+  {
+    "id": "ssh-tunnel-background",
+    "name": "ssh -N -f",
+    "description": "Run a tunnel in the background without a remote shell.",
+    "category": "Port Forwarding",
+    "technologyId": "ssh",
+    "flags": [
+      {
+        "flag": "-N",
+        "description": "Do not execute a remote command (forwarding only)"
+      },
+      {
+        "flag": "-f",
+        "description": "Go to background after authentication"
+      },
+      {
+        "flag": "-o ExitOnForwardFailure=yes",
+        "description": "Fail instead of silently running without the forward"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ssh -f -N -L 5433:localhost:5432 user@db.example.com",
+        "description": "Background a tunnel after authentication"
+      },
+      {
+        "command": "ssh -f -N -o ExitOnForwardFailure=yes -L 5433:localhost:5432 user@db.example.com",
+        "description": "Exit with an error if the port can't be forwarded"
+      },
+      {
+        "command": "pkill -f 'ssh -f -N -L 5433'",
+        "description": "Stop the background tunnel"
+      }
+    ],
+    "notes": [
+      "For long-lived tunnels add -o ServerAliveInterval=60, or use autossh."
+    ],
+    "relatedCommands": [
+      "ssh-tunnel-local",
+      "ssh-tunnel-remote",
+      "ssh-controlmaster"
+    ]
+  },
+  {
+    "id": "ssh-config-host",
+    "name": "~/.ssh/config",
+    "description": "Define per-host aliases and options so you can type ssh myserver.",
+    "category": "Config",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "Host myserver\n    HostName 203.0.113.10\n    User deploy\n    Port 2222\n    IdentityFile ~/.ssh/id_ed25519_work\n    IdentitiesOnly yes",
+        "description": "Alias with host, user, port and key"
+      },
+      {
+        "command": "Host github.com-work\n    HostName github.com\n    User git\n    IdentityFile ~/.ssh/id_ed25519_work",
+        "description": "Use a separate key for a second GitHub account (clone with git@github.com-work:org/repo.git)"
+      },
+      {
+        "command": "Host *\n    AddKeysToAgent yes\n    UseKeychain yes\n    ServerAliveInterval 60",
+        "description": "Defaults for all hosts (UseKeychain is macOS only)"
+      },
+      {
+        "command": "ssh -G myserver",
+        "description": "Print the effective configuration ssh will use for a host"
+      }
+    ],
+    "notes": [
+      "The first matching value wins, so put specific Host blocks above Host *.",
+      "The file should be chmod 600."
+    ],
+    "relatedCommands": [
+      "ssh-controlmaster",
+      "ssh-jump-host",
+      "ssh-connect"
+    ]
+  },
+  {
+    "id": "ssh-controlmaster",
+    "name": "ControlMaster",
+    "description": "Reuse one SSH connection for multiple sessions (multiplexing) to make repeat connections instant.",
+    "category": "Config",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "Host *\n    ControlMaster auto\n    ControlPath ~/.ssh/cm-%r@%h:%p\n    ControlPersist 10m",
+        "description": "Enable multiplexing in ~/.ssh/config, keeping the master open 10 minutes after the last session"
+      },
+      {
+        "command": "ssh -O check myserver",
+        "description": "Check whether a master connection is running"
+      },
+      {
+        "command": "ssh -O exit myserver",
+        "description": "Close the master connection"
+      }
+    ],
+    "notes": [
+      "Speeds up tools that open many connections (git, Ansible, scp loops).",
+      "If a master hangs after a network change, ssh -O exit or delete the control socket."
+    ],
+    "relatedCommands": [
+      "ssh-config-host"
+    ]
+  },
+  {
+    "id": "ssh-scp",
+    "name": "scp",
+    "description": "Copy files between hosts over SSH.",
+    "category": "File Transfer",
+    "technologyId": "ssh",
+    "flags": [
+      {
+        "flag": "-r",
+        "description": "Copy directories recursively"
+      },
+      {
+        "flag": "-P",
+        "description": "Remote port (note: capital P)"
+      },
+      {
+        "flag": "-i",
+        "description": "Identity file"
+      },
+      {
+        "flag": "-C",
+        "description": "Enable compression"
+      },
+      {
+        "flag": "-O",
+        "description": "Use the legacy SCP protocol instead of SFTP"
+      }
+    ],
+    "examples": [
+      {
+        "command": "scp file.txt user@example.com:/tmp/",
+        "description": "Upload a file"
+      },
+      {
+        "command": "scp user@example.com:/var/log/app.log .",
+        "description": "Download a file to the current directory"
+      },
+      {
+        "command": "scp -r ./dist user@example.com:/var/www/app",
+        "description": "Copy a directory recursively"
+      },
+      {
+        "command": "scp -P 2222 file.txt user@example.com:~",
+        "description": "Use a custom port (capital -P)"
+      }
+    ],
+    "notes": [
+      "Since OpenSSH 9.0, scp uses the SFTP protocol by default; use -O for old servers without SFTP.",
+      "For large or repeated syncs, rsync is faster and resumable."
+    ],
+    "relatedCommands": [
+      "ssh-sftp",
+      "ssh-sshfs"
+    ]
+  },
+  {
+    "id": "ssh-sftp",
+    "name": "sftp",
+    "description": "Interactive file transfer session over SSH.",
+    "category": "File Transfer",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "sftp user@example.com",
+        "description": "Open an SFTP session"
+      },
+      {
+        "command": "sftp -P 2222 user@example.com",
+        "description": "Connect on a custom port"
+      },
+      {
+        "command": "put -r ./dist /var/www/app",
+        "description": "Upload a directory (inside sftp)"
+      },
+      {
+        "command": "get /var/log/app.log",
+        "description": "Download a file (inside sftp)"
+      }
+    ],
+    "notes": [
+      "Inside sftp: ls/cd act on the remote side, lls/lcd on the local side.",
+      "Batch mode: sftp -b commands.txt user@example.com."
+    ],
+    "relatedCommands": [
+      "ssh-scp"
+    ]
+  },
+  {
+    "id": "ssh-sshfs",
+    "name": "sshfs",
+    "description": "Mount a remote directory locally over SSH.",
+    "category": "File Transfer",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "sshfs user@example.com:/var/www ~/mnt/www",
+        "description": "Mount a remote directory"
+      },
+      {
+        "command": "sshfs -o reconnect,ServerAliveInterval=15 user@example.com:/var/www ~/mnt/www",
+        "description": "Auto-reconnect after network drops"
+      },
+      {
+        "command": "fusermount -u ~/mnt/www",
+        "description": "Unmount on Linux (fusermount3 -u on newer distros)"
+      },
+      {
+        "command": "umount ~/mnt/www",
+        "description": "Unmount on macOS"
+      }
+    ],
+    "notes": [
+      "Not part of OpenSSH; install the sshfs package. macOS needs macFUSE plus an sshfs build.",
+      "The mount point directory must exist and be empty."
+    ],
+    "relatedCommands": [
+      "ssh-scp",
+      "ssh-sftp"
+    ]
+  },
+  {
+    "id": "ssh-verbose",
+    "name": "ssh -vvv",
+    "description": "Print verbose debug output to diagnose connection and authentication problems.",
+    "category": "Troubleshooting",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh -v user@example.com",
+        "description": "Basic debugging: see which keys are offered and which auth methods succeed"
+      },
+      {
+        "command": "ssh -vvv user@example.com 2>&1 | grep -i -E 'offering|authentications|denied'",
+        "description": "Filter debug output for authentication details"
+      },
+      {
+        "command": "ssh -T git@github.com",
+        "description": "Test GitHub SSH authentication"
+      }
+    ],
+    "notes": [
+      "Server-side details are in the auth log: journalctl -u ssh (Debian/Ubuntu, sshd on RHEL) or /var/log/auth.log."
+    ],
+    "relatedCommands": [
+      "ssh-connect",
+      "ssh-known-hosts",
+      "ssh-sshd"
+    ]
+  },
+  {
+    "id": "ssh-known-hosts",
+    "name": "known_hosts",
+    "description": "Manage trusted host keys and fix \"REMOTE HOST IDENTIFICATION HAS CHANGED\" errors.",
+    "category": "Troubleshooting",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh-keygen -R example.com",
+        "description": "Remove the stored key for a host (after a legitimate rebuild)"
+      },
+      {
+        "command": "ssh-keygen -R '[example.com]:2222'",
+        "description": "Remove the key for a host on a non-standard port"
+      },
+      {
+        "command": "ssh-keygen -F example.com",
+        "description": "Check whether a host is in known_hosts"
+      },
+      {
+        "command": "ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts",
+        "description": "Pre-populate a host key (e.g. in CI); verify the fingerprint against the provider's published value"
+      }
+    ],
+    "notes": [
+      "A changed host key can mean a man-in-the-middle attack. Only remove the entry when you know the server was reinstalled or its key rotated.",
+      "-o StrictHostKeyChecking=accept-new accepts new hosts automatically but still rejects changed keys; avoid StrictHostKeyChecking=no."
+    ],
+    "relatedCommands": [
+      "ssh-keygen-fingerprint",
+      "ssh-verbose"
+    ]
+  },
+  {
+    "id": "ssh-sshd",
+    "name": "sshd",
+    "description": "Validate and reload the SSH server configuration.",
+    "category": "Troubleshooting",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "sudo sshd -t",
+        "description": "Test /etc/ssh/sshd_config for errors"
+      },
+      {
+        "command": "sudo sshd -T | grep -i passwordauthentication",
+        "description": "Print the effective server setting for an option"
+      },
+      {
+        "command": "sudo systemctl reload ssh",
+        "description": "Apply config changes (service is sshd on RHEL/Fedora)"
+      }
+    ],
+    "notes": [
+      "Keep an existing session open while changing sshd_config (e.g. disabling PasswordAuthentication) so a mistake can't lock you out.",
+      "Run sshd -t before reloading."
+    ],
+    "relatedCommands": [
+      "ssh-verbose"
+    ]
+  }
+]

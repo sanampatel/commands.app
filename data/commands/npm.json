@@ -1,0 +1,810 @@
+[
+  {
+    "id": "npm-install",
+    "name": "npm install",
+    "description": "Install packages from package.json or specific package",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "-g",
+        "description": "Install globally"
+      },
+      {
+        "flag": "-D, --save-dev",
+        "description": "Save as a devDependency"
+      },
+      {
+        "flag": "-E, --save-exact",
+        "description": "Pin the exact version instead of a ^range"
+      },
+      {
+        "flag": "--omit=dev",
+        "description": "Skip devDependencies (replaces the deprecated --production)"
+      },
+      {
+        "flag": "--legacy-peer-deps",
+        "description": "Ignore peer dependency conflicts (npm 6 behavior)"
+      },
+      {
+        "flag": "--no-fund",
+        "description": "Hide the funding message"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm install",
+        "description": "Install all dependencies"
+      },
+      {
+        "command": "npm install express",
+        "description": "Install specific package"
+      },
+      {
+        "command": "npm install -g typescript",
+        "description": "Install package globally"
+      },
+      {
+        "command": "npm install -D typescript @types/node",
+        "description": "Add dev dependencies"
+      },
+      {
+        "command": "npm install react@19",
+        "description": "Install a specific major version"
+      },
+      {
+        "command": "npm install -E prettier",
+        "description": "Pin an exact version"
+      }
+    ],
+    "notes": [
+      "Alias: npm i",
+      "--production is deprecated; use --omit=dev",
+      "Use npm ci in CI for reproducible installs from package-lock.json"
+    ],
+    "relatedCommands": [
+      "npm-uninstall",
+      "npm-update"
+    ]
+  },
+  {
+    "id": "npm-init",
+    "name": "npm init",
+    "description": "Create a package.json file",
+    "category": "Project Setup",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "-y",
+        "description": "Accept all defaults"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm init",
+        "description": "Initialize project interactively"
+      },
+      {
+        "command": "npm init -y",
+        "description": "Initialize with defaults"
+      }
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-pkg",
+    "name": "npm pkg",
+    "description": "Read and edit package.json fields from the command line",
+    "category": "Project Setup",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm pkg get version",
+        "description": "Print the package version"
+      },
+      {
+        "command": "npm pkg set scripts.lint=\"eslint .\"",
+        "description": "Add or update a script"
+      },
+      {
+        "command": "npm pkg set type=module",
+        "description": "Set a top-level field"
+      },
+      {
+        "command": "npm pkg delete scripts.prepare",
+        "description": "Remove a field"
+      },
+      {
+        "command": "npm pkg fix",
+        "description": "Auto-correct common package.json errors"
+      }
+    ],
+    "notes": [
+      "Use --json to set non-string values, e.g. npm pkg set private=true --json"
+    ],
+    "relatedCommands": [
+      "npm-init"
+    ]
+  },
+  {
+    "id": "npm-run",
+    "name": "npm run",
+    "description": "Run scripts defined in package.json",
+    "category": "Scripts",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm run dev",
+        "description": "Run dev script"
+      },
+      {
+        "command": "npm run build",
+        "description": "Run build script"
+      },
+      {
+        "command": "npm run test",
+        "description": "Run test script"
+      },
+      {
+        "command": "npm run test -- --watch",
+        "description": "Pass extra flags to the underlying script"
+      },
+      {
+        "command": "npm run build --workspaces",
+        "description": "Run a script in every workspace"
+      }
+    ],
+    "notes": [
+      "Use 'npm start' and 'npm test' without 'run'",
+      "Pass arguments to the script after --, e.g. npm run test -- --watch",
+      "Run 'npm run' with no arguments to list available scripts"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-exec",
+    "name": "npx / npm exec",
+    "description": "Run a package binary, from node_modules/.bin or downloaded on demand",
+    "category": "Scripts",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "-y, --yes",
+        "description": "Don't prompt before installing missing packages"
+      },
+      {
+        "flag": "-p, --package <pkg>",
+        "description": "Package that provides the binary (when names differ)"
+      },
+      {
+        "flag": "-c <cmd>",
+        "description": "Run a shell command with package binaries on PATH"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npx create-vite@latest my-app",
+        "description": "Run a scaffolder without installing it globally"
+      },
+      {
+        "command": "npx eslint .",
+        "description": "Run a locally installed binary"
+      },
+      {
+        "command": "npx -p typescript tsc --version",
+        "description": "Run a binary whose package name is different"
+      },
+      {
+        "command": "npm exec -- prettier --check .",
+        "description": "npm exec form (use -- before the binary's flags)"
+      }
+    ],
+    "notes": [
+      "Local project binaries are used first; otherwise the package is fetched into the npx cache",
+      "Pin a version (pkg@1.2.3 or @latest) for reproducible results"
+    ],
+    "relatedCommands": [
+      "npm-run",
+      "npm-install"
+    ]
+  },
+  {
+    "id": "npm-uninstall",
+    "name": "npm uninstall",
+    "description": "Remove a package",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "-g",
+        "description": "Uninstall globally"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm uninstall express",
+        "description": "Uninstall package"
+      },
+      {
+        "command": "npm uninstall -g typescript",
+        "description": "Uninstall global package"
+      }
+    ],
+    "relatedCommands": [
+      "npm-install"
+    ]
+  },
+  {
+    "id": "npm-update",
+    "name": "npm update",
+    "description": "Update packages to latest version",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm update",
+        "description": "Update all packages"
+      },
+      {
+        "command": "npm update express",
+        "description": "Update specific package"
+      }
+    ],
+    "notes": [
+      "Updates within the semver ranges in package.json; it won't cross a major version (^1.x won't become 2.x)",
+      "To jump majors, run npm install <pkg>@latest"
+    ],
+    "relatedCommands": [
+      "npm-outdated"
+    ]
+  },
+  {
+    "id": "npm-outdated",
+    "name": "npm outdated",
+    "description": "Check for outdated packages",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm outdated",
+        "description": "List outdated packages"
+      },
+      {
+        "command": "npm outdated -g",
+        "description": "Check global packages"
+      }
+    ],
+    "notes": [
+      "Columns: Current, Wanted (max allowed by your range), Latest (dist-tag latest)"
+    ],
+    "relatedCommands": [
+      "npm-update"
+    ]
+  },
+  {
+    "id": "npm-list",
+    "name": "npm list",
+    "description": "List installed packages",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "-g",
+        "description": "List global packages"
+      },
+      {
+        "flag": "--depth=0",
+        "description": "Show only top-level packages"
+      },
+      {
+        "flag": "--all",
+        "description": "Show the full dependency tree"
+      },
+      {
+        "flag": "--omit=dev",
+        "description": "Exclude devDependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm list",
+        "description": "List all packages"
+      },
+      {
+        "command": "npm list --depth=0",
+        "description": "List only direct dependencies"
+      },
+      {
+        "command": "npm ls react",
+        "description": "Show which installed versions of react exist and where"
+      }
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-audit",
+    "name": "npm audit",
+    "description": "Scan for security vulnerabilities",
+    "category": "Security",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "fix",
+        "description": "Subcommand: apply compatible security updates"
+      },
+      {
+        "flag": "--audit-level=<level>",
+        "description": "Exit non-zero only at or above low|moderate|high|critical"
+      },
+      {
+        "flag": "--omit=dev",
+        "description": "Ignore devDependencies"
+      },
+      {
+        "flag": "--json",
+        "description": "Machine-readable output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm audit",
+        "description": "Check for vulnerabilities"
+      },
+      {
+        "command": "npm audit fix",
+        "description": "Fix vulnerabilities automatically"
+      },
+      {
+        "command": "npm audit --audit-level=high --omit=dev",
+        "description": "CI gate: fail only on high/critical issues in production deps"
+      },
+      {
+        "command": "npm audit fix --force",
+        "description": "Also apply breaking (major) upgrades"
+      }
+    ],
+    "notes": [
+      "WARNING: 'audit fix --force' can install breaking major versions; review the diff and run tests",
+      "Use 'overrides' in package.json to force a patched transitive version"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-sbom",
+    "name": "npm sbom",
+    "description": "Generate a Software Bill of Materials for the project",
+    "category": "Security",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "--sbom-format",
+        "description": "cyclonedx or spdx"
+      },
+      {
+        "flag": "--omit=dev",
+        "description": "Exclude devDependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm sbom --sbom-format=cyclonedx > sbom.json",
+        "description": "CycloneDX SBOM"
+      },
+      {
+        "command": "npm sbom --sbom-format=spdx --omit=dev > sbom.spdx.json",
+        "description": "SPDX SBOM of production dependencies"
+      }
+    ],
+    "notes": [
+      "Requires a package-lock.json or installed node_modules"
+    ],
+    "relatedCommands": [
+      "npm-audit"
+    ]
+  },
+  {
+    "id": "npm-ci",
+    "name": "npm ci",
+    "description": "Clean install (for CI/CD)",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "--omit=dev",
+        "description": "Skip devDependencies (production image)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm ci",
+        "description": "Clean install from package-lock.json"
+      },
+      {
+        "command": "npm ci --omit=dev",
+        "description": "Production-only clean install (e.g. in a Dockerfile)"
+      }
+    ],
+    "notes": [
+      "Faster and more reliable than npm install in CI",
+      "Requires package-lock.json",
+      "Removes node_modules before installing",
+      "Fails if package.json and package-lock.json are out of sync"
+    ],
+    "relatedCommands": [
+      "npm-install"
+    ]
+  },
+  {
+    "id": "npm-cache",
+    "name": "npm cache",
+    "description": "Manage npm cache",
+    "category": "Maintenance",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm cache clean --force",
+        "description": "Clear npm cache"
+      },
+      {
+        "command": "npm cache verify",
+        "description": "Verify cache integrity"
+      }
+    ],
+    "notes": [
+      "You rarely need to clear the cache; npm cache verify fixes most corruption"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-publish",
+    "name": "npm publish",
+    "description": "Publish a package to registry",
+    "category": "Publishing",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "--dry-run",
+        "description": "Show what would be published without publishing"
+      },
+      {
+        "flag": "--tag <tag>",
+        "description": "Publish under a dist-tag other than latest"
+      },
+      {
+        "flag": "--access public",
+        "description": "Make a scoped package public"
+      },
+      {
+        "flag": "--provenance",
+        "description": "Attach a signed provenance statement (from supported CI)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm publish",
+        "description": "Publish package"
+      },
+      {
+        "command": "npm publish --access public",
+        "description": "Publish scoped package publicly"
+      },
+      {
+        "command": "npm publish --dry-run",
+        "description": "Preview the package contents"
+      },
+      {
+        "command": "npm publish --tag beta",
+        "description": "Publish a prerelease without making it latest"
+      }
+    ],
+    "notes": [
+      "Requires npm account and login",
+      "Use the 'files' field in package.json to control what gets published"
+    ],
+    "relatedCommands": [
+      "npm-version",
+      "npm-login",
+      "npm-whoami"
+    ]
+  },
+  {
+    "id": "npm-version",
+    "name": "npm version",
+    "description": "Bump package version",
+    "category": "Publishing",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm version patch",
+        "description": "Bump patch version (1.0.0 → 1.0.1)"
+      },
+      {
+        "command": "npm version minor",
+        "description": "Bump minor version (1.0.0 → 1.1.0)"
+      },
+      {
+        "command": "npm version major",
+        "description": "Bump major version (1.0.0 → 2.0.0)"
+      },
+      {
+        "command": "npm version prerelease --preid=beta",
+        "description": "Bump to e.g. 1.1.0-beta.0"
+      },
+      {
+        "command": "npm version patch --no-git-tag-version",
+        "description": "Bump without committing or tagging"
+      }
+    ],
+    "notes": [
+      "Creates git tag automatically",
+      "Requires a clean git working tree when run inside a repo"
+    ],
+    "relatedCommands": [
+      "npm-publish"
+    ]
+  },
+  {
+    "id": "npm-login",
+    "name": "npm login",
+    "description": "Authenticate with the npm registry (or a private registry)",
+    "category": "Publishing",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm login",
+        "description": "Log in to registry.npmjs.org via the browser"
+      },
+      {
+        "command": "npm login --scope=@myorg --registry=https://npm.pkg.github.com",
+        "description": "Log in to a scoped private registry"
+      },
+      {
+        "command": "npm logout",
+        "description": "Log out and remove the token from .npmrc"
+      }
+    ],
+    "notes": [
+      "In CI, use an access token in .npmrc (//registry.npmjs.org/:_authToken=${NPM_TOKEN}) instead of npm login"
+    ],
+    "relatedCommands": [
+      "npm-whoami",
+      "npm-publish"
+    ]
+  },
+  {
+    "id": "npm-whoami",
+    "name": "npm whoami",
+    "description": "Print the username you are logged in as",
+    "category": "Publishing",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm whoami",
+        "description": "Show the current registry user"
+      },
+      {
+        "command": "npm whoami --registry=https://npm.pkg.github.com",
+        "description": "Check auth against another registry"
+      }
+    ],
+    "relatedCommands": [
+      "npm-login"
+    ]
+  },
+  {
+    "id": "npm-link",
+    "name": "npm link",
+    "description": "Create symlink for local development",
+    "category": "Development",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm link",
+        "description": "Create global link to current package"
+      },
+      {
+        "command": "npm link package-name",
+        "description": "Link to a local package"
+      },
+      {
+        "command": "npm unlink package-name",
+        "description": "Remove the link and restore the registry version"
+      }
+    ],
+    "notes": [
+      "Useful for testing packages locally"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-prune",
+    "name": "npm prune",
+    "description": "Remove extraneous packages",
+    "category": "Maintenance",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm prune",
+        "description": "Remove packages not in package.json"
+      },
+      {
+        "command": "npm prune --production",
+        "description": "Remove devDependencies"
+      },
+      {
+        "command": "npm prune --omit=dev",
+        "description": "Remove devDependencies from node_modules"
+      }
+    ],
+    "notes": [
+      "--production is deprecated; use npm prune --omit=dev"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-dedupe",
+    "name": "npm dedupe",
+    "description": "Reduce duplicate packages by hoisting shared dependencies",
+    "category": "Maintenance",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "--dry-run",
+        "description": "Show what would change"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm dedupe",
+        "description": "Simplify the dependency tree and update package-lock.json"
+      },
+      {
+        "command": "npm dedupe --dry-run",
+        "description": "Preview changes"
+      }
+    ],
+    "notes": [
+      "Alias: npm ddp"
+    ],
+    "relatedCommands": [
+      "npm-explain",
+      "npm-prune"
+    ]
+  },
+  {
+    "id": "npm-doctor",
+    "name": "npm doctor",
+    "description": "Check your npm environment for common problems",
+    "category": "Maintenance",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm doctor",
+        "description": "Check registry connectivity, npm/node versions, git, and cache permissions"
+      }
+    ],
+    "relatedCommands": [
+      "npm-cache"
+    ]
+  },
+  {
+    "id": "npm-search",
+    "name": "npm search",
+    "description": "Search for packages",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm search express",
+        "description": "Search for packages"
+      }
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "npm-view",
+    "name": "npm view",
+    "description": "Show registry metadata for a package",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm view react version",
+        "description": "Latest published version"
+      },
+      {
+        "command": "npm view react versions --json",
+        "description": "All published versions"
+      },
+      {
+        "command": "npm view next dist-tags",
+        "description": "Show dist-tags (latest, canary, ...)"
+      },
+      {
+        "command": "npm view express dependencies",
+        "description": "Show a package's dependencies"
+      }
+    ],
+    "notes": [
+      "Aliases: npm info, npm show"
+    ],
+    "relatedCommands": [
+      "npm-outdated",
+      "npm-search"
+    ]
+  },
+  {
+    "id": "npm-explain",
+    "name": "npm explain",
+    "description": "Explain why a package is installed (which dependencies require it)",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm explain lodash",
+        "description": "Show the dependency chain(s) that pull in lodash"
+      },
+      {
+        "command": "npm why @types/react",
+        "description": "Same, using the 'why' alias"
+      }
+    ],
+    "relatedCommands": [
+      "npm-list",
+      "npm-dedupe",
+      "npm-query"
+    ]
+  },
+  {
+    "id": "npm-query",
+    "name": "npm query",
+    "description": "Select packages in the dependency tree with CSS-like selectors",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm query \":root > .prod\"",
+        "description": "Direct production dependencies, as JSON"
+      },
+      {
+        "command": "npm query \"#react\"",
+        "description": "Every installed copy of react"
+      },
+      {
+        "command": "npm query \".dev\"",
+        "description": "All dev dependencies (direct and transitive)"
+      },
+      {
+        "command": "npm query \"[license=MIT]\" | jq -r '.[].name'",
+        "description": "Packages with an MIT license field"
+      }
+    ],
+    "relatedCommands": [
+      "npm-explain",
+      "npm-list"
+    ]
+  },
+  {
+    "id": "npm-fund",
+    "name": "npm fund",
+    "description": "Show funding information for your dependencies",
+    "category": "Package Management",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm fund",
+        "description": "List dependencies looking for funding"
+      },
+      {
+        "command": "npm fund eslint",
+        "description": "Open the funding URL for a package"
+      }
+    ],
+    "notes": [
+      "Hide the post-install funding message with npm config set fund false"
+    ],
+    "relatedCommands": [
+      "npm-install"
+    ]
+  }
+]

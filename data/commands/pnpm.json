@@ -1,0 +1,1007 @@
+[
+  {
+    "id": "pnpm-install",
+    "name": "pnpm install",
+    "description": "Install all dependencies listed in package.json and the lockfile.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--frozen-lockfile",
+        "description": "Fail if the lockfile needs updating (default in CI)"
+      },
+      {
+        "flag": "--prod, -P",
+        "description": "Install only production dependencies"
+      },
+      {
+        "flag": "--offline",
+        "description": "Install using only packages already in the store"
+      },
+      {
+        "flag": "--prefer-offline",
+        "description": "Use cached metadata and packages when available"
+      },
+      {
+        "flag": "--ignore-scripts",
+        "description": "Do not run lifecycle scripts"
+      },
+      {
+        "flag": "--filter <selector>",
+        "description": "Install only for matching workspace projects"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm install",
+        "description": "Install all dependencies"
+      },
+      {
+        "command": "pnpm install --frozen-lockfile",
+        "description": "Reproducible install for CI"
+      },
+      {
+        "command": "pnpm install --prod",
+        "description": "Install production dependencies only"
+      },
+      {
+        "command": "pnpm i --offline",
+        "description": "Install without hitting the network"
+      }
+    ],
+    "notes": [
+      "Alias: pnpm i",
+      "In CI, --frozen-lockfile is enabled by default",
+      "Dependencies are hard-linked from a global content-addressable store, saving disk space"
+    ],
+    "relatedCommands": [
+      "pnpm-add",
+      "pnpm-store-prune",
+      "pnpm-approve-builds"
+    ]
+  },
+  {
+    "id": "pnpm-add",
+    "name": "pnpm add",
+    "description": "Add a package and its dependencies to the project.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-D, --save-dev",
+        "description": "Add as a devDependency"
+      },
+      {
+        "flag": "-O, --save-optional",
+        "description": "Add as an optionalDependency"
+      },
+      {
+        "flag": "--save-peer",
+        "description": "Add as a peerDependency (and devDependency)"
+      },
+      {
+        "flag": "-E, --save-exact",
+        "description": "Pin the exact version instead of a range"
+      },
+      {
+        "flag": "-g, --global",
+        "description": "Install the package globally"
+      },
+      {
+        "flag": "-w, --workspace-root",
+        "description": "Add to the workspace root package.json"
+      },
+      {
+        "flag": "--workspace",
+        "description": "Only add if the package is found in the workspace"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm add zod",
+        "description": "Add a runtime dependency"
+      },
+      {
+        "command": "pnpm add -D typescript @types/node",
+        "description": "Add dev dependencies"
+      },
+      {
+        "command": "pnpm add react@19 -E",
+        "description": "Add a pinned exact version"
+      },
+      {
+        "command": "pnpm add -w -D eslint",
+        "description": "Add a dev dependency to the monorepo root"
+      },
+      {
+        "command": "pnpm add @acme/ui --workspace --filter web",
+        "description": "Link a local workspace package into the web app"
+      }
+    ],
+    "notes": [
+      "In a workspace root you must pass -w to add to the root; otherwise pnpm errors to prevent mistakes"
+    ],
+    "relatedCommands": [
+      "pnpm-remove",
+      "pnpm-install",
+      "pnpm-update"
+    ]
+  },
+  {
+    "id": "pnpm-remove",
+    "name": "pnpm remove",
+    "description": "Remove packages from node_modules and package.json.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-D, --save-dev",
+        "description": "Only remove from devDependencies"
+      },
+      {
+        "flag": "-g, --global",
+        "description": "Remove a globally installed package"
+      },
+      {
+        "flag": "-r, --recursive",
+        "description": "Remove from every workspace project"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm remove lodash",
+        "description": "Remove a dependency"
+      },
+      {
+        "command": "pnpm rm -g vercel",
+        "description": "Remove a global package"
+      },
+      {
+        "command": "pnpm remove moment -r",
+        "description": "Remove from all workspace projects"
+      }
+    ],
+    "notes": [
+      "Aliases: pnpm rm, pnpm uninstall, pnpm un"
+    ],
+    "relatedCommands": [
+      "pnpm-add"
+    ]
+  },
+  {
+    "id": "pnpm-update",
+    "name": "pnpm update",
+    "description": "Update packages to their latest versions within the allowed ranges.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-L, --latest",
+        "description": "Update to the latest version, ignoring package.json ranges"
+      },
+      {
+        "flag": "-i, --interactive",
+        "description": "Pick which outdated packages to update"
+      },
+      {
+        "flag": "-r, --recursive",
+        "description": "Update in every workspace project"
+      },
+      {
+        "flag": "-D, --dev",
+        "description": "Only update devDependencies"
+      },
+      {
+        "flag": "--prod",
+        "description": "Only update dependencies and optionalDependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm update",
+        "description": "Update all packages within semver ranges"
+      },
+      {
+        "command": "pnpm up -i -L",
+        "description": "Interactively upgrade to latest versions"
+      },
+      {
+        "command": "pnpm up \"@types/*\" -L",
+        "description": "Update all @types packages to latest"
+      },
+      {
+        "command": "pnpm up -r typescript@latest",
+        "description": "Bump typescript across the whole workspace"
+      }
+    ],
+    "notes": [
+      "Aliases: pnpm up, pnpm upgrade",
+      "--latest may cross major versions; review changelogs before committing"
+    ],
+    "relatedCommands": [
+      "pnpm-outdated",
+      "pnpm-add"
+    ]
+  },
+  {
+    "id": "pnpm-outdated",
+    "name": "pnpm outdated",
+    "description": "List packages that have newer versions available.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Check every workspace project"
+      },
+      {
+        "flag": "--format <table|list|json>",
+        "description": "Output format"
+      },
+      {
+        "flag": "--compatible",
+        "description": "Only show versions satisfying package.json ranges"
+      },
+      {
+        "flag": "-D, --dev / -P, --prod",
+        "description": "Limit to dev or production dependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm outdated",
+        "description": "Show outdated packages in the current project"
+      },
+      {
+        "command": "pnpm outdated -r",
+        "description": "Show outdated packages across the workspace"
+      },
+      {
+        "command": "pnpm outdated --format json",
+        "description": "Machine-readable output"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-update"
+    ]
+  },
+  {
+    "id": "pnpm-why",
+    "name": "pnpm why",
+    "description": "Show all packages that depend on the given package.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Check every workspace project"
+      },
+      {
+        "flag": "--json",
+        "description": "Output as JSON"
+      },
+      {
+        "flag": "--depth <n>",
+        "description": "Limit the depth of the shown tree"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm why lodash",
+        "description": "Find out why lodash is installed"
+      },
+      {
+        "command": "pnpm why -r @babel/core",
+        "description": "Check across the whole monorepo"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-list",
+      "pnpm-dedupe"
+    ]
+  },
+  {
+    "id": "pnpm-list",
+    "name": "pnpm list",
+    "description": "List installed packages and their versions.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--depth <n>",
+        "description": "How deep to print the dependency tree (default 0)"
+      },
+      {
+        "flag": "-g, --global",
+        "description": "List globally installed packages"
+      },
+      {
+        "flag": "-r, --recursive",
+        "description": "List for every workspace project"
+      },
+      {
+        "flag": "--json",
+        "description": "Output as JSON"
+      },
+      {
+        "flag": "-P, --prod / -D, --dev",
+        "description": "Limit to production or dev dependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm ls",
+        "description": "List top-level dependencies"
+      },
+      {
+        "command": "pnpm ls react --depth Infinity",
+        "description": "Find every installed copy of react"
+      },
+      {
+        "command": "pnpm ls -g",
+        "description": "List global packages"
+      }
+    ],
+    "notes": [
+      "Alias: pnpm ls"
+    ],
+    "relatedCommands": [
+      "pnpm-why"
+    ]
+  },
+  {
+    "id": "pnpm-dedupe",
+    "name": "pnpm dedupe",
+    "description": "Rewrite the lockfile to remove duplicate dependency versions where possible.",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--check",
+        "description": "Exit non-zero if deduplication would change the lockfile (useful in CI)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm dedupe",
+        "description": "Deduplicate the lockfile"
+      },
+      {
+        "command": "pnpm dedupe --check",
+        "description": "Verify the lockfile is already deduplicated"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-why",
+      "pnpm-install"
+    ]
+  },
+  {
+    "id": "pnpm-run",
+    "name": "pnpm run",
+    "description": "Run a script defined in package.json.",
+    "category": "Scripts & Execution",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Run the script in every workspace project that has it"
+      },
+      {
+        "flag": "--parallel",
+        "description": "Run in all projects at once, ignoring topological order (good for watch/dev)"
+      },
+      {
+        "flag": "--if-present",
+        "description": "Do not fail when the script is missing"
+      },
+      {
+        "flag": "--stream",
+        "description": "Stream output prefixed with the project name"
+      },
+      {
+        "flag": "--filter <selector>",
+        "description": "Run only in matching workspace projects"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm dev",
+        "description": "Shorthand for pnpm run dev"
+      },
+      {
+        "command": "pnpm run build -- --watch",
+        "description": "Pass extra args through to the script"
+      },
+      {
+        "command": "pnpm -r run build",
+        "description": "Build every package in topological order"
+      },
+      {
+        "command": "pnpm -r --parallel run dev",
+        "description": "Start all dev servers at once"
+      }
+    ],
+    "notes": [
+      "Any unknown command is treated as a script name, so pnpm test, pnpm lint, etc. work directly",
+      "pnpm does not run pre/post scripts for user-defined scripts unless enable-pre-post-scripts=true"
+    ],
+    "relatedCommands": [
+      "pnpm-exec",
+      "pnpm-filter"
+    ]
+  },
+  {
+    "id": "pnpm-exec",
+    "name": "pnpm exec",
+    "description": "Execute a binary from the project's node_modules/.bin.",
+    "category": "Scripts & Execution",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Execute in every workspace project"
+      },
+      {
+        "flag": "--parallel",
+        "description": "Run concurrently across projects"
+      },
+      {
+        "flag": "-c, --shell-mode",
+        "description": "Run the command inside a shell"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm exec prisma migrate dev",
+        "description": "Run a locally installed CLI"
+      },
+      {
+        "command": "pnpm -r exec rm -rf dist",
+        "description": "Delete dist in every workspace project"
+      },
+      {
+        "command": "pnpm tsc --noEmit",
+        "description": "Local binaries can also be run directly when no script has the same name"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-run",
+      "pnpm-dlx"
+    ]
+  },
+  {
+    "id": "pnpm-dlx",
+    "name": "pnpm dlx",
+    "description": "Fetch a package temporarily and run its binary without adding it to the project.",
+    "category": "Scripts & Execution",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--package <name>",
+        "description": "Package to install when the binary name differs"
+      },
+      {
+        "flag": "-c, --shell-mode",
+        "description": "Run the command inside a shell"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm dlx create-vite@latest my-app",
+        "description": "Scaffold a project without global installs"
+      },
+      {
+        "command": "pnpm dlx shadcn@latest add button",
+        "description": "Run a one-off CLI"
+      },
+      {
+        "command": "pnpm --package=typescript dlx tsc --version",
+        "description": "Run a binary from a differently named package"
+      }
+    ],
+    "notes": [
+      "pnpm's equivalent of npx for remote packages"
+    ],
+    "relatedCommands": [
+      "pnpm-create",
+      "pnpm-exec"
+    ]
+  },
+  {
+    "id": "pnpm-create",
+    "name": "pnpm create",
+    "description": "Create a project from a create-* starter kit.",
+    "category": "Scripts & Execution",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm create next-app my-app",
+        "description": "Runs create-next-app"
+      },
+      {
+        "command": "pnpm create vite my-app --template react-ts",
+        "description": "Scaffold a Vite React+TS app"
+      },
+      {
+        "command": "pnpm create astro@latest",
+        "description": "Scaffold an Astro project"
+      }
+    ],
+    "notes": [
+      "pnpm create foo runs the create-foo package via dlx"
+    ],
+    "relatedCommands": [
+      "pnpm-dlx",
+      "pnpm-init"
+    ]
+  },
+  {
+    "id": "pnpm-init",
+    "name": "pnpm init",
+    "description": "Create a package.json file in the current directory.",
+    "category": "Scripts & Execution",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm init",
+        "description": "Create a default package.json"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-create"
+    ]
+  },
+  {
+    "id": "pnpm-filter",
+    "name": "pnpm --filter",
+    "description": "Restrict a command to a subset of workspace projects.",
+    "category": "Workspaces",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--filter <name>",
+        "description": "Select a project by package name (globs allowed)"
+      },
+      {
+        "flag": "--filter <name>...",
+        "description": "Select the project and its dependencies"
+      },
+      {
+        "flag": "--filter ...<name>",
+        "description": "Select the project and its dependents"
+      },
+      {
+        "flag": "--filter ./apps/*",
+        "description": "Select projects by directory"
+      },
+      {
+        "flag": "--filter \"[origin/main]\"",
+        "description": "Select projects changed since a git ref"
+      },
+      {
+        "flag": "--filter !<name>",
+        "description": "Exclude matching projects"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm --filter web dev",
+        "description": "Run dev only in the web package"
+      },
+      {
+        "command": "pnpm --filter \"@acme/*\" build",
+        "description": "Build all packages in the @acme scope"
+      },
+      {
+        "command": "pnpm --filter web... build",
+        "description": "Build web and everything it depends on"
+      },
+      {
+        "command": "pnpm --filter \"...[origin/main]\" test",
+        "description": "Test changed packages and their dependents"
+      }
+    ],
+    "notes": [
+      "Short form: -F",
+      "Workspaces are defined in pnpm-workspace.yaml"
+    ],
+    "relatedCommands": [
+      "pnpm-recursive",
+      "pnpm-run"
+    ]
+  },
+  {
+    "id": "pnpm-recursive",
+    "name": "pnpm -r",
+    "description": "Run a command in every project of the workspace.",
+    "category": "Workspaces",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--workspace-concurrency <n>",
+        "description": "Max projects processed concurrently (default 4)"
+      },
+      {
+        "flag": "--no-bail",
+        "description": "Continue on errors in other projects"
+      },
+      {
+        "flag": "--include-workspace-root",
+        "description": "Also run in the root project"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm -r build",
+        "description": "Build all packages in dependency order"
+      },
+      {
+        "command": "pnpm -r --no-bail test",
+        "description": "Run all tests even if some fail"
+      },
+      {
+        "command": "pnpm -r --workspace-concurrency=1 publish",
+        "description": "Publish packages one at a time"
+      }
+    ],
+    "notes": [
+      "Long form: --recursive"
+    ],
+    "relatedCommands": [
+      "pnpm-filter",
+      "pnpm-run"
+    ]
+  },
+  {
+    "id": "pnpm-link",
+    "name": "pnpm link",
+    "description": "Link a local package into the current project.",
+    "category": "Workspaces",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-g, --global",
+        "description": "Link the current package into the global node_modules"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm link ../my-lib",
+        "description": "Symlink a local package into node_modules"
+      },
+      {
+        "command": "pnpm unlink my-lib",
+        "description": "Remove the link and restore the registry version"
+      }
+    ],
+    "notes": [
+      "Inside a workspace, prefer the workspace: protocol (\"my-lib\": \"workspace:*\") instead of link"
+    ],
+    "relatedCommands": [
+      "pnpm-add"
+    ]
+  },
+  {
+    "id": "pnpm-patch",
+    "name": "pnpm patch",
+    "description": "Prepare a dependency for patching by extracting it to an editable directory.",
+    "category": "Workspaces",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--edit-dir <dir>",
+        "description": "Directory to extract the package into"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm patch express@4.21.2",
+        "description": "Extract a package for editing (prints the temp dir)"
+      },
+      {
+        "command": "pnpm patch-commit /tmp/abc123",
+        "description": "Generate the patch and register it in package.json"
+      },
+      {
+        "command": "pnpm patch-remove express@4.21.2",
+        "description": "Remove an applied patch"
+      }
+    ],
+    "notes": [
+      "Patches are stored in patches/ and applied automatically on install"
+    ],
+    "relatedCommands": [
+      "pnpm-install"
+    ]
+  },
+  {
+    "id": "pnpm-audit",
+    "name": "pnpm audit",
+    "description": "Check installed packages for known security vulnerabilities.",
+    "category": "Security & Maintenance",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--audit-level <low|moderate|high|critical>",
+        "description": "Minimum severity to report / fail on"
+      },
+      {
+        "flag": "--fix",
+        "description": "Add overrides to force patched versions"
+      },
+      {
+        "flag": "-P, --prod",
+        "description": "Only audit production dependencies"
+      },
+      {
+        "flag": "--json",
+        "description": "Output as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm audit",
+        "description": "Report vulnerabilities"
+      },
+      {
+        "command": "pnpm audit --audit-level high",
+        "description": "Only fail on high/critical issues"
+      },
+      {
+        "command": "pnpm audit --fix",
+        "description": "Write overrides for vulnerable transitive deps"
+      }
+    ],
+    "notes": [
+      "--fix adds pnpm.overrides; run pnpm install afterward and test"
+    ],
+    "relatedCommands": [
+      "pnpm-outdated"
+    ]
+  },
+  {
+    "id": "pnpm-approve-builds",
+    "name": "pnpm approve-builds",
+    "description": "Choose which dependencies are allowed to run install (postinstall) scripts.",
+    "category": "Security & Maintenance",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm approve-builds",
+        "description": "Interactively approve packages like esbuild or sharp"
+      }
+    ],
+    "notes": [
+      "Since pnpm 10, dependency lifecycle scripts are blocked by default",
+      "Approved packages are recorded in onlyBuiltDependencies (pnpm-workspace.yaml / package.json)"
+    ],
+    "relatedCommands": [
+      "pnpm-install",
+      "pnpm-rebuild"
+    ]
+  },
+  {
+    "id": "pnpm-rebuild",
+    "name": "pnpm rebuild",
+    "description": "Rebuild packages, re-running their install scripts.",
+    "category": "Security & Maintenance",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm rebuild",
+        "description": "Rebuild all packages"
+      },
+      {
+        "command": "pnpm rebuild sharp",
+        "description": "Rebuild one native package"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-approve-builds"
+    ]
+  },
+  {
+    "id": "pnpm-store-prune",
+    "name": "pnpm store prune",
+    "description": "Remove unreferenced packages from the global store.",
+    "category": "Store & Cache",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm store prune",
+        "description": "Free disk space used by unreferenced packages"
+      }
+    ],
+    "notes": [
+      "Safe to run periodically; packages will be re-downloaded if needed later",
+      "Not recommended in CI caches as it can lower cache hit rates"
+    ],
+    "relatedCommands": [
+      "pnpm-store-path"
+    ]
+  },
+  {
+    "id": "pnpm-store-path",
+    "name": "pnpm store path",
+    "description": "Print the location of the content-addressable store.",
+    "category": "Store & Cache",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm store path",
+        "description": "Show the store directory"
+      },
+      {
+        "command": "pnpm store status",
+        "description": "Check for modified packages in the store"
+      }
+    ],
+    "notes": [
+      "Commonly used for CI caching: cache the directory printed by this command"
+    ],
+    "relatedCommands": [
+      "pnpm-store-prune"
+    ]
+  },
+  {
+    "id": "pnpm-env-use",
+    "name": "pnpm env use",
+    "description": "Install and activate a Node.js version via pnpm.",
+    "category": "Environment",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-g, --global",
+        "description": "Required: set the global Node.js version"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm env use --global lts",
+        "description": "Install and use the latest LTS"
+      },
+      {
+        "command": "pnpm env use --global 22",
+        "description": "Use the latest Node 22.x"
+      },
+      {
+        "command": "pnpm env list --remote",
+        "description": "List available Node.js versions"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-self-update"
+    ]
+  },
+  {
+    "id": "pnpm-self-update",
+    "name": "pnpm self-update",
+    "description": "Update pnpm itself to the latest (or a given) version.",
+    "category": "Environment",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm self-update",
+        "description": "Update to the latest pnpm"
+      },
+      {
+        "command": "pnpm self-update 10",
+        "description": "Update to the latest 10.x"
+      },
+      {
+        "command": "corepack use pnpm@latest",
+        "description": "Alternative: pin pnpm via Corepack's packageManager field"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-env-use"
+    ]
+  },
+  {
+    "id": "pnpm-config",
+    "name": "pnpm config",
+    "description": "Get, set, or list pnpm configuration values.",
+    "category": "Environment",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--location <project|global>",
+        "description": "Where to write the setting"
+      },
+      {
+        "flag": "--json",
+        "description": "Output as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm config list",
+        "description": "Show effective config"
+      },
+      {
+        "command": "pnpm config set store-dir ~/.pnpm-store",
+        "description": "Change the store location"
+      },
+      {
+        "command": "pnpm config get registry",
+        "description": "Show the configured registry"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-store-path"
+    ]
+  },
+  {
+    "id": "pnpm-publish",
+    "name": "pnpm publish",
+    "description": "Publish a package to the registry.",
+    "category": "Publishing",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--access <public|restricted>",
+        "description": "Access level for scoped packages"
+      },
+      {
+        "flag": "--tag <tag>",
+        "description": "Publish under a dist-tag (default latest)"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Show what would be published without publishing"
+      },
+      {
+        "flag": "--no-git-checks",
+        "description": "Skip checks for clean working tree and branch"
+      },
+      {
+        "flag": "-r, --recursive",
+        "description": "Publish all workspace packages whose version is not yet published"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm publish --access public",
+        "description": "Publish a public scoped package"
+      },
+      {
+        "command": "pnpm publish --dry-run",
+        "description": "Preview the tarball contents"
+      },
+      {
+        "command": "pnpm -r publish --tag next",
+        "description": "Publish all changed workspace packages under next"
+      }
+    ],
+    "notes": [
+      "workspace: ranges are replaced with real versions in the published package.json",
+      "Published versions cannot be reused; unpublishing is restricted by the npm registry"
+    ],
+    "relatedCommands": [
+      "pnpm-pack"
+    ]
+  },
+  {
+    "id": "pnpm-pack",
+    "name": "pnpm pack",
+    "description": "Create a tarball of the package as it would be published.",
+    "category": "Publishing",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--pack-destination <dir>",
+        "description": "Directory to write the tarball to"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm pack",
+        "description": "Produce my-pkg-1.0.0.tgz in the current directory"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-publish"
+    ]
+  }
+]

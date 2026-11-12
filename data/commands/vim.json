@@ -1,0 +1,815 @@
+[
+  {
+    "id": "vim-open",
+    "name": "vim file",
+    "description": "Open one or more files in Vim from the shell.",
+    "category": "Files & Saving",
+    "technologyId": "vim",
+    "flags": [
+      {
+        "flag": "+N",
+        "description": "Open with the cursor on line N",
+        "example": "vim +42 app.py"
+      },
+      {
+        "flag": "+/pattern",
+        "description": "Open at the first match of a pattern",
+        "example": "vim +/TODO notes.md"
+      },
+      {
+        "flag": "-d",
+        "description": "Diff mode: compare 2-4 files side by side",
+        "example": "vim -d old.conf new.conf"
+      },
+      {
+        "flag": "-O / -o",
+        "description": "Open files in vertical / horizontal splits"
+      },
+      {
+        "flag": "-p",
+        "description": "Open each file in a tab"
+      },
+      {
+        "flag": "-R",
+        "description": "Read-only mode (same as `view`)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "vim src/main.go",
+        "description": "Open a file"
+      },
+      {
+        "command": "vim +120 server.log",
+        "description": "Jump straight to line 120"
+      },
+      {
+        "command": "vim -d config.yaml config.yaml.orig",
+        "description": "Diff two files (]c / [c jump between changes)"
+      },
+      {
+        "command": "git diff --name-only | xargs -o vim -p",
+        "description": "Open changed files in tabs"
+      }
+    ],
+    "notes": [
+      "`vimdiff a b` is the same as `vim -d a b`. Inside Vim, `:e path` opens another file."
+    ],
+    "relatedCommands": [
+      "vim-write-quit",
+      "vim-buffers"
+    ]
+  },
+  {
+    "id": "vim-write-quit",
+    "name": ":w / :q / :wq / :q! / :x / ZZ",
+    "description": "Save and quit commands.",
+    "category": "Files & Saving",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":w",
+        "description": "Save"
+      },
+      {
+        "command": ":wq",
+        "description": "Save and quit (:x or ZZ also save, but only write if there are changes)"
+      },
+      {
+        "command": ":q!",
+        "description": "Quit and discard unsaved changes (ZQ does the same)"
+      },
+      {
+        "command": ":wa",
+        "description": "Save all buffers (:qa quits all, :wqa saves and quits all)"
+      },
+      {
+        "command": ":w !sudo tee % > /dev/null",
+        "description": "Save a file you opened without root permissions (classic Vim; may not work in Neovim)"
+      }
+    ],
+    "notes": [
+      "WARNING: :q! and ZQ discard all unsaved changes in the buffer.",
+      "`:w newname.txt` saves a copy under a new name; `:saveas` switches to it."
+    ],
+    "relatedCommands": [
+      "vim-open",
+      "vim-modes"
+    ]
+  },
+  {
+    "id": "vim-modes",
+    "name": "i / a / o / v / Esc",
+    "description": "Switch between Normal, Insert, Visual, and Command-line modes.",
+    "category": "Modes",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "i",
+        "description": "Insert before the cursor (I = start of line)"
+      },
+      {
+        "command": "a",
+        "description": "Append after the cursor (A = end of line)"
+      },
+      {
+        "command": "o",
+        "description": "Open a new line below (O = above) and insert"
+      },
+      {
+        "command": "Esc",
+        "description": "Return to Normal mode (Ctrl-[ also works)"
+      },
+      {
+        "command": ":",
+        "description": "Enter Command-line mode for Ex commands"
+      }
+    ],
+    "notes": [
+      "Normal mode is home: always press Esc before typing commands. R enters Replace mode."
+    ],
+    "relatedCommands": [
+      "vim-visual",
+      "vim-write-quit"
+    ]
+  },
+  {
+    "id": "vim-word-motions",
+    "name": "w / b / e",
+    "description": "Move forward to the next word start, back to the previous word start, or to the word end.",
+    "category": "Motions",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "w",
+        "description": "Next word start (W uses whitespace-separated WORDs)"
+      },
+      {
+        "command": "b",
+        "description": "Previous word start (B for WORDs)"
+      },
+      {
+        "command": "e",
+        "description": "End of word (E for WORDs; ge goes to the previous word end)"
+      },
+      {
+        "command": "3w",
+        "description": "Move forward three words (counts work with most motions)"
+      }
+    ],
+    "relatedCommands": [
+      "vim-line-motions",
+      "vim-file-motions"
+    ]
+  },
+  {
+    "id": "vim-line-motions",
+    "name": "0 / ^ / $ / f / t",
+    "description": "Move within the current line.",
+    "category": "Motions",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "0",
+        "description": "Start of line"
+      },
+      {
+        "command": "^",
+        "description": "First non-blank character"
+      },
+      {
+        "command": "$",
+        "description": "End of line"
+      },
+      {
+        "command": "f,",
+        "description": "Jump to the next comma on the line (t, stops before it; ; and , repeat)"
+      }
+    ],
+    "relatedCommands": [
+      "vim-word-motions",
+      "vim-file-motions"
+    ]
+  },
+  {
+    "id": "vim-file-motions",
+    "name": "gg / G / % / :N",
+    "description": "Jump around the file: top, bottom, a line number, or a matching bracket.",
+    "category": "Motions",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "gg",
+        "description": "First line"
+      },
+      {
+        "command": "G",
+        "description": "Last line (42G goes to line 42)"
+      },
+      {
+        "command": ":42",
+        "description": "Go to line 42"
+      },
+      {
+        "command": "%",
+        "description": "Jump to the matching (), [], or {}"
+      },
+      {
+        "command": "Ctrl-d / Ctrl-u",
+        "description": "Scroll half a page down / up"
+      },
+      {
+        "command": "Ctrl-o / Ctrl-i",
+        "description": "Jump back / forward through the jump list"
+      }
+    ],
+    "relatedCommands": [
+      "vim-line-motions",
+      "vim-marks"
+    ]
+  },
+  {
+    "id": "vim-delete",
+    "name": "dd / x / D",
+    "description": "Delete (cut) lines or characters into a register.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "dd",
+        "description": "Delete the current line (3dd deletes three)"
+      },
+      {
+        "command": "x",
+        "description": "Delete the character under the cursor"
+      },
+      {
+        "command": "D",
+        "description": "Delete to end of line"
+      },
+      {
+        "command": "dw",
+        "description": "Delete to the next word (any operator + motion works: d}, dG, dgg)"
+      }
+    ],
+    "notes": [
+      "Deleted text goes into the unnamed register, so dd then p moves a line."
+    ],
+    "relatedCommands": [
+      "vim-yank-put",
+      "vim-change",
+      "vim-undo-redo"
+    ]
+  },
+  {
+    "id": "vim-yank-put",
+    "name": "yy / p / P",
+    "description": "Copy (yank) text and paste (put) it.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "yy",
+        "description": "Yank the current line (5yy yanks five)"
+      },
+      {
+        "command": "p",
+        "description": "Put after the cursor / below the line"
+      },
+      {
+        "command": "P",
+        "description": "Put before the cursor / above the line"
+      },
+      {
+        "command": "yiw",
+        "description": "Yank the word under the cursor"
+      }
+    ],
+    "relatedCommands": [
+      "vim-delete",
+      "vim-registers"
+    ]
+  },
+  {
+    "id": "vim-change",
+    "name": "ciw / cw / cc / ci\"",
+    "description": "Change text: delete it and enter Insert mode in one step.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "ciw",
+        "description": "Change the word under the cursor"
+      },
+      {
+        "command": "ci\"",
+        "description": "Change everything inside the quotes (also ci(, ci{, cit for HTML tags)"
+      },
+      {
+        "command": "cc",
+        "description": "Change the whole line"
+      },
+      {
+        "command": "C",
+        "description": "Change to end of line"
+      }
+    ],
+    "notes": [
+      "The i/a text objects (inner/around) work with any operator: daw, yi(, va{."
+    ],
+    "relatedCommands": [
+      "vim-delete",
+      "vim-dot-repeat"
+    ]
+  },
+  {
+    "id": "vim-undo-redo",
+    "name": "u / Ctrl-r",
+    "description": "Undo and redo changes.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "u",
+        "description": "Undo the last change"
+      },
+      {
+        "command": "Ctrl-r",
+        "description": "Redo"
+      },
+      {
+        "command": ":earlier 5m",
+        "description": "Restore the buffer to how it was 5 minutes ago (:later to go forward)"
+      }
+    ],
+    "notes": [
+      "Enable `:set undofile` to keep undo history after closing a file."
+    ],
+    "relatedCommands": [
+      "vim-dot-repeat"
+    ]
+  },
+  {
+    "id": "vim-dot-repeat",
+    "name": ".",
+    "description": "Repeat the last change.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ".",
+        "description": "Repeat the last edit at the cursor"
+      },
+      {
+        "command": "ciwfoo<Esc> then n.",
+        "description": "Change a word, jump to the next search match, and repeat the change"
+      }
+    ],
+    "relatedCommands": [
+      "vim-undo-redo",
+      "vim-macros"
+    ]
+  },
+  {
+    "id": "vim-search",
+    "name": "/pattern / n / N / *",
+    "description": "Search forward or backward and step through matches.",
+    "category": "Search & Replace",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "/TODO",
+        "description": "Search forward (?TODO searches backward)"
+      },
+      {
+        "command": "n / N",
+        "description": "Next / previous match"
+      },
+      {
+        "command": "*",
+        "description": "Search for the word under the cursor (# searches backward)"
+      },
+      {
+        "command": ":noh",
+        "description": "Clear search highlighting"
+      }
+    ],
+    "notes": [
+      "Add \\c to make a search case-insensitive (/todo\\c), or use `:set ignorecase smartcase`."
+    ],
+    "relatedCommands": [
+      "vim-substitute",
+      "vim-global"
+    ]
+  },
+  {
+    "id": "vim-substitute",
+    "name": ":%s/old/new/g",
+    "description": "Find and replace text with the substitute command.",
+    "category": "Search & Replace",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":%s/foo/bar/g",
+        "description": "Replace all occurrences in the file"
+      },
+      {
+        "command": ":%s/foo/bar/gc",
+        "description": "Replace with confirmation for each match"
+      },
+      {
+        "command": ":s/foo/bar/",
+        "description": "Replace the first match on the current line only"
+      },
+      {
+        "command": ":'<,'>s/^/# /",
+        "description": "Comment out the visually selected lines"
+      },
+      {
+        "command": ":%s/\\s\\+$//e",
+        "description": "Strip trailing whitespace (e suppresses 'not found' errors)"
+      }
+    ],
+    "notes": [
+      "% means every line; omit it for the current line or give a range like :10,20s/a/b/g. Use a different delimiter for paths: :%s#/usr/local#/opt#g."
+    ],
+    "relatedCommands": [
+      "vim-search",
+      "vim-global"
+    ]
+  },
+  {
+    "id": "vim-global",
+    "name": ":g/pattern/d",
+    "description": "Run an Ex command on every line matching a pattern.",
+    "category": "Search & Replace",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":g/DEBUG/d",
+        "description": "Delete all lines containing DEBUG"
+      },
+      {
+        "command": ":v/error/d",
+        "description": "Delete all lines NOT containing error (same as :g!)"
+      },
+      {
+        "command": ":g/^$/d",
+        "description": "Delete empty lines"
+      },
+      {
+        "command": ":g/TODO/normal A // FIXME",
+        "description": "Append text to every matching line"
+      }
+    ],
+    "relatedCommands": [
+      "vim-substitute",
+      "vim-sort"
+    ]
+  },
+  {
+    "id": "vim-visual",
+    "name": "v / V / Ctrl-v",
+    "description": "Select text character-wise, line-wise, or as a rectangular block.",
+    "category": "Visual Mode",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "v",
+        "description": "Character-wise selection; then d, y, c, >, < act on it"
+      },
+      {
+        "command": "V",
+        "description": "Line-wise selection"
+      },
+      {
+        "command": "Ctrl-v",
+        "description": "Block (column) selection"
+      },
+      {
+        "command": "Ctrl-v jjj I// <Esc>",
+        "description": "Insert // at the start of four lines at once"
+      },
+      {
+        "command": "gv",
+        "description": "Reselect the last visual selection"
+      }
+    ],
+    "notes": [
+      "In block mode, $ extends to each line end and A appends to every line."
+    ],
+    "relatedCommands": [
+      "vim-modes",
+      "vim-substitute"
+    ]
+  },
+  {
+    "id": "vim-registers",
+    "name": "\"ayy / \"+y / :reg",
+    "description": "Use named registers and the system clipboard.",
+    "category": "Registers & Macros",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "\"ayy",
+        "description": "Yank the line into register a (\"Ayy appends to it)"
+      },
+      {
+        "command": "\"ap",
+        "description": "Put from register a"
+      },
+      {
+        "command": "\"+y",
+        "description": "Yank to the system clipboard (needs +clipboard support)"
+      },
+      {
+        "command": "\"0p",
+        "description": "Put the last yank, even after a delete overwrote the unnamed register"
+      },
+      {
+        "command": ":reg",
+        "description": "Show register contents"
+      }
+    ],
+    "notes": [
+      "In Insert mode, Ctrl-r a inserts register a."
+    ],
+    "relatedCommands": [
+      "vim-yank-put",
+      "vim-macros"
+    ]
+  },
+  {
+    "id": "vim-macros",
+    "name": "qa ... q / @a",
+    "description": "Record a sequence of keystrokes and replay it.",
+    "category": "Registers & Macros",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "qa",
+        "description": "Start recording into register a; q stops"
+      },
+      {
+        "command": "@a",
+        "description": "Play macro a (@@ replays the last macro)"
+      },
+      {
+        "command": "10@a",
+        "description": "Run macro a ten times"
+      },
+      {
+        "command": ":%normal @a",
+        "description": "Run macro a on every line"
+      }
+    ],
+    "notes": [
+      "Start macros with a motion like 0 so they behave the same on each line."
+    ],
+    "relatedCommands": [
+      "vim-registers",
+      "vim-dot-repeat"
+    ]
+  },
+  {
+    "id": "vim-marks",
+    "name": "ma / 'a / `a",
+    "description": "Set bookmarks and jump back to them.",
+    "category": "Registers & Macros",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "ma",
+        "description": "Set mark a at the cursor (uppercase A works across files)"
+      },
+      {
+        "command": "'a",
+        "description": "Jump to the line of mark a"
+      },
+      {
+        "command": "`a",
+        "description": "Jump to the exact position of mark a"
+      },
+      {
+        "command": "`.",
+        "description": "Jump to the position of the last change"
+      },
+      {
+        "command": ":marks",
+        "description": "List marks"
+      }
+    ],
+    "relatedCommands": [
+      "vim-file-motions"
+    ]
+  },
+  {
+    "id": "vim-buffers",
+    "name": ":ls / :bn / :bp / :b",
+    "description": "List and switch between open buffers (files).",
+    "category": "Buffers, Windows & Tabs",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":ls",
+        "description": "List buffers"
+      },
+      {
+        "command": ":bn / :bp",
+        "description": "Next / previous buffer"
+      },
+      {
+        "command": ":b 3",
+        "description": "Switch to buffer 3 (or :b part-of-name with Tab completion)"
+      },
+      {
+        "command": ":bd",
+        "description": "Close (delete) the current buffer"
+      }
+    ],
+    "relatedCommands": [
+      "vim-splits",
+      "vim-tabs"
+    ]
+  },
+  {
+    "id": "vim-splits",
+    "name": ":sp / :vsp / Ctrl-w",
+    "description": "Split the window and move between splits.",
+    "category": "Buffers, Windows & Tabs",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":sp file.txt",
+        "description": "Horizontal split (opens file.txt above)"
+      },
+      {
+        "command": ":vsp",
+        "description": "Vertical split of the current file"
+      },
+      {
+        "command": "Ctrl-w h/j/k/l",
+        "description": "Move to the split left/down/up/right (Ctrl-w w cycles)"
+      },
+      {
+        "command": "Ctrl-w =",
+        "description": "Make all splits equal size"
+      },
+      {
+        "command": "Ctrl-w q",
+        "description": "Close the current split (:only closes all others)"
+      }
+    ],
+    "relatedCommands": [
+      "vim-buffers",
+      "vim-tabs"
+    ]
+  },
+  {
+    "id": "vim-tabs",
+    "name": ":tabnew / gt / gT",
+    "description": "Open and navigate tab pages.",
+    "category": "Buffers, Windows & Tabs",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":tabnew file.txt",
+        "description": "Open a file in a new tab"
+      },
+      {
+        "command": "gt / gT",
+        "description": "Next / previous tab (2gt goes to tab 2)"
+      },
+      {
+        "command": ":tabclose",
+        "description": "Close the current tab"
+      }
+    ],
+    "relatedCommands": [
+      "vim-buffers",
+      "vim-splits"
+    ]
+  },
+  {
+    "id": "vim-set",
+    "name": ":set number / :set paste",
+    "description": "Change editor options for the current session.",
+    "category": "Options & Tools",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":set number",
+        "description": "Show line numbers (:set relativenumber for relative)"
+      },
+      {
+        "command": ":set nonumber",
+        "description": "Turn an option off (append ! to toggle: :set number!)"
+      },
+      {
+        "command": ":set paste",
+        "description": "Paste from terminal without auto-indent mangling; :set nopaste afterwards"
+      },
+      {
+        "command": ":set expandtab tabstop=4 shiftwidth=4",
+        "description": "Use 4 spaces for indentation"
+      },
+      {
+        "command": ":set number?",
+        "description": "Show an option's current value"
+      }
+    ],
+    "notes": [
+      "Put options in ~/.vimrc to make them permanent.",
+      "'paste' is unnecessary in Vim 8+ and Neovim with terminals supporting bracketed paste (Neovim marks it obsolete)."
+    ],
+    "relatedCommands": [
+      "vim-shell"
+    ]
+  },
+  {
+    "id": "vim-shell",
+    "name": ":!cmd",
+    "description": "Run a shell command, or filter text through one.",
+    "category": "Options & Tools",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":!ls",
+        "description": "Run a shell command and show the output"
+      },
+      {
+        "command": ":!python3 %",
+        "description": "Run the current file (% expands to the file name)"
+      },
+      {
+        "command": ":r !date",
+        "description": "Insert command output below the cursor"
+      },
+      {
+        "command": ":%!jq .",
+        "description": "Replace the whole buffer with its output through jq (format JSON)"
+      }
+    ],
+    "relatedCommands": [
+      "vim-sort",
+      "vim-set"
+    ]
+  },
+  {
+    "id": "vim-sort",
+    "name": ":sort",
+    "description": "Sort lines in the buffer or a range.",
+    "category": "Options & Tools",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":sort",
+        "description": "Sort all lines"
+      },
+      {
+        "command": ":sort u",
+        "description": "Sort and remove duplicates"
+      },
+      {
+        "command": ":sort n",
+        "description": "Numeric sort"
+      },
+      {
+        "command": ":'<,'>sort!",
+        "description": "Reverse-sort the visual selection"
+      }
+    ],
+    "relatedCommands": [
+      "vim-global",
+      "vim-shell"
+    ]
+  },
+  {
+    "id": "vim-folding",
+    "name": "zf / za / zR / zM",
+    "description": "Fold (collapse) and unfold regions of text.",
+    "category": "Options & Tools",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "zfap",
+        "description": "Create a fold over a paragraph (manual foldmethod)"
+      },
+      {
+        "command": "za",
+        "description": "Toggle the fold under the cursor"
+      },
+      {
+        "command": "zR / zM",
+        "description": "Open all folds / close all folds"
+      },
+      {
+        "command": ":set foldmethod=indent",
+        "description": "Fold automatically by indentation (or syntax, marker, expr)"
+      }
+    ],
+    "relatedCommands": [
+      "vim-set"
+    ]
+  }
+]

@@ -1,0 +1,2149 @@
+[
+  {
+    "id": "laravel-new",
+    "name": "laravel new",
+    "description": "Create a new Laravel application",
+    "category": "Project Setup",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--react / --vue / --livewire",
+        "description": "Use the React, Vue or Livewire starter kit (Laravel 12+)"
+      },
+      {
+        "flag": "--pest",
+        "description": "Use Pest for testing"
+      },
+      {
+        "flag": "--database=<driver>",
+        "description": "Database driver, e.g. sqlite, mysql, pgsql"
+      },
+      {
+        "flag": "--git",
+        "description": "Initialize a git repository"
+      },
+      {
+        "flag": "--force",
+        "description": "Overwrite the directory if it exists"
+      }
+    ],
+    "examples": [
+      {
+        "command": "laravel new my-app",
+        "description": "Create a new app (prompts for starter kit, testing framework and database)"
+      },
+      {
+        "command": "laravel new my-app --react --pest",
+        "description": "Create an app with the React starter kit and Pest"
+      },
+      {
+        "command": "composer create-project laravel/laravel my-app",
+        "description": "Create an app without the Laravel installer"
+      },
+      {
+        "command": "composer global require laravel/installer",
+        "description": "Install or update the Laravel installer"
+      }
+    ],
+    "notes": [
+      "The --jet and --breeze options were removed; Laravel 12 replaced Breeze/Jetstream with the React, Vue and Livewire starter kits",
+      "Keep the installer current with composer global update laravel/installer"
+    ],
+    "relatedCommands": [
+      "artisan-serve",
+      "artisan-key-generate"
+    ]
+  },
+  {
+    "id": "artisan-key-generate",
+    "name": "php artisan key:generate",
+    "description": "Set APP_KEY in .env to a new random encryption key",
+    "category": "Project Setup",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--show",
+        "description": "Print the key instead of writing it"
+      },
+      {
+        "flag": "--force",
+        "description": "Run in production without confirmation"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan key:generate",
+        "description": "Generate and write APP_KEY (after copying .env.example)"
+      },
+      {
+        "command": "php artisan key:generate --show",
+        "description": "Print a key for use in a secrets manager"
+      }
+    ],
+    "notes": [
+      "WARNING: changing APP_KEY on an existing app invalidates sessions and makes encrypted data unreadable; use APP_PREVIOUS_KEYS when rotating"
+    ],
+    "relatedCommands": [
+      "laravel-new"
+    ]
+  },
+  {
+    "id": "artisan-install-api",
+    "name": "php artisan install:api",
+    "description": "Add API routing and token authentication (Sanctum) to the app",
+    "category": "Project Setup",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--passport",
+        "description": "Install Passport (OAuth2) instead of Sanctum"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan install:api",
+        "description": "Create routes/api.php and install Sanctum"
+      },
+      {
+        "command": "php artisan install:api --passport",
+        "description": "Use Passport instead"
+      }
+    ],
+    "notes": [
+      "Laravel 11+: new apps ship without routes/api.php until you run this"
+    ],
+    "relatedCommands": [
+      "laravel-sanctum-install",
+      "laravel-passport-install"
+    ]
+  },
+  {
+    "id": "artisan-install-broadcasting",
+    "name": "php artisan install:broadcasting",
+    "description": "Enable event broadcasting (config, routes/channels.php, optional Reverb and Echo setup)",
+    "category": "Project Setup",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan install:broadcasting",
+        "description": "Enable broadcasting; prompts to install Reverb and Laravel Echo"
+      }
+    ],
+    "notes": [
+      "Laravel 11+: broadcasting is not enabled by default"
+    ],
+    "relatedCommands": [
+      "artisan-reverb-start"
+    ]
+  },
+  {
+    "id": "artisan-serve",
+    "name": "php artisan serve",
+    "description": "Start Laravel development server",
+    "category": "Development",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--host=HOST",
+        "description": "Specify the host address"
+      },
+      {
+        "flag": "--port=PORT",
+        "description": "Specify the port (default 8000)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan serve",
+        "description": "Start development server on localhost:8000"
+      },
+      {
+        "command": "php artisan serve --port=8080",
+        "description": "Start server on custom port"
+      },
+      {
+        "command": "php artisan serve --host=0.0.0.0",
+        "description": "Make server accessible from network"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-tinker"
+    ]
+  },
+  {
+    "id": "artisan-make-controller",
+    "name": "php artisan make:controller",
+    "description": "Create a new controller class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--resource",
+        "description": "Generate a resource controller"
+      },
+      {
+        "flag": "--api",
+        "description": "Generate an API resource controller"
+      },
+      {
+        "flag": "--model=Model",
+        "description": "Generate controller for specific model"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:controller UserController",
+        "description": "Create a basic controller"
+      },
+      {
+        "command": "php artisan make:controller UserController --resource",
+        "description": "Create controller with CRUD methods"
+      },
+      {
+        "command": "php artisan make:controller API/UserController --api",
+        "description": "Create API controller"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-model",
+      "artisan-make-request"
+    ]
+  },
+  {
+    "id": "artisan-make-model",
+    "name": "php artisan make:model",
+    "description": "Create a new Eloquent model",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "-m",
+        "description": "Create migration file"
+      },
+      {
+        "flag": "-c",
+        "description": "Create controller"
+      },
+      {
+        "flag": "-r",
+        "description": "Create resource controller"
+      },
+      {
+        "flag": "-f",
+        "description": "Create factory"
+      },
+      {
+        "flag": "-s",
+        "description": "Create seeder"
+      },
+      {
+        "flag": "-a",
+        "description": "Create all (migration, factory, seeder, controller)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:model Post",
+        "description": "Create a model"
+      },
+      {
+        "command": "php artisan make:model Post -m",
+        "description": "Create model with migration"
+      },
+      {
+        "command": "php artisan make:model Post -a",
+        "description": "Create model with all related files"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-migration",
+      "artisan-make-controller"
+    ]
+  },
+  {
+    "id": "artisan-make-migration",
+    "name": "php artisan make:migration",
+    "description": "Create a new database migration",
+    "category": "Database",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--create=table",
+        "description": "Create table migration"
+      },
+      {
+        "flag": "--table=table",
+        "description": "Modify existing table"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:migration create_posts_table",
+        "description": "Create a new migration"
+      },
+      {
+        "command": "php artisan make:migration create_posts_table --create=posts",
+        "description": "Create table migration with boilerplate"
+      },
+      {
+        "command": "php artisan make:migration add_status_to_posts --table=posts",
+        "description": "Create migration to modify existing table"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-migrate",
+      "artisan-migrate-rollback"
+    ]
+  },
+  {
+    "id": "artisan-migrate",
+    "name": "php artisan migrate",
+    "description": "Run database migrations",
+    "category": "Database",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--seed",
+        "description": "Run seeders after migration"
+      },
+      {
+        "flag": "--force",
+        "description": "Force migrations in production"
+      },
+      {
+        "flag": "--pretend",
+        "description": "Show SQL without executing"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan migrate",
+        "description": "Run all pending migrations"
+      },
+      {
+        "command": "php artisan migrate --seed",
+        "description": "Run migrations and seed database"
+      },
+      {
+        "command": "php artisan migrate:fresh --seed",
+        "description": "Drop all tables and re-migrate with seed"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-migrate-rollback",
+      "artisan-db-seed"
+    ]
+  },
+  {
+    "id": "artisan-migrate-rollback",
+    "name": "php artisan migrate:rollback",
+    "description": "Rollback the last database migration",
+    "category": "Database",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--step=N",
+        "description": "Rollback N migration batches"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan migrate:rollback",
+        "description": "Rollback last migration batch"
+      },
+      {
+        "command": "php artisan migrate:rollback --step=3",
+        "description": "Rollback last 3 migration batches"
+      },
+      {
+        "command": "php artisan migrate:reset",
+        "description": "Rollback all migrations"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-migrate",
+      "artisan-migrate-fresh"
+    ]
+  },
+  {
+    "id": "artisan-db-seed",
+    "name": "php artisan db:seed",
+    "description": "Seed the database with records",
+    "category": "Database",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--class=Seeder",
+        "description": "Run specific seeder class"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan db:seed",
+        "description": "Run database seeder"
+      },
+      {
+        "command": "php artisan db:seed --class=UserSeeder",
+        "description": "Run specific seeder"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-migrate",
+      "artisan-make-seeder"
+    ]
+  },
+  {
+    "id": "artisan-tinker",
+    "name": "php artisan tinker",
+    "description": "Interact with your application via REPL",
+    "category": "Development",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan tinker",
+        "description": "Start Tinker REPL"
+      }
+    ],
+    "notes": [
+      "Test code interactively",
+      "Access models, helpers, and application features",
+      "Exit with 'exit' or Ctrl+C"
+    ],
+    "relatedCommands": [
+      "artisan-serve"
+    ]
+  },
+  {
+    "id": "artisan-route-list",
+    "name": "php artisan route:list",
+    "description": "List all registered routes",
+    "category": "Development",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--name=pattern",
+        "description": "Filter by route name"
+      },
+      {
+        "flag": "--path=pattern",
+        "description": "Filter by path"
+      },
+      {
+        "flag": "--method=GET",
+        "description": "Filter by HTTP method"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan route:list",
+        "description": "List all routes"
+      },
+      {
+        "command": "php artisan route:list --name=user",
+        "description": "Filter routes containing 'user' in name"
+      },
+      {
+        "command": "php artisan route:list --method=POST",
+        "description": "Show only POST routes"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-route-cache"
+    ]
+  },
+  {
+    "id": "artisan-cache-clear",
+    "name": "php artisan cache:clear",
+    "description": "Clear the application cache",
+    "category": "Optimization",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan cache:clear",
+        "description": "Clear application cache"
+      },
+      {
+        "command": "php artisan config:clear",
+        "description": "Clear configuration cache"
+      },
+      {
+        "command": "php artisan route:clear",
+        "description": "Clear route cache"
+      },
+      {
+        "command": "php artisan view:clear",
+        "description": "Clear compiled view files"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-optimize"
+    ]
+  },
+  {
+    "id": "artisan-optimize",
+    "name": "php artisan optimize",
+    "description": "Cache configuration and routes for better performance",
+    "category": "Optimization",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan optimize",
+        "description": "Optimize the application"
+      },
+      {
+        "command": "php artisan config:cache",
+        "description": "Cache configuration files"
+      },
+      {
+        "command": "php artisan route:cache",
+        "description": "Cache routes"
+      }
+    ],
+    "notes": [
+      "Run before deploying to production",
+      "Use optimize:clear to clear all caches",
+      "In Laravel 11+ optimize caches config, events, routes and views; optimize:clear clears them all"
+    ],
+    "relatedCommands": [
+      "artisan-cache-clear",
+      "artisan-optimize-clear",
+      "artisan-config-cache"
+    ]
+  },
+  {
+    "id": "artisan-queue-work",
+    "name": "php artisan queue:work",
+    "description": "Start processing jobs on the queue",
+    "category": "Queue",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--queue=name",
+        "description": "Queues to process, in priority order"
+      },
+      {
+        "flag": "--tries=N",
+        "description": "Times to attempt a job before marking it failed"
+      },
+      {
+        "flag": "--timeout=SECONDS",
+        "description": "Max seconds a job may run"
+      },
+      {
+        "flag": "--max-jobs=N",
+        "description": "Exit after processing N jobs"
+      },
+      {
+        "flag": "--max-time=SECONDS",
+        "description": "Exit after running this many seconds"
+      },
+      {
+        "flag": "--stop-when-empty",
+        "description": "Exit once the queue is empty"
+      },
+      {
+        "flag": "--backoff=SECONDS",
+        "description": "Seconds to wait before retrying a failed job"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan queue:work",
+        "description": "Start queue worker"
+      },
+      {
+        "command": "php artisan queue:work --queue=high,default",
+        "description": "Process high priority queue first"
+      },
+      {
+        "command": "php artisan queue:listen",
+        "description": "Listen for jobs (dev mode)"
+      },
+      {
+        "command": "php artisan queue:work redis --tries=3 --timeout=90",
+        "description": "Process a specific connection with retries and timeout"
+      },
+      {
+        "command": "php artisan queue:work --stop-when-empty",
+        "description": "Drain the queue and exit (e.g. in a cron or CI)"
+      }
+    ],
+    "notes": [
+      "queue:work is a long-running process that keeps the app in memory; run php artisan queue:restart after each deploy",
+      "The old --daemon flag is obsolete (workers run as daemons by default)",
+      "queue:listen reloads code for every job; handy locally but slower",
+      "Run workers under Supervisor (or use Horizon for Redis queues) in production"
+    ],
+    "relatedCommands": [
+      "artisan-make-job",
+      "artisan-queue-restart",
+      "artisan-queue-failed",
+      "laravel-horizon"
+    ]
+  },
+  {
+    "id": "artisan-storage-link",
+    "name": "php artisan storage:link",
+    "description": "Create symbolic link from public/storage to storage/app/public",
+    "category": "Development",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan storage:link",
+        "description": "Create storage symlink"
+      }
+    ],
+    "notes": [
+      "Required for publicly accessible file storage",
+      "Run once per environment"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "artisan-make-middleware",
+    "name": "php artisan make:middleware",
+    "description": "Create a new middleware class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:middleware CheckAge",
+        "description": "Create a middleware"
+      }
+    ],
+    "notes": [
+      "Register middleware in app/Http/Kernel.php",
+      "Use in routes or controllers"
+    ],
+    "relatedCommands": [
+      "artisan-make-controller"
+    ]
+  },
+  {
+    "id": "artisan-make-request",
+    "name": "php artisan make:request",
+    "description": "Create a new form request class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:request StorePostRequest",
+        "description": "Create a form request"
+      }
+    ],
+    "notes": [
+      "Use for validation logic",
+      "Type-hint in controller methods"
+    ],
+    "relatedCommands": [
+      "artisan-make-controller"
+    ]
+  },
+  {
+    "id": "artisan-make-mail",
+    "name": "php artisan make:mail",
+    "description": "Create a new email class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--markdown",
+        "description": "Create a new Markdown template"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:mail OrderShipped",
+        "description": "Create a mailable class"
+      },
+      {
+        "command": "php artisan make:mail OrderShipped --markdown=emails.orders.shipped",
+        "description": "Create mailable with markdown template"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-notification"
+    ]
+  },
+  {
+    "id": "artisan-make-notification",
+    "name": "php artisan make:notification",
+    "description": "Create a new notification class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--markdown",
+        "description": "Create a new Markdown template"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:notification InvoicePaid",
+        "description": "Create a notification"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-mail"
+    ]
+  },
+  {
+    "id": "artisan-make-job",
+    "name": "php artisan make:job",
+    "description": "Create a new job class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--sync",
+        "description": "Indicates that job should be synchronous"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:job ProcessPodcast",
+        "description": "Create a queued job"
+      }
+    ],
+    "notes": [
+      "Jobs are dispatched to queue by default",
+      "Use dispatch() helper to queue jobs"
+    ],
+    "relatedCommands": [
+      "artisan-queue-work"
+    ]
+  },
+  {
+    "id": "artisan-make-event",
+    "name": "php artisan make:event",
+    "description": "Create a new event class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:event OrderShipped",
+        "description": "Create an event"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-listener"
+    ]
+  },
+  {
+    "id": "artisan-make-listener",
+    "name": "php artisan make:listener",
+    "description": "Create a new event listener class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--event=Event",
+        "description": "The event class being listened for"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:listener SendShipmentNotification",
+        "description": "Create a listener"
+      },
+      {
+        "command": "php artisan make:listener SendShipmentNotification --event=OrderShipped",
+        "description": "Create listener for specific event"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-event"
+    ]
+  },
+  {
+    "id": "artisan-make-observer",
+    "name": "php artisan make:observer",
+    "description": "Create a new observer class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--model=Model",
+        "description": "The model that the observer applies to"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:observer UserObserver",
+        "description": "Create an observer"
+      },
+      {
+        "command": "php artisan make:observer UserObserver --model=User",
+        "description": "Create observer for specific model"
+      }
+    ],
+    "notes": [
+      "Register observers in service provider",
+      "Listen to model events (created, updated, deleted, etc.)"
+    ],
+    "relatedCommands": [
+      "artisan-make-model"
+    ]
+  },
+  {
+    "id": "artisan-make-policy",
+    "name": "php artisan make:policy",
+    "description": "Create a new policy class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--model=Model",
+        "description": "The model that the policy applies to"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:policy PostPolicy",
+        "description": "Create a policy"
+      },
+      {
+        "command": "php artisan make:policy PostPolicy --model=Post",
+        "description": "Create policy for specific model"
+      }
+    ],
+    "notes": [
+      "Policies organize authorization logic",
+      "Use gates and policies for authorization"
+    ],
+    "relatedCommands": [
+      "artisan-make-model"
+    ]
+  },
+  {
+    "id": "artisan-make-seeder",
+    "name": "php artisan make:seeder",
+    "description": "Create a new seeder class",
+    "category": "Database",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:seeder UserSeeder",
+        "description": "Create a seeder"
+      }
+    ],
+    "notes": [
+      "Call from DatabaseSeeder",
+      "Use with factories for fake data"
+    ],
+    "relatedCommands": [
+      "artisan-db-seed",
+      "artisan-make-factory"
+    ]
+  },
+  {
+    "id": "artisan-make-factory",
+    "name": "php artisan make:factory",
+    "description": "Create a new model factory",
+    "category": "Database",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--model=Model",
+        "description": "The model that the factory applies to"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:factory PostFactory",
+        "description": "Create a factory"
+      },
+      {
+        "command": "php artisan make:factory PostFactory --model=Post",
+        "description": "Create factory for specific model"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-seeder",
+      "artisan-make-model"
+    ]
+  },
+  {
+    "id": "artisan-make-resource",
+    "name": "php artisan make:resource",
+    "description": "Create a new API resource",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--collection",
+        "description": "Create a resource collection"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:resource UserResource",
+        "description": "Create an API resource"
+      },
+      {
+        "command": "php artisan make:resource UserCollection --collection",
+        "description": "Create a resource collection"
+      }
+    ],
+    "notes": [
+      "Transform models into JSON responses",
+      "Use in API endpoints"
+    ],
+    "relatedCommands": [
+      "artisan-make-controller"
+    ]
+  },
+  {
+    "id": "artisan-make-test",
+    "name": "php artisan make:test",
+    "description": "Create a new test class",
+    "category": "Testing",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--unit",
+        "description": "Create a unit test"
+      },
+      {
+        "flag": "--pest",
+        "description": "Create a Pest test"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:test UserTest",
+        "description": "Create a feature test"
+      },
+      {
+        "command": "php artisan make:test UserTest --unit",
+        "description": "Create a unit test"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-test"
+    ]
+  },
+  {
+    "id": "artisan-make-command",
+    "name": "php artisan make:command",
+    "description": "Create a new Artisan command",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:command SendEmails",
+        "description": "Create a custom command"
+      }
+    ],
+    "notes": [
+      "Define command signature and description",
+      "Run with php artisan command-name"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "artisan-make-provider",
+    "name": "php artisan make:provider",
+    "description": "Create a new service provider class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:provider PaymentServiceProvider",
+        "description": "Create a service provider"
+      }
+    ],
+    "notes": [
+      "Register in config/app.php providers array",
+      "Use for binding services into container"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "artisan-make-rule",
+    "name": "php artisan make:rule",
+    "description": "Create a new validation rule",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:rule Uppercase",
+        "description": "Create a custom validation rule"
+      }
+    ],
+    "notes": [
+      "Use in validation rules array",
+      "Implement validate() method"
+    ],
+    "relatedCommands": [
+      "artisan-make-request"
+    ]
+  },
+  {
+    "id": "artisan-make-cast",
+    "name": "php artisan make:cast",
+    "description": "Create a new custom Eloquent cast class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan make:cast Json",
+        "description": "Create a custom cast"
+      }
+    ],
+    "notes": [
+      "Use in model $casts property",
+      "Transform attribute values"
+    ],
+    "relatedCommands": [
+      "artisan-make-model"
+    ]
+  },
+  {
+    "id": "artisan-make-exception",
+    "name": "php artisan make:exception",
+    "description": "Create a new custom exception class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--render",
+        "description": "Create a render method"
+      },
+      {
+        "flag": "--report",
+        "description": "Create a report method"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:exception UserNotFoundException",
+        "description": "Create a custom exception"
+      }
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "artisan-make-enum",
+    "name": "php artisan make:enum",
+    "description": "Create a PHP enum class",
+    "category": "Code Generation",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--string",
+        "description": "Create a string-backed enum"
+      },
+      {
+        "flag": "--int",
+        "description": "Create an int-backed enum"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:enum OrderStatus --string",
+        "description": "Create a string-backed enum in app/Enums"
+      },
+      {
+        "command": "php artisan make:enum Priority --int",
+        "description": "Create an int-backed enum"
+      }
+    ],
+    "notes": [
+      "Laravel 11+; make:class, make:interface and make:trait were added at the same time"
+    ],
+    "relatedCommands": [
+      "artisan-make-cast",
+      "artisan-make-model"
+    ]
+  },
+  {
+    "id": "artisan-test",
+    "name": "php artisan test",
+    "description": "Run the application tests",
+    "category": "Testing",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--parallel",
+        "description": "Run tests in parallel"
+      },
+      {
+        "flag": "--filter",
+        "description": "Filter which tests to run"
+      },
+      {
+        "flag": "--coverage",
+        "description": "Generate code coverage report"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan test",
+        "description": "Run all tests"
+      },
+      {
+        "command": "php artisan test --parallel",
+        "description": "Run tests in parallel"
+      },
+      {
+        "command": "php artisan test --filter UserTest",
+        "description": "Run specific test"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-make-test"
+    ]
+  },
+  {
+    "id": "artisan-about",
+    "name": "php artisan about",
+    "description": "Display basic information about your application",
+    "category": "Utility",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan about",
+        "description": "Show application information"
+      },
+      {
+        "command": "php artisan about --only=environment",
+        "description": "Show only the environment section"
+      }
+    ],
+    "notes": [
+      "Shows Laravel version, PHP version, environment, etc.",
+      "Useful for debugging and support",
+      "Use --only=environment (or cache, drivers) to show one section",
+      "Add --json for machine-readable output"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "artisan-down",
+    "name": "php artisan down",
+    "description": "Put the application into maintenance mode",
+    "category": "Utility",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--secret=TOKEN",
+        "description": "Bypass token: visit /TOKEN to get a bypass cookie"
+      },
+      {
+        "flag": "--with-secret",
+        "description": "Generate a random bypass secret"
+      },
+      {
+        "flag": "--render=VIEW",
+        "description": "Pre-render a view, e.g. errors::503"
+      },
+      {
+        "flag": "--redirect=PATH",
+        "description": "Redirect all requests to a path"
+      },
+      {
+        "flag": "--retry=SECONDS",
+        "description": "Value for the Retry-After header"
+      },
+      {
+        "flag": "--refresh=SECONDS",
+        "description": "Ask browsers to refresh after N seconds"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan down",
+        "description": "Enable maintenance mode"
+      },
+      {
+        "command": "php artisan down --secret=my-secret",
+        "description": "Enable with bypass token"
+      },
+      {
+        "command": "php artisan down --render=\"errors::503\" --retry=60",
+        "description": "Show the 503 view and send Retry-After"
+      }
+    ],
+    "notes": [
+      "Shows 503 error to visitors",
+      "Use --secret to access site during maintenance",
+      "The --message option was removed in Laravel 8; customize resources/views/errors/503.blade.php instead"
+    ],
+    "relatedCommands": [
+      "artisan-up"
+    ]
+  },
+  {
+    "id": "artisan-up",
+    "name": "php artisan up",
+    "description": "Bring the application out of maintenance mode",
+    "category": "Utility",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan up",
+        "description": "Disable maintenance mode"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-down"
+    ]
+  },
+  {
+    "id": "artisan-inspire",
+    "name": "php artisan inspire",
+    "description": "Display an inspiring quote",
+    "category": "Utility",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan inspire",
+        "description": "Get inspired!"
+      }
+    ],
+    "notes": [
+      "Just for fun!",
+      "Shows random inspirational quote"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "artisan-migrate-status",
+    "name": "php artisan migrate:status",
+    "description": "Show the status of each migration",
+    "category": "Database",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan migrate:status",
+        "description": "Check which migrations have run"
+      }
+    ],
+    "notes": [
+      "Shows Ran/Pending status for each migration"
+    ],
+    "relatedCommands": [
+      "artisan-migrate"
+    ]
+  },
+  {
+    "id": "artisan-migrate-fresh",
+    "name": "php artisan migrate:fresh",
+    "description": "Drop all tables and re-run all migrations",
+    "category": "Database",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--seed",
+        "description": "Seed the database after migrating"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan migrate:fresh",
+        "description": "Fresh migration (drops all tables)"
+      },
+      {
+        "command": "php artisan migrate:fresh --seed",
+        "description": "Fresh migration with seeding"
+      }
+    ],
+    "notes": [
+      "WARNING: Drops ALL tables, including non-migration tables",
+      "Use in development only"
+    ],
+    "relatedCommands": [
+      "artisan-migrate",
+      "artisan-db-seed"
+    ]
+  },
+  {
+    "id": "artisan-db-show",
+    "name": "php artisan db:show",
+    "description": "Show an overview of the database: connection, size, tables",
+    "category": "Database",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--counts",
+        "description": "Include row counts per table (slow on big databases)"
+      },
+      {
+        "flag": "--views",
+        "description": "Include views"
+      },
+      {
+        "flag": "--database=NAME",
+        "description": "Connection to inspect"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan db:show",
+        "description": "Overview of the default connection"
+      },
+      {
+        "command": "php artisan db:show --database=pgsql --counts",
+        "description": "Inspect another connection with row counts"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-db-table",
+      "artisan-migrate-status"
+    ]
+  },
+  {
+    "id": "artisan-db-table",
+    "name": "php artisan db:table",
+    "description": "Show a table's columns, indexes and foreign keys",
+    "category": "Database",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan db:table users",
+        "description": "Inspect the users table"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-db-show",
+      "artisan-model-show"
+    ]
+  },
+  {
+    "id": "artisan-model-show",
+    "name": "php artisan model:show",
+    "description": "Show information about an Eloquent model",
+    "category": "Development",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan model:show User",
+        "description": "Display model information"
+      },
+      {
+        "command": "php artisan model:show \"App\\Models\\Order\"",
+        "description": "Use the fully qualified class name"
+      }
+    ],
+    "notes": [
+      "Shows attributes, relations, observers, etc.",
+      "Helpful for understanding model structure"
+    ],
+    "relatedCommands": [
+      "artisan-make-model"
+    ]
+  },
+  {
+    "id": "artisan-config-show",
+    "name": "php artisan config:show",
+    "description": "Display configuration values",
+    "category": "Development",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan config:show database",
+        "description": "Show database configuration"
+      },
+      {
+        "command": "php artisan config:show database.connections.mysql",
+        "description": "Show specific config value"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-cache-clear"
+    ]
+  },
+  {
+    "id": "artisan-pail",
+    "name": "php artisan pail",
+    "description": "Tail application logs in the terminal",
+    "category": "Development",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--filter=TEXT",
+        "description": "Only show logs containing text (message, file, exception)"
+      },
+      {
+        "flag": "--level=LEVEL",
+        "description": "Only show a given log level"
+      },
+      {
+        "flag": "--user=ID",
+        "description": "Only logs written while this user was authenticated"
+      },
+      {
+        "flag": "-v / -vv",
+        "description": "Show more detail, including stack traces"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan pail",
+        "description": "Stream logs"
+      },
+      {
+        "command": "php artisan pail --level=error",
+        "description": "Only errors"
+      },
+      {
+        "command": "php artisan pail --filter=\"QueryException\"",
+        "description": "Filter by text"
+      }
+    ],
+    "notes": [
+      "Included in new Laravel 11+ apps (laravel/pail); requires the pcntl PHP extension",
+      "Works with any log driver, including Sentry or Flare"
+    ],
+    "relatedCommands": [
+      "artisan-serve"
+    ]
+  },
+  {
+    "id": "artisan-reverb-start",
+    "name": "php artisan reverb:start",
+    "description": "Start the Laravel Reverb WebSocket server",
+    "category": "Development",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--host=HOST",
+        "description": "Host to bind (default 0.0.0.0)"
+      },
+      {
+        "flag": "--port=PORT",
+        "description": "Port (default 8080)"
+      },
+      {
+        "flag": "--debug",
+        "description": "Show connection and message debug output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan reverb:start",
+        "description": "Start Reverb"
+      },
+      {
+        "command": "php artisan reverb:start --debug",
+        "description": "Start with debug output"
+      }
+    ],
+    "notes": [
+      "Run under Supervisor in production and restart with reverb:restart on deploy"
+    ],
+    "relatedCommands": [
+      "artisan-install-broadcasting"
+    ]
+  },
+  {
+    "id": "artisan-route-cache",
+    "name": "php artisan route:cache",
+    "description": "Create a route cache file for faster route registration",
+    "category": "Optimization",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan route:cache",
+        "description": "Cache routes"
+      }
+    ],
+    "notes": [
+      "Speeds up route registration",
+      "Run in production for better performance",
+      "Clear cache after route changes"
+    ],
+    "relatedCommands": [
+      "artisan-optimize"
+    ]
+  },
+  {
+    "id": "artisan-view-cache",
+    "name": "php artisan view:cache",
+    "description": "Compile all Blade templates",
+    "category": "Optimization",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan view:cache",
+        "description": "Precompile all views"
+      }
+    ],
+    "notes": [
+      "Improves performance in production"
+    ],
+    "relatedCommands": [
+      "artisan-view-clear"
+    ]
+  },
+  {
+    "id": "artisan-view-clear",
+    "name": "php artisan view:clear",
+    "description": "Clear all compiled view files",
+    "category": "Optimization",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan view:clear",
+        "description": "Clear compiled views"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-view-cache"
+    ]
+  },
+  {
+    "id": "artisan-optimize-clear",
+    "name": "php artisan optimize:clear",
+    "description": "Clear all cached bootstrap files (config, routes, views, events, cache)",
+    "category": "Optimization",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan optimize:clear",
+        "description": "Clear every Laravel cache in one command"
+      }
+    ],
+    "notes": [
+      "Run when config or route changes don't seem to take effect"
+    ],
+    "relatedCommands": [
+      "artisan-optimize",
+      "artisan-cache-clear"
+    ]
+  },
+  {
+    "id": "artisan-config-cache",
+    "name": "php artisan config:cache",
+    "description": "Combine all config files into one cached file",
+    "category": "Optimization",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan config:cache",
+        "description": "Cache config for production"
+      },
+      {
+        "command": "php artisan config:clear",
+        "description": "Remove the cached config"
+      }
+    ],
+    "notes": [
+      "After caching, env() returns null outside config files; only call env() inside config/*.php"
+    ],
+    "relatedCommands": [
+      "artisan-optimize",
+      "artisan-config-show"
+    ]
+  },
+  {
+    "id": "artisan-schedule-list",
+    "name": "php artisan schedule:list",
+    "description": "List all scheduled tasks",
+    "category": "Scheduling",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan schedule:list",
+        "description": "View scheduled tasks"
+      }
+    ],
+    "notes": [
+      "Shows task, schedule, and next run time",
+      "Define schedules in app/Console/Kernel.php"
+    ],
+    "relatedCommands": [
+      "artisan-schedule-run"
+    ]
+  },
+  {
+    "id": "artisan-schedule-run",
+    "name": "php artisan schedule:run",
+    "description": "Run the scheduled commands",
+    "category": "Scheduling",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan schedule:run",
+        "description": "Execute scheduled tasks"
+      }
+    ],
+    "notes": [
+      "Typically run via cron every minute",
+      "Laravel determines which tasks should run"
+    ],
+    "relatedCommands": [
+      "artisan-schedule-list"
+    ]
+  },
+  {
+    "id": "artisan-schedule-work",
+    "name": "php artisan schedule:work",
+    "description": "Run the scheduler in the foreground every minute (local development)",
+    "category": "Scheduling",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan schedule:work",
+        "description": "Run scheduled tasks locally without cron"
+      }
+    ],
+    "notes": [
+      "In production, use a cron entry that runs php artisan schedule:run every minute"
+    ],
+    "relatedCommands": [
+      "artisan-schedule-run",
+      "artisan-schedule-list"
+    ]
+  },
+  {
+    "id": "artisan-queue-failed",
+    "name": "php artisan queue:failed",
+    "description": "List all failed queue jobs",
+    "category": "Queue",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan queue:failed",
+        "description": "Show failed jobs"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-queue-retry",
+      "artisan-queue-work"
+    ]
+  },
+  {
+    "id": "artisan-queue-retry",
+    "name": "php artisan queue:retry",
+    "description": "Retry a failed queue job",
+    "category": "Queue",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan queue:retry all",
+        "description": "Retry all failed jobs"
+      },
+      {
+        "command": "php artisan queue:retry 5",
+        "description": "Retry job with ID 5"
+      }
+    ],
+    "relatedCommands": [
+      "artisan-queue-failed",
+      "artisan-queue-work"
+    ]
+  },
+  {
+    "id": "artisan-queue-flush",
+    "name": "php artisan queue:flush",
+    "description": "Flush all failed queue jobs",
+    "category": "Queue",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan queue:flush",
+        "description": "Delete all failed jobs"
+      }
+    ],
+    "notes": [
+      "Permanently removes failed jobs",
+      "Cannot be undone"
+    ],
+    "relatedCommands": [
+      "artisan-queue-failed"
+    ]
+  },
+  {
+    "id": "artisan-queue-restart",
+    "name": "php artisan queue:restart",
+    "description": "Gracefully restart queue workers after their current job",
+    "category": "Queue",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan queue:restart",
+        "description": "Signal all workers to restart (run on every deploy)"
+      }
+    ],
+    "notes": [
+      "Uses the cache to signal workers, so a shared cache driver is required across servers",
+      "Workers must be under a process monitor (e.g. Supervisor) to come back up"
+    ],
+    "relatedCommands": [
+      "artisan-queue-work"
+    ]
+  },
+  {
+    "id": "artisan-vendor-publish",
+    "name": "php artisan vendor:publish",
+    "description": "Publish any publishable assets from vendor packages",
+    "category": "Utility",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--tag",
+        "description": "Publish assets with specific tag"
+      },
+      {
+        "flag": "--provider",
+        "description": "Publish assets from specific provider"
+      },
+      {
+        "flag": "--force",
+        "description": "Overwrite existing files"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan vendor:publish",
+        "description": "Publish all available assets (interactive)"
+      },
+      {
+        "command": "php artisan vendor:publish --tag=config",
+        "description": "Publish config files"
+      },
+      {
+        "command": "php artisan vendor:publish --provider=\"Vendor\\Package\\ServiceProvider\"",
+        "description": "Publish from specific provider"
+      }
+    ],
+    "notes": [
+      "Copies package assets to your application",
+      "Allows customization of package resources"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "laravel-horizon",
+    "name": "php artisan horizon",
+    "description": "Start Laravel Horizon queue worker dashboard",
+    "category": "Horizon",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan horizon",
+        "description": "Start Horizon worker"
+      }
+    ],
+    "notes": [
+      "Beautiful dashboard for monitoring Redis queues",
+      "Requires Laravel Horizon package",
+      "Access dashboard at /horizon route",
+      "Run under a process monitor like Supervisor in production",
+      "Run horizon:terminate on deploy so workers pick up new code"
+    ],
+    "relatedCommands": [
+      "artisan-queue-work",
+      "laravel-horizon-terminate"
+    ]
+  },
+  {
+    "id": "laravel-horizon-install",
+    "name": "php artisan horizon:install",
+    "description": "Install Laravel Horizon resources",
+    "category": "Horizon",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan horizon:install",
+        "description": "Install Horizon configuration and assets"
+      }
+    ],
+    "notes": [
+      "Publishes configuration file to config/horizon.php"
+    ],
+    "relatedCommands": [
+      "laravel-horizon"
+    ]
+  },
+  {
+    "id": "laravel-horizon-terminate",
+    "name": "php artisan horizon:terminate",
+    "description": "Terminate the Horizon supervisor",
+    "category": "Horizon",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan horizon:terminate",
+        "description": "Gracefully terminate Horizon"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-horizon"
+    ]
+  },
+  {
+    "id": "laravel-horizon-pause",
+    "name": "php artisan horizon:pause",
+    "description": "Pause the Horizon supervisor",
+    "category": "Horizon",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan horizon:pause",
+        "description": "Pause job processing"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-horizon-continue"
+    ]
+  },
+  {
+    "id": "laravel-horizon-continue",
+    "name": "php artisan horizon:continue",
+    "description": "Resume the Horizon supervisor",
+    "category": "Horizon",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan horizon:continue",
+        "description": "Resume job processing"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-horizon-pause"
+    ]
+  },
+  {
+    "id": "laravel-telescope-install",
+    "name": "php artisan telescope:install",
+    "description": "Install Laravel Telescope debugging assistant",
+    "category": "Telescope",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan telescope:install",
+        "description": "Install Telescope configuration and migrations"
+      }
+    ],
+    "notes": [
+      "Elegant debug assistant for Laravel",
+      "Access dashboard at /telescope route",
+      "Records requests, exceptions, logs, queries, and more"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "laravel-telescope-prune",
+    "name": "php artisan telescope:prune",
+    "description": "Prune stale Telescope entries",
+    "category": "Telescope",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--hours",
+        "description": "Number of hours to retain"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan telescope:prune",
+        "description": "Prune old entries"
+      },
+      {
+        "command": "php artisan telescope:prune --hours=48",
+        "description": "Keep entries from last 48 hours"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-telescope-install"
+    ]
+  },
+  {
+    "id": "laravel-telescope-clear",
+    "name": "php artisan telescope:clear",
+    "description": "Clear all Telescope data",
+    "category": "Telescope",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan telescope:clear",
+        "description": "Delete all Telescope entries"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-telescope-install"
+    ]
+  },
+  {
+    "id": "laravel-pulse-install",
+    "name": "php artisan pulse:install",
+    "description": "Install Laravel Pulse application monitoring",
+    "category": "Pulse",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan pulse:install",
+        "description": "Install Pulse configuration and migrations"
+      }
+    ],
+    "notes": [
+      "Real-time application performance monitoring",
+      "Access dashboard at /pulse route",
+      "Monitors requests, queues, cache, and more"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "laravel-pulse-check",
+    "name": "php artisan pulse:check",
+    "description": "Run Pulse's recorders that capture periodic snapshots, such as server CPU, memory and disk",
+    "category": "Pulse",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan pulse:check",
+        "description": "Verify Pulse setup"
+      }
+    ],
+    "notes": [
+      "Required for the Servers card; run it as a long-lived daemon (Supervisor) on every server you want to monitor",
+      "Restart it on deploy with php artisan pulse:restart"
+    ],
+    "relatedCommands": [
+      "laravel-pulse-install"
+    ]
+  },
+  {
+    "id": "laravel-pulse-work",
+    "name": "php artisan pulse:work",
+    "description": "Start the Pulse worker",
+    "category": "Pulse",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan pulse:work",
+        "description": "Process Pulse data"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-pulse-install"
+    ]
+  },
+  {
+    "id": "laravel-sail-install",
+    "name": "php artisan sail:install",
+    "description": "Install Laravel Sail Docker environment",
+    "category": "Sail",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan sail:install",
+        "description": "Install Sail Docker configuration"
+      }
+    ],
+    "notes": [
+      "Light-weight command-line interface for Docker",
+      "Provides preconfigured Docker environment",
+      "Use ./vendor/bin/sail to run commands"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "laravel-sail-publish",
+    "name": "php artisan sail:publish",
+    "description": "Publish Sail Docker files",
+    "category": "Sail",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan sail:publish",
+        "description": "Publish Docker configuration for customization"
+      }
+    ],
+    "notes": [
+      "Publishes docker-compose.yml and Dockerfiles"
+    ],
+    "relatedCommands": [
+      "laravel-sail-install"
+    ]
+  },
+  {
+    "id": "laravel-sanctum-install",
+    "name": "php artisan sanctum:install",
+    "description": "Install Laravel Sanctum API authentication",
+    "category": "Sanctum",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan install:api",
+        "description": "Laravel 11+: install Sanctum and create routes/api.php"
+      },
+      {
+        "command": "php artisan sanctum:install",
+        "description": "Install Sanctum migrations and configuration"
+      }
+    ],
+    "notes": [
+      "Lightweight authentication for SPAs and mobile apps",
+      "Token-based authentication",
+      "In Laravel 11+ use php artisan install:api, which installs Sanctum, publishes its migration and creates routes/api.php"
+    ],
+    "relatedCommands": [
+      "artisan-install-api"
+    ]
+  },
+  {
+    "id": "laravel-scout-import",
+    "name": "php artisan scout:import",
+    "description": "Import models into search index",
+    "category": "Scout",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan scout:import \"App\\Models\\Post\"",
+        "description": "Import Post model into search index"
+      }
+    ],
+    "notes": [
+      "Requires Laravel Scout package",
+      "Works with Algolia, MeiliSearch, or other drivers"
+    ],
+    "relatedCommands": [
+      "laravel-scout-flush"
+    ]
+  },
+  {
+    "id": "laravel-scout-flush",
+    "name": "php artisan scout:flush",
+    "description": "Flush all model records from search index",
+    "category": "Scout",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan scout:flush \"App\\Models\\Post\"",
+        "description": "Remove all Post records from index"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-scout-import"
+    ]
+  },
+  {
+    "id": "laravel-passport-install",
+    "name": "php artisan passport:install",
+    "description": "Install Laravel Passport OAuth2 server",
+    "category": "Passport",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--force",
+        "description": "Overwrite existing keys"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan passport:install",
+        "description": "Create encryption keys and OAuth2 clients"
+      },
+      {
+        "command": "php artisan install:api --passport",
+        "description": "Laravel 11+: install Passport and create routes/api.php"
+      }
+    ],
+    "notes": [
+      "Full OAuth2 server implementation",
+      "Creates personal access and password grant clients",
+      "For first-party SPAs and mobile apps, Sanctum is usually simpler than Passport"
+    ],
+    "relatedCommands": [
+      "laravel-passport-keys"
+    ]
+  },
+  {
+    "id": "laravel-passport-keys",
+    "name": "php artisan passport:keys",
+    "description": "Create encryption keys for Passport",
+    "category": "Passport",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan passport:keys",
+        "description": "Generate encryption keys"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-passport-install"
+    ]
+  },
+  {
+    "id": "laravel-passport-client",
+    "name": "php artisan passport:client",
+    "description": "Create a new Passport client",
+    "category": "Passport",
+    "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--personal",
+        "description": "Create personal access client"
+      },
+      {
+        "flag": "--password",
+        "description": "Create password grant client"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan passport:client",
+        "description": "Create new OAuth2 client (interactive)"
+      },
+      {
+        "command": "php artisan passport:client --personal",
+        "description": "Create personal access client"
+      }
+    ],
+    "relatedCommands": [
+      "laravel-passport-install"
+    ]
+  },
+  {
+    "id": "laravel-breeze-install",
+    "name": "php artisan breeze:install",
+    "description": "Install Laravel Breeze authentication scaffolding (superseded by Laravel 12 starter kits)",
+    "category": "Breeze",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "php artisan breeze:install",
+        "description": "Install Breeze with Blade templates"
+      },
+      {
+        "command": "php artisan breeze:install vue",
+        "description": "Install Breeze with Vue.js"
+      },
+      {
+        "command": "php artisan breeze:install react",
+        "description": "Install Breeze with React"
+      }
+    ],
+    "notes": [
+      "Minimal authentication scaffolding",
+      "Simple implementation of login, registration, and password reset",
+      "DEPRECATED for new projects: since Laravel 12, Breeze and Jetstream no longer receive updates. Use 'laravel new my-app' and pick the React, Vue or Livewire starter kit",
+      "Still works for existing Breeze installs on Laravel 11"
+    ],
+    "relatedCommands": [
+      "laravel-new"
+    ]
+  },
+  {
+    "id": "laravel-socialite",
+    "name": "Laravel Socialite",
+    "description": "OAuth authentication with social providers",
+    "category": "Socialite",
+    "technologyId": "laravel",
+    "examples": [
+      {
+        "command": "composer require laravel/socialite",
+        "description": "Install Socialite package"
+      }
+    ],
+    "notes": [
+      "Supports Facebook, Twitter, Google, GitHub, GitLab, and Bitbucket",
+      "Simplifies OAuth authentication flow"
+    ],
+    "relatedCommands": []
+  }
+]

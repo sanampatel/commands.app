@@ -1,0 +1,1346 @@
+[
+  {
+    "id": "git-init",
+    "name": "git init",
+    "description": "Initialize a new Git repository",
+    "category": "Repository Setup",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git init",
+        "description": "Initialize current directory as Git repo"
+      },
+      {
+        "command": "git init myproject",
+        "description": "Create and initialize new directory"
+      }
+    ],
+    "relatedCommands": [
+      "git-clone"
+    ]
+  },
+  {
+    "id": "git-clone",
+    "name": "git clone",
+    "description": "Clone a repository into a new directory",
+    "category": "Repository Setup",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git clone https://github.com/user/repo.git",
+        "description": "Clone a repository"
+      },
+      {
+        "command": "git clone https://github.com/user/repo.git mydir",
+        "description": "Clone into specific directory"
+      }
+    ],
+    "relatedCommands": [
+      "git-init",
+      "git-remote"
+    ]
+  },
+  {
+    "id": "git-status",
+    "name": "git status",
+    "description": "Show the working tree status",
+    "category": "Basic Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-s",
+        "description": "Short format output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git status",
+        "description": "Check current status"
+      },
+      {
+        "command": "git status -s",
+        "description": "Short status output"
+      }
+    ],
+    "notes": [
+      "Shows staged, unstaged, and untracked files"
+    ],
+    "relatedCommands": [
+      "git-add",
+      "git-commit"
+    ]
+  },
+  {
+    "id": "git-add",
+    "name": "git add",
+    "description": "Add file contents to the staging area",
+    "category": "Basic Workflow",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git add file.txt",
+        "description": "Stage specific file"
+      },
+      {
+        "command": "git add .",
+        "description": "Stage all changes in current directory"
+      },
+      {
+        "command": "git add -A",
+        "description": "Stage all changes in repository"
+      },
+      {
+        "command": "git add -p",
+        "description": "Interactively stage changes"
+      }
+    ],
+    "relatedCommands": [
+      "git-commit",
+      "git-status"
+    ]
+  },
+  {
+    "id": "git-commit",
+    "name": "git commit",
+    "description": "Record changes to the repository",
+    "category": "Basic Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-m 'message'",
+        "description": "Commit with inline message"
+      },
+      {
+        "flag": "-a",
+        "description": "Automatically stage modified files"
+      },
+      {
+        "flag": "--amend",
+        "description": "Replace the last commit (add staged changes and/or edit its message)"
+      },
+      {
+        "flag": "--no-edit",
+        "description": "With --amend, keep the existing commit message"
+      },
+      {
+        "flag": "--fixup=<commit>",
+        "description": "Create a fixup! commit to be squashed into <commit> by rebase --autosquash"
+      },
+      {
+        "flag": "--no-verify",
+        "description": "Skip pre-commit and commit-msg hooks"
+      },
+      {
+        "flag": "-S",
+        "description": "GPG/SSH-sign the commit"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git commit -m 'Add new feature'",
+        "description": "Commit staged changes"
+      },
+      {
+        "command": "git commit -am 'Fix bug'",
+        "description": "Stage and commit modified files"
+      },
+      {
+        "command": "git commit --amend",
+        "description": "Amend last commit"
+      },
+      {
+        "command": "git commit --amend --no-edit",
+        "description": "Add staged changes to the last commit without changing its message"
+      },
+      {
+        "command": "git commit --amend -m 'Better message'",
+        "description": "Rewrite the last commit message"
+      },
+      {
+        "command": "git commit --fixup=a1b2c3d",
+        "description": "Record a fix for an earlier commit"
+      },
+      {
+        "command": "git rebase -i --autosquash main",
+        "description": "Squash all fixup! commits into their targets"
+      }
+    ],
+    "notes": [
+      "--amend and --fixup + autosquash rewrite history: only do this on commits you haven't pushed, or push afterwards with --force-with-lease",
+      "Set rebase.autoSquash=true to make every interactive rebase autosquash by default"
+    ],
+    "relatedCommands": [
+      "git-add",
+      "git-push"
+    ]
+  },
+  {
+    "id": "git-rm",
+    "name": "git rm",
+    "description": "Remove files from the working tree and the index",
+    "category": "Basic Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--cached",
+        "description": "Untrack the file but keep it on disk"
+      },
+      {
+        "flag": "-r",
+        "description": "Remove directories recursively"
+      },
+      {
+        "flag": "-n",
+        "description": "Dry run"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git rm old-file.txt",
+        "description": "Delete a file and stage the deletion"
+      },
+      {
+        "command": "git rm --cached .env",
+        "description": "Stop tracking a file but keep it locally (then add it to .gitignore)"
+      },
+      {
+        "command": "git rm -r --cached node_modules",
+        "description": "Untrack a directory committed by mistake"
+      }
+    ],
+    "notes": [
+      "--cached does not remove the file from earlier commits; rotate any leaked secrets"
+    ],
+    "relatedCommands": [
+      "git-mv",
+      "git-add",
+      "git-status"
+    ]
+  },
+  {
+    "id": "git-mv",
+    "name": "git mv",
+    "description": "Move or rename a tracked file and stage the change",
+    "category": "Basic Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Overwrite the destination if it exists"
+      },
+      {
+        "flag": "-n",
+        "description": "Dry run"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git mv old-name.ts new-name.ts",
+        "description": "Rename a file"
+      },
+      {
+        "command": "git mv Readme.md README.md",
+        "description": "Change filename case on case-insensitive filesystems (macOS/Windows)"
+      },
+      {
+        "command": "git mv src/utils.ts src/lib/",
+        "description": "Move a file into another directory"
+      }
+    ],
+    "notes": [
+      "Git detects renames by content, so a plain mv + git add works too; git mv just stages it in one step"
+    ],
+    "relatedCommands": [
+      "git-rm",
+      "git-status"
+    ]
+  },
+  {
+    "id": "git-push",
+    "name": "git push",
+    "description": "Update remote repository with local commits",
+    "category": "Remote Operations",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-u origin branch",
+        "description": "Set upstream branch"
+      },
+      {
+        "flag": "--force",
+        "description": "Force push, overwriting remote history (dangerous)"
+      },
+      {
+        "flag": "--tags",
+        "description": "Push tags"
+      },
+      {
+        "flag": "--force-with-lease",
+        "description": "Force push only if the remote branch is still where you last saw it (safer than --force)"
+      },
+      {
+        "flag": "--delete",
+        "description": "Delete a remote branch or tag"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git push",
+        "description": "Push commits to remote"
+      },
+      {
+        "command": "git push -u origin main",
+        "description": "Push and set upstream"
+      },
+      {
+        "command": "git push origin --delete branch-name",
+        "description": "Delete remote branch"
+      },
+      {
+        "command": "git push --force-with-lease",
+        "description": "Safely push a rebased/amended branch"
+      },
+      {
+        "command": "git push origin v1.2.0",
+        "description": "Push a single tag"
+      }
+    ],
+    "notes": [
+      "Requires write access to remote repository",
+      "WARNING: --force can silently discard commits teammates pushed. Prefer --force-with-lease, and never force push shared branches like main",
+      "Set push.autoSetupRemote=true so a plain 'git push' sets the upstream on first push"
+    ],
+    "relatedCommands": [
+      "git-pull",
+      "git-fetch"
+    ]
+  },
+  {
+    "id": "git-pull",
+    "name": "git pull",
+    "description": "Fetch and integrate changes from remote repository",
+    "category": "Remote Operations",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--rebase",
+        "description": "Rebase instead of merge"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git pull",
+        "description": "Pull changes from remote"
+      },
+      {
+        "command": "git pull origin main",
+        "description": "Pull from specific branch"
+      },
+      {
+        "command": "git pull --rebase",
+        "description": "Pull and rebase"
+      }
+    ],
+    "relatedCommands": [
+      "git-fetch",
+      "git-push"
+    ]
+  },
+  {
+    "id": "git-fetch",
+    "name": "git fetch",
+    "description": "Download objects and refs from remote repository",
+    "category": "Remote Operations",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git fetch",
+        "description": "Fetch from remote"
+      },
+      {
+        "command": "git fetch origin",
+        "description": "Fetch from specific remote"
+      }
+    ],
+    "notes": [
+      "Doesn't merge changes, only downloads them"
+    ],
+    "relatedCommands": [
+      "git-pull",
+      "git-merge"
+    ]
+  },
+  {
+    "id": "git-branch",
+    "name": "git branch",
+    "description": "List, create, or delete branches",
+    "category": "Branching",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "List all branches (including remote)"
+      },
+      {
+        "flag": "-d",
+        "description": "Delete branch"
+      },
+      {
+        "flag": "-D",
+        "description": "Force delete branch"
+      },
+      {
+        "flag": "-m",
+        "description": "Rename branch"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git branch",
+        "description": "List local branches"
+      },
+      {
+        "command": "git branch feature-x",
+        "description": "Create new branch"
+      },
+      {
+        "command": "git branch -d feature-x",
+        "description": "Delete branch"
+      }
+    ],
+    "relatedCommands": [
+      "git-checkout",
+      "git-switch"
+    ]
+  },
+  {
+    "id": "git-checkout",
+    "name": "git checkout",
+    "description": "Switch branches or restore files",
+    "category": "Branching",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-b",
+        "description": "Create and switch to new branch"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git checkout main",
+        "description": "Switch to main branch"
+      },
+      {
+        "command": "git checkout -b feature-x",
+        "description": "Create and switch to new branch"
+      },
+      {
+        "command": "git checkout -- file.txt",
+        "description": "Discard changes in file"
+      }
+    ],
+    "notes": [
+      "Consider using 'git switch' for switching branches"
+    ],
+    "relatedCommands": [
+      "git-switch",
+      "git-branch"
+    ]
+  },
+  {
+    "id": "git-merge",
+    "name": "git merge",
+    "description": "Join two or more development histories together",
+    "category": "Branching",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--no-ff",
+        "description": "Create merge commit even if fast-forward"
+      },
+      {
+        "flag": "--squash",
+        "description": "Squash commits"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git merge feature-x",
+        "description": "Merge feature-x into current branch"
+      },
+      {
+        "command": "git merge --no-ff feature-x",
+        "description": "Merge with merge commit"
+      }
+    ],
+    "relatedCommands": [
+      "git-rebase",
+      "git-branch"
+    ]
+  },
+  {
+    "id": "git-rebase",
+    "name": "git rebase",
+    "description": "Reapply commits on top of another base tip",
+    "category": "Branching",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Interactive rebase"
+      },
+      {
+        "flag": "--autosquash",
+        "description": "Automatically squash fixup!/squash! commits during interactive rebase"
+      },
+      {
+        "flag": "--onto <newbase>",
+        "description": "Transplant a range of commits onto a different base"
+      },
+      {
+        "flag": "--continue",
+        "description": "Continue after resolving conflicts"
+      },
+      {
+        "flag": "--abort",
+        "description": "Abort and return to the pre-rebase state"
+      },
+      {
+        "flag": "--update-refs",
+        "description": "Also move branches that point at rebased commits (stacked branches)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git rebase main",
+        "description": "Rebase current branch onto main"
+      },
+      {
+        "command": "git rebase -i HEAD~3",
+        "description": "Interactive rebase last 3 commits"
+      },
+      {
+        "command": "git rebase --continue",
+        "description": "Continue after fixing conflicts and staging them"
+      },
+      {
+        "command": "git rebase --onto main feature-a feature-b",
+        "description": "Move feature-b's own commits from feature-a onto main"
+      }
+    ],
+    "notes": [
+      "Don't rebase commits that have been pushed to public repos",
+      "Use with caution"
+    ],
+    "relatedCommands": [
+      "git-merge",
+      "git-commit",
+      "git-reflog"
+    ]
+  },
+  {
+    "id": "git-log",
+    "name": "git log",
+    "description": "Show commit logs",
+    "category": "History",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--oneline",
+        "description": "Show one commit per line"
+      },
+      {
+        "flag": "--graph",
+        "description": "Show ASCII graph of branches"
+      },
+      {
+        "flag": "-n NUM",
+        "description": "Show last NUM commits"
+      },
+      {
+        "flag": "-p",
+        "description": "Show the patch (diff) for each commit"
+      },
+      {
+        "flag": "--author=<name>",
+        "description": "Filter by author"
+      },
+      {
+        "flag": "--since=<date>",
+        "description": "Only commits newer than date, e.g. '2 weeks ago'"
+      },
+      {
+        "flag": "-S <string>",
+        "description": "Pickaxe: commits that add or remove <string>"
+      },
+      {
+        "flag": "--follow",
+        "description": "Follow a single file's history across renames"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git log",
+        "description": "Show commit history"
+      },
+      {
+        "command": "git log --oneline",
+        "description": "Compact commit history"
+      },
+      {
+        "command": "git log --graph --oneline --all",
+        "description": "Visual branch history"
+      },
+      {
+        "command": "git log --oneline main..feature",
+        "description": "Commits on feature that are not on main"
+      },
+      {
+        "command": "git log -p --follow -- src/app.ts",
+        "description": "Full history of a file, including renames"
+      },
+      {
+        "command": "git log -S 'apiKey' --oneline",
+        "description": "Find commits that added or removed a string"
+      }
+    ],
+    "relatedCommands": [
+      "git-show",
+      "git-diff",
+      "git-shortlog",
+      "git-reflog"
+    ]
+  },
+  {
+    "id": "git-diff",
+    "name": "git diff",
+    "description": "Show changes between commits, commit and working tree, etc",
+    "category": "History",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--staged",
+        "description": "Show staged changes (alias: --cached)"
+      },
+      {
+        "flag": "--stat",
+        "description": "Show a per-file summary of changes"
+      },
+      {
+        "flag": "--name-only",
+        "description": "Show only names of changed files"
+      },
+      {
+        "flag": "--word-diff",
+        "description": "Show word-level changes instead of line-level"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git diff",
+        "description": "Show unstaged changes"
+      },
+      {
+        "command": "git diff --staged",
+        "description": "Show staged changes"
+      },
+      {
+        "command": "git diff main feature",
+        "description": "Compare two branches"
+      },
+      {
+        "command": "git diff main...feature",
+        "description": "Changes on feature since it branched from main"
+      },
+      {
+        "command": "git diff --stat HEAD~3",
+        "description": "Summary of changes in the last 3 commits"
+      }
+    ],
+    "relatedCommands": [
+      "git-status",
+      "git-log"
+    ]
+  },
+  {
+    "id": "git-stash",
+    "name": "git stash",
+    "description": "Stash changes in a dirty working directory",
+    "category": "Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-u",
+        "description": "Include untracked files"
+      },
+      {
+        "flag": "-m <message>",
+        "description": "Give the stash a description (with 'push')"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git stash",
+        "description": "Stash current changes"
+      },
+      {
+        "command": "git stash pop",
+        "description": "Apply and remove stashed changes"
+      },
+      {
+        "command": "git stash list",
+        "description": "List all stashes"
+      },
+      {
+        "command": "git stash drop",
+        "description": "Remove most recent stash"
+      },
+      {
+        "command": "git stash push -u -m 'wip: login form'",
+        "description": "Stash including untracked files, with a message"
+      },
+      {
+        "command": "git stash apply stash@{2}",
+        "description": "Apply a specific stash without removing it"
+      }
+    ],
+    "notes": [
+      "Useful for temporarily setting aside changes"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "git-reset",
+    "name": "git reset",
+    "description": "Reset current HEAD to specified state",
+    "category": "Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--soft",
+        "description": "Keep changes staged"
+      },
+      {
+        "flag": "--mixed",
+        "description": "Keep changes but unstage (default)"
+      },
+      {
+        "flag": "--hard",
+        "description": "Discard all changes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git reset HEAD~1",
+        "description": "Undo last commit, keep changes"
+      },
+      {
+        "command": "git reset --hard HEAD~1",
+        "description": "Undo last commit, discard changes"
+      }
+    ],
+    "notes": [
+      "Use --hard with caution, it permanently deletes changes",
+      "WARNING: --hard discards uncommitted work permanently; committed work can usually be recovered with git reflog"
+    ],
+    "relatedCommands": [
+      "git-revert",
+      "git-reflog",
+      "git-restore"
+    ]
+  },
+  {
+    "id": "git-tag",
+    "name": "git tag",
+    "description": "Create, list, or delete tags",
+    "category": "Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Create annotated tag"
+      },
+      {
+        "flag": "-d",
+        "description": "Delete tag"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git tag v1.0.0",
+        "description": "Create lightweight tag"
+      },
+      {
+        "command": "git tag -a v1.0.0 -m 'Version 1.0.0'",
+        "description": "Create annotated tag"
+      },
+      {
+        "command": "git push origin v1.0.0",
+        "description": "Push tag to remote"
+      }
+    ],
+    "relatedCommands": [
+      "git-push"
+    ]
+  },
+  {
+    "id": "git-remote",
+    "name": "git remote",
+    "description": "Manage set of tracked repositories",
+    "category": "Remote Operations",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-v",
+        "description": "Show remote URLs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git remote -v",
+        "description": "List remotes with URLs"
+      },
+      {
+        "command": "git remote add origin URL",
+        "description": "Add new remote"
+      },
+      {
+        "command": "git remote remove origin",
+        "description": "Remove remote"
+      }
+    ],
+    "relatedCommands": [
+      "git-clone",
+      "git-push"
+    ]
+  },
+  {
+    "id": "git-config",
+    "name": "git config",
+    "description": "Get and set repository or global options",
+    "category": "Configuration",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--global",
+        "description": "Set configuration globally"
+      },
+      {
+        "flag": "--list",
+        "description": "List all configuration"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git config --global user.name \"Your Name\"",
+        "description": "Set global username"
+      },
+      {
+        "command": "git config --global user.email \"email@example.com\"",
+        "description": "Set global email"
+      },
+      {
+        "command": "git config --list",
+        "description": "List all configuration"
+      }
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "git-show",
+    "name": "git show",
+    "description": "Show various types of objects",
+    "category": "History",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git show",
+        "description": "Show last commit"
+      },
+      {
+        "command": "git show HEAD~2",
+        "description": "Show commit 2 commits ago"
+      },
+      {
+        "command": "git show <commit-hash>",
+        "description": "Show specific commit"
+      }
+    ],
+    "relatedCommands": [
+      "git-log",
+      "git-diff"
+    ]
+  },
+  {
+    "id": "git-blame",
+    "name": "git blame",
+    "description": "Show which commit and author last changed each line of a file",
+    "category": "History",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-L <start>,<end>",
+        "description": "Only annotate the given line range"
+      },
+      {
+        "flag": "-w",
+        "description": "Ignore whitespace changes"
+      },
+      {
+        "flag": "-C",
+        "description": "Detect lines moved or copied from other files"
+      },
+      {
+        "flag": "--ignore-revs-file <file>",
+        "description": "Skip commits listed in a file (e.g. mass reformatting)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git blame src/app.ts",
+        "description": "Annotate every line of a file"
+      },
+      {
+        "command": "git blame -L 40,60 src/app.ts",
+        "description": "Annotate only lines 40-60"
+      },
+      {
+        "command": "git blame -w -C src/app.ts",
+        "description": "Ignore whitespace and track moved code"
+      },
+      {
+        "command": "git config blame.ignoreRevsFile .git-blame-ignore-revs",
+        "description": "Always skip formatting commits listed in .git-blame-ignore-revs"
+      }
+    ],
+    "relatedCommands": [
+      "git-log",
+      "git-show"
+    ]
+  },
+  {
+    "id": "git-shortlog",
+    "name": "git shortlog",
+    "description": "Summarize commit history grouped by author",
+    "category": "History",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-s",
+        "description": "Show only commit counts"
+      },
+      {
+        "flag": "-n",
+        "description": "Sort by number of commits"
+      },
+      {
+        "flag": "-e",
+        "description": "Show email addresses"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git shortlog -sn",
+        "description": "Contributors ranked by commit count"
+      },
+      {
+        "command": "git shortlog -sne --since='1 year ago'",
+        "description": "Contributors in the last year, with emails"
+      },
+      {
+        "command": "git shortlog v1.0.0..v1.1.0",
+        "description": "Commits per author between two tags (release notes)"
+      }
+    ],
+    "relatedCommands": [
+      "git-log"
+    ]
+  },
+  {
+    "id": "git-reflog",
+    "name": "git reflog",
+    "description": "Show where HEAD and branch tips have pointed, for recovering lost commits",
+    "category": "History",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git reflog",
+        "description": "Show recent HEAD movements"
+      },
+      {
+        "command": "git reset --hard HEAD@{1}",
+        "description": "Undo the last reset/rebase/amend by returning to the previous HEAD"
+      },
+      {
+        "command": "git branch recovered a1b2c3d",
+        "description": "Recreate a deleted branch from a commit found in the reflog"
+      },
+      {
+        "command": "git reflog show feature-x",
+        "description": "Show the history of a specific branch tip"
+      }
+    ],
+    "notes": [
+      "The reflog is local only and entries expire (by default 90 days, 30 for unreachable commits)",
+      "This is the safety net after a bad reset, rebase, or branch delete"
+    ],
+    "relatedCommands": [
+      "git-reset",
+      "git-log",
+      "git-branch"
+    ]
+  },
+  {
+    "id": "git-grep",
+    "name": "git grep",
+    "description": "Search tracked files for a pattern",
+    "category": "History",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-n",
+        "description": "Show line numbers"
+      },
+      {
+        "flag": "-i",
+        "description": "Case-insensitive search"
+      },
+      {
+        "flag": "-w",
+        "description": "Match whole words only"
+      },
+      {
+        "flag": "-l",
+        "description": "Show only matching file names"
+      },
+      {
+        "flag": "-E",
+        "description": "Use extended regular expressions"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git grep -n 'TODO'",
+        "description": "Find TODOs in tracked files with line numbers"
+      },
+      {
+        "command": "git grep -l 'useEffect' -- '*.tsx'",
+        "description": "List .tsx files containing a string"
+      },
+      {
+        "command": "git grep 'API_URL' v1.0.0",
+        "description": "Search the tree at a tag or commit"
+      }
+    ],
+    "notes": [
+      "Faster than plain grep in large repos and skips untracked/ignored files like node_modules"
+    ],
+    "relatedCommands": [
+      "git-log"
+    ]
+  },
+  {
+    "id": "git-revert",
+    "name": "git revert",
+    "description": "Revert commits by creating new commit",
+    "category": "Workflow",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git revert HEAD",
+        "description": "Revert last commit"
+      },
+      {
+        "command": "git revert <commit-hash>",
+        "description": "Revert specific commit"
+      }
+    ],
+    "notes": [
+      "Creates a new commit that undoes changes",
+      "Safer than git reset for public branches"
+    ],
+    "relatedCommands": [
+      "git-reset"
+    ]
+  },
+  {
+    "id": "git-switch",
+    "name": "git switch",
+    "description": "Switch branches (newer alternative to checkout)",
+    "category": "Branching",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-c",
+        "description": "Create and switch to new branch"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git switch main",
+        "description": "Switch to main branch"
+      },
+      {
+        "command": "git switch -c feature-x",
+        "description": "Create and switch to new branch"
+      }
+    ],
+    "notes": [
+      "Introduced in Git 2.23 as clearer alternative to checkout"
+    ],
+    "relatedCommands": [
+      "git-checkout",
+      "git-branch"
+    ]
+  },
+  {
+    "id": "git-restore",
+    "name": "git restore",
+    "description": "Restore working tree files",
+    "category": "Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--staged",
+        "description": "Unstage files"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git restore file.txt",
+        "description": "Discard changes in file"
+      },
+      {
+        "command": "git restore --staged file.txt",
+        "description": "Unstage file"
+      }
+    ],
+    "notes": [
+      "Introduced in Git 2.23 as clearer alternative to checkout"
+    ],
+    "relatedCommands": [
+      "git-checkout"
+    ]
+  },
+  {
+    "id": "git-cherry-pick",
+    "name": "git cherry-pick",
+    "description": "Apply changes from specific commits",
+    "category": "Advanced",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git cherry-pick <commit-hash>",
+        "description": "Apply specific commit to current branch"
+      }
+    ],
+    "notes": [
+      "Useful for applying specific fixes across branches"
+    ],
+    "relatedCommands": [
+      "git-rebase"
+    ]
+  },
+  {
+    "id": "git-bisect",
+    "name": "git bisect",
+    "description": "Binary-search history to find the commit that introduced a bug",
+    "category": "Advanced",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git bisect start",
+        "description": "Begin a bisect session"
+      },
+      {
+        "command": "git bisect bad",
+        "description": "Mark the current commit as broken"
+      },
+      {
+        "command": "git bisect good v1.4.0",
+        "description": "Mark a known-good commit or tag"
+      },
+      {
+        "command": "git bisect run npm test",
+        "description": "Automate: run a command on each step (exit 0 = good, non-zero = bad)"
+      },
+      {
+        "command": "git bisect reset",
+        "description": "End the session and return to the original branch"
+      }
+    ],
+    "notes": [
+      "Use 'git bisect skip' for commits that can't be tested",
+      "Exit code 125 from a 'bisect run' script means skip"
+    ],
+    "relatedCommands": [
+      "git-log",
+      "git-blame"
+    ]
+  },
+  {
+    "id": "git-worktree",
+    "name": "git worktree",
+    "description": "Check out multiple branches at once in separate directories",
+    "category": "Advanced",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git worktree add ../hotfix hotfix-branch",
+        "description": "Check out an existing branch in a new directory"
+      },
+      {
+        "command": "git worktree add -b feature-y ../feature-y main",
+        "description": "Create a new branch from main in a new worktree"
+      },
+      {
+        "command": "git worktree list",
+        "description": "List all worktrees"
+      },
+      {
+        "command": "git worktree remove ../hotfix",
+        "description": "Remove a worktree"
+      },
+      {
+        "command": "git worktree prune",
+        "description": "Clean up metadata for worktrees deleted manually"
+      }
+    ],
+    "notes": [
+      "All worktrees share one .git object store, so it's cheaper than a second clone",
+      "A branch can only be checked out in one worktree at a time",
+      "Each worktree needs its own dependency install (node_modules, vendor, etc.)"
+    ],
+    "relatedCommands": [
+      "git-branch",
+      "git-switch",
+      "git-stash"
+    ]
+  },
+  {
+    "id": "git-submodule",
+    "name": "git submodule",
+    "description": "Manage repositories nested inside another repository",
+    "category": "Advanced",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git submodule add https://github.com/org/lib.git vendor/lib",
+        "description": "Add a submodule"
+      },
+      {
+        "command": "git clone --recurse-submodules <repo-url>",
+        "description": "Clone a repo together with its submodules"
+      },
+      {
+        "command": "git submodule update --init --recursive",
+        "description": "Initialize and check out submodules after a normal clone"
+      },
+      {
+        "command": "git submodule update --remote",
+        "description": "Update submodules to their remote branch's latest commit"
+      }
+    ],
+    "notes": [
+      "The parent repo records a specific submodule commit; commit the parent after updating a submodule",
+      "Set submodule.recurse=true so pull/checkout also update submodules"
+    ],
+    "relatedCommands": [
+      "git-clone"
+    ]
+  },
+  {
+    "id": "git-sparse-checkout",
+    "name": "git sparse-checkout",
+    "description": "Check out only some directories of a large repository",
+    "category": "Advanced",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git clone --filter=blob:none --sparse <repo-url>",
+        "description": "Partial clone that starts with only top-level files"
+      },
+      {
+        "command": "git sparse-checkout set apps/web packages/ui",
+        "description": "Check out only these directories"
+      },
+      {
+        "command": "git sparse-checkout add docs",
+        "description": "Add another directory"
+      },
+      {
+        "command": "git sparse-checkout disable",
+        "description": "Restore the full working tree"
+      }
+    ],
+    "notes": [
+      "Cone mode (the default) matches whole directories and is much faster than pattern mode"
+    ],
+    "relatedCommands": [
+      "git-clone"
+    ]
+  },
+  {
+    "id": "git-maintenance",
+    "name": "git maintenance",
+    "description": "Run or schedule background optimization tasks for a repository",
+    "category": "Advanced",
+    "technologyId": "git",
+    "examples": [
+      {
+        "command": "git maintenance start",
+        "description": "Register the repo and schedule hourly/daily/weekly background maintenance"
+      },
+      {
+        "command": "git maintenance run --task=gc",
+        "description": "Run garbage collection now"
+      },
+      {
+        "command": "git maintenance stop",
+        "description": "Stop scheduled maintenance for this repo"
+      }
+    ],
+    "notes": [
+      "Useful for large repos: keeps commit-graph, prefetch, and packfiles optimized so fetch/log stay fast"
+    ],
+    "relatedCommands": [
+      "git-fetch"
+    ]
+  },
+  {
+    "id": "git-clean",
+    "name": "git clean",
+    "description": "Remove untracked files",
+    "category": "Workflow",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-n",
+        "description": "Dry run (show what would be deleted)"
+      },
+      {
+        "flag": "-f",
+        "description": "Force removal"
+      },
+      {
+        "flag": "-d",
+        "description": "Remove directories too"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git clean -n",
+        "description": "Show what would be removed"
+      },
+      {
+        "command": "git clean -fd",
+        "description": "Remove untracked files and directories"
+      }
+    ],
+    "notes": [
+      "Always run with -n first to preview",
+      "Cannot be undone"
+    ],
+    "relatedCommands": []
+  }
+]

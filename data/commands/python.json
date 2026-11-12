@@ -1,0 +1,675 @@
+[
+  {
+    "id": "python-pip-install",
+    "name": "pip install",
+    "description": "Install Python packages",
+    "category": "Package Management",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "-r requirements.txt",
+        "description": "Install from requirements file"
+      },
+      {
+        "flag": "--upgrade",
+        "description": "Upgrade package"
+      },
+      {
+        "flag": "--user",
+        "description": "Install to user directory"
+      },
+      {
+        "flag": "-e, --editable <path>",
+        "description": "Install a local project in editable (development) mode"
+      },
+      {
+        "flag": "-U, --upgrade",
+        "description": "Upgrade to the newest available version"
+      },
+      {
+        "flag": "-c <file>",
+        "description": "Apply version constraints from a file"
+      },
+      {
+        "flag": "--pre",
+        "description": "Include pre-release versions"
+      },
+      {
+        "flag": "--no-cache-dir",
+        "description": "Don't use pip's cache (smaller Docker images)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pip install requests",
+        "description": "Install package"
+      },
+      {
+        "command": "pip install -r requirements.txt",
+        "description": "Install from requirements file"
+      },
+      {
+        "command": "pip install --upgrade pip",
+        "description": "Upgrade pip itself"
+      },
+      {
+        "command": "pip install -e .",
+        "description": "Install the current project in editable mode"
+      },
+      {
+        "command": "pip install -e \".[dev]\"",
+        "description": "Editable install with the 'dev' optional dependencies"
+      },
+      {
+        "command": "pip install \"django>=5,<6\"",
+        "description": "Install within a version range (quote to protect < and >)"
+      },
+      {
+        "command": "pip install --no-cache-dir -r requirements.txt",
+        "description": "Install for a Docker image without keeping the cache"
+      }
+    ],
+    "notes": [
+      "Prefer 'python -m pip' so packages go to the interpreter you expect",
+      "On many Linux distros and Homebrew Python, installing into the system interpreter fails with 'externally-managed-environment' (PEP 668); use a virtual environment or pipx",
+      "--user does nothing inside a virtual environment"
+    ],
+    "relatedCommands": [
+      "python-pip-uninstall",
+      "python-module-pip",
+      "python-venv",
+      "python-pip-freeze"
+    ]
+  },
+  {
+    "id": "python-pip-uninstall",
+    "name": "pip uninstall",
+    "description": "Uninstall Python packages",
+    "category": "Package Management",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "pip uninstall requests",
+        "description": "Uninstall package"
+      }
+    ],
+    "relatedCommands": [
+      "python-pip-install"
+    ]
+  },
+  {
+    "id": "python-pip-list",
+    "name": "pip list",
+    "description": "List installed packages",
+    "category": "Package Management",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "--outdated",
+        "description": "List outdated packages"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pip list",
+        "description": "List all packages"
+      },
+      {
+        "command": "pip list --outdated",
+        "description": "List outdated packages"
+      }
+    ],
+    "relatedCommands": [
+      "python-pip-freeze"
+    ]
+  },
+  {
+    "id": "python-pip-freeze",
+    "name": "pip freeze",
+    "description": "Output installed packages in requirements format",
+    "category": "Package Management",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "pip freeze",
+        "description": "List packages in requirements format"
+      },
+      {
+        "command": "pip freeze > requirements.txt",
+        "description": "Save to requirements.txt"
+      }
+    ],
+    "relatedCommands": [
+      "python-pip-install"
+    ]
+  },
+  {
+    "id": "python-venv",
+    "name": "python -m venv",
+    "description": "Create a virtual environment",
+    "category": "Environment",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "python3 -m venv .venv",
+        "description": "Create a venv in .venv (common convention)"
+      },
+      {
+        "command": "source .venv/bin/activate",
+        "description": "Activate on macOS/Linux (bash/zsh)"
+      },
+      {
+        "command": ".venv\\Scripts\\Activate.ps1",
+        "description": "Activate on Windows PowerShell"
+      },
+      {
+        "command": ".venv\\Scripts\\activate.bat",
+        "description": "Activate on Windows cmd.exe"
+      },
+      {
+        "command": "deactivate",
+        "description": "Leave the virtual environment"
+      },
+      {
+        "command": "python -m venv venv",
+        "description": "Create virtual environment"
+      },
+      {
+        "command": "source venv/bin/activate",
+        "description": "Activate virtual environment (Linux/Mac)"
+      },
+      {
+        "command": "venv\\Scripts\\activate",
+        "description": "Activate virtual environment (Windows)"
+      }
+    ],
+    "notes": [
+      "Always use virtual environments for Python projects",
+      "fish: source .venv/bin/activate.fish; csh/tcsh: source .venv/bin/activate.csh",
+      "PowerShell may block the script; run Set-ExecutionPolicy -Scope CurrentUser RemoteSigned once",
+      "You can skip activation and call the venv's interpreter directly: .venv/bin/python (Windows: .venv\\Scripts\\python.exe)",
+      "Add .venv/ to .gitignore; don't commit or copy virtual environments between machines"
+    ],
+    "relatedCommands": [
+      "python-pip-install",
+      "python-module-pip"
+    ]
+  },
+  {
+    "id": "python-run",
+    "name": "python",
+    "description": "Run Python scripts or start interactive shell",
+    "category": "Execution",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "-m module",
+        "description": "Run library module as script"
+      },
+      {
+        "flag": "-c command",
+        "description": "Execute Python command"
+      },
+      {
+        "flag": "-i",
+        "description": "Enter interactive mode after running the script"
+      },
+      {
+        "flag": "-X dev",
+        "description": "Enable Python Development Mode (extra runtime checks and warnings)"
+      },
+      {
+        "flag": "-u",
+        "description": "Unbuffered stdout/stderr (useful in Docker logs)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python script.py",
+        "description": "Run Python script"
+      },
+      {
+        "command": "python -m http.server",
+        "description": "Start simple HTTP server"
+      },
+      {
+        "command": "python -c 'print(\"Hello\")'",
+        "description": "Execute Python command"
+      }
+    ],
+    "relatedCommands": [
+      "python-venv",
+      "python-pdb"
+    ]
+  },
+  {
+    "id": "python-pip-show",
+    "name": "pip show",
+    "description": "Show information about installed package",
+    "category": "Information",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "pip show requests",
+        "description": "Show package information"
+      },
+      {
+        "command": "pip show requests django",
+        "description": "Show info for multiple packages"
+      }
+    ],
+    "notes": [
+      "Displays version, location, dependencies, and more"
+    ],
+    "relatedCommands": [
+      "python-pip-list"
+    ]
+  },
+  {
+    "id": "python-pip-download",
+    "name": "pip download",
+    "description": "Download packages without installing them",
+    "category": "Package Management",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "-d directory",
+        "description": "Download to specific directory"
+      },
+      {
+        "flag": "--no-deps",
+        "description": "Don't download dependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pip download requests",
+        "description": "Download package"
+      },
+      {
+        "command": "pip download -d ./packages requests",
+        "description": "Download to specific directory"
+      }
+    ],
+    "relatedCommands": [
+      "python-pip-install"
+    ]
+  },
+  {
+    "id": "python-pytest",
+    "name": "pytest",
+    "description": "Run tests with pytest framework",
+    "category": "Testing",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      },
+      {
+        "flag": "-k pattern",
+        "description": "Run tests matching pattern"
+      },
+      {
+        "flag": "--cov",
+        "description": "Measure code coverage"
+      },
+      {
+        "flag": "-x",
+        "description": "Stop after the first failure"
+      },
+      {
+        "flag": "--lf",
+        "description": "Re-run only the tests that failed last time"
+      },
+      {
+        "flag": "-s",
+        "description": "Show print() output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pytest",
+        "description": "Run all tests"
+      },
+      {
+        "command": "pytest tests/test_app.py",
+        "description": "Run specific test file"
+      },
+      {
+        "command": "pytest -v -k test_login",
+        "description": "Run tests matching pattern"
+      }
+    ],
+    "notes": [
+      "Requires pytest package to be installed"
+    ],
+    "relatedCommands": [
+      "python-unittest"
+    ]
+  },
+  {
+    "id": "python-unittest",
+    "name": "python -m unittest",
+    "description": "Run tests with unittest framework",
+    "category": "Testing",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "python -m unittest",
+        "description": "Discover and run all tests"
+      },
+      {
+        "command": "python -m unittest tests.test_module",
+        "description": "Run specific test module"
+      },
+      {
+        "command": "python -m unittest discover",
+        "description": "Discover tests in current directory"
+      }
+    ],
+    "notes": [
+      "Built-in testing framework, no installation needed"
+    ],
+    "relatedCommands": [
+      "python-pytest"
+    ]
+  },
+  {
+    "id": "python-pdb",
+    "name": "python -m pdb",
+    "description": "Python debugger",
+    "category": "Debugging",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "python -m pdb script.py",
+        "description": "Run script in debugger"
+      },
+      {
+        "command": "python -m pdb -c continue script.py",
+        "description": "Run until an exception, then drop into the debugger"
+      }
+    ],
+    "notes": [
+      "Interactive debugger with breakpoints",
+      "Use 'n' to step, 'c' to continue, 'q' to quit",
+      "Call breakpoint() in code to stop at that line"
+    ],
+    "relatedCommands": [
+      "python-run"
+    ]
+  },
+  {
+    "id": "python-timeit",
+    "name": "python -m timeit",
+    "description": "Time small code snippets",
+    "category": "Debugging",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "-n N",
+        "description": "Number of executions per loop"
+      },
+      {
+        "flag": "-r N",
+        "description": "Number of repeats (default 5)"
+      },
+      {
+        "flag": "-s STMT",
+        "description": "Setup statement run once before timing"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python -m timeit \"'-'.join(str(n) for n in range(100))\"",
+        "description": "Time an expression"
+      },
+      {
+        "command": "python -m timeit -s \"import json; d={'a': 1}\" \"json.dumps(d)\"",
+        "description": "Time with setup code excluded"
+      }
+    ],
+    "notes": [
+      "Reports the best of several runs; picks the loop count automatically if -n isn't given"
+    ],
+    "relatedCommands": [
+      "python-cprofile"
+    ]
+  },
+  {
+    "id": "python-cprofile",
+    "name": "python -m cProfile",
+    "description": "Profile a script to find where time is spent",
+    "category": "Debugging",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "-s KEY",
+        "description": "Sort output, e.g. cumtime or tottime"
+      },
+      {
+        "flag": "-o FILE",
+        "description": "Save stats to a file for later analysis"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python -m cProfile -s cumtime script.py",
+        "description": "Profile and sort by cumulative time"
+      },
+      {
+        "command": "python -m cProfile -o profile.out script.py",
+        "description": "Save profile data"
+      },
+      {
+        "command": "python -m pstats profile.out",
+        "description": "Browse saved profile data interactively"
+      }
+    ],
+    "relatedCommands": [
+      "python-timeit",
+      "python-pdb"
+    ]
+  },
+  {
+    "id": "python-version",
+    "name": "python --version",
+    "description": "Check Python version",
+    "category": "Information",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "python --version",
+        "description": "Show Python version"
+      },
+      {
+        "command": "python3 --version",
+        "description": "Show Python 3 version"
+      }
+    ],
+    "relatedCommands": [
+      "python-pip-version"
+    ]
+  },
+  {
+    "id": "python-pip-version",
+    "name": "pip --version",
+    "description": "Check pip version",
+    "category": "Information",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "pip --version",
+        "description": "Show pip version"
+      },
+      {
+        "command": "pip3 --version",
+        "description": "Show pip3 version"
+      }
+    ],
+    "relatedCommands": [
+      "python-version"
+    ]
+  },
+  {
+    "id": "python-module-pip",
+    "name": "python -m pip",
+    "description": "Run pip as a Python module",
+    "category": "Package Management",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "python -m pip install requests",
+        "description": "Install package via module"
+      },
+      {
+        "command": "python -m pip install --upgrade pip",
+        "description": "Upgrade pip itself"
+      },
+      {
+        "command": "py -m pip install --upgrade pip",
+        "description": "Upgrade pip on Windows using the py launcher"
+      }
+    ],
+    "notes": [
+      "Ensures pip runs with correct Python version",
+      "Useful when multiple Python versions are installed",
+      "Upgrade pip with 'python -m pip install --upgrade pip'; 'pip install --upgrade pip' can fail on Windows because pip.exe is in use"
+    ],
+    "relatedCommands": [
+      "python-pip-install"
+    ]
+  },
+  {
+    "id": "python-http-server",
+    "name": "python -m http.server",
+    "description": "Start a simple HTTP server",
+    "category": "Development",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "port",
+        "description": "Port number (default: 8000)"
+      },
+      {
+        "flag": "-b, --bind ADDRESS",
+        "description": "Address to bind to (e.g. 127.0.0.1)"
+      },
+      {
+        "flag": "-d, --directory DIR",
+        "description": "Serve this directory instead of the current one"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python -m http.server",
+        "description": "Start server on port 8000"
+      },
+      {
+        "command": "python -m http.server 3000",
+        "description": "Start server on port 3000"
+      },
+      {
+        "command": "python -m http.server 8080 --bind 127.0.0.1 --directory dist",
+        "description": "Serve ./dist only on localhost"
+      }
+    ],
+    "notes": [
+      "Serves files from current directory",
+      "Useful for quick testing",
+      "Not for production: no security hardening"
+    ],
+    "relatedCommands": [
+      "python-run"
+    ]
+  },
+  {
+    "id": "python-json-tool",
+    "name": "python -m json.tool",
+    "description": "Validate and pretty-print JSON",
+    "category": "Development",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "--sort-keys",
+        "description": "Sort object keys"
+      },
+      {
+        "flag": "--indent N",
+        "description": "Indentation width"
+      },
+      {
+        "flag": "--compact",
+        "description": "Compact output on one line"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python -m json.tool data.json",
+        "description": "Pretty-print a JSON file"
+      },
+      {
+        "command": "curl -s https://api.example.com/items | python -m json.tool",
+        "description": "Pretty-print an API response"
+      },
+      {
+        "command": "python -m json.tool --sort-keys in.json out.json",
+        "description": "Sort keys and write to a file"
+      }
+    ],
+    "notes": [
+      "Exits non-zero with the line and column on invalid JSON, so it also works as a quick validator"
+    ],
+    "relatedCommands": [
+      "python-run"
+    ]
+  },
+  {
+    "id": "python-pip-check",
+    "name": "pip check",
+    "description": "Verify installed packages have compatible dependencies",
+    "category": "Maintenance",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "pip check",
+        "description": "Check dependency compatibility"
+      }
+    ],
+    "notes": [
+      "Identifies broken package dependencies"
+    ],
+    "relatedCommands": [
+      "python-pip-list"
+    ]
+  },
+  {
+    "id": "python-pip-cache",
+    "name": "pip cache",
+    "description": "Inspect and clear pip's download/wheel cache",
+    "category": "Maintenance",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "pip cache dir",
+        "description": "Show the cache location"
+      },
+      {
+        "command": "pip cache info",
+        "description": "Show cache size"
+      },
+      {
+        "command": "pip cache purge",
+        "description": "Remove everything from the cache"
+      },
+      {
+        "command": "pip cache remove numpy",
+        "description": "Remove cached files for one package"
+      }
+    ],
+    "relatedCommands": [
+      "python-pip-install"
+    ]
+  }
+]

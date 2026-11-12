@@ -1,0 +1,983 @@
+[
+  {
+    "id": "cargo-new",
+    "name": "cargo new",
+    "description": "Create a new Cargo package in a new directory",
+    "category": "Project Setup",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--lib",
+        "description": "Create a library crate"
+      },
+      {
+        "flag": "--bin",
+        "description": "Create a binary crate (default)"
+      },
+      {
+        "flag": "--vcs",
+        "description": "Initialize a VCS (git, none, ...)",
+        "example": "cargo new my-app --vcs none"
+      },
+      {
+        "flag": "--edition",
+        "description": "Set the Rust edition"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo new my-app",
+        "description": "Create a binary project with a git repo"
+      },
+      {
+        "command": "cargo new my-lib --lib",
+        "description": "Create a library project"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-init",
+      "cargo-build"
+    ]
+  },
+  {
+    "id": "cargo-init",
+    "name": "cargo init",
+    "description": "Create a new Cargo package in an existing directory",
+    "category": "Project Setup",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--lib",
+        "description": "Create a library crate"
+      },
+      {
+        "flag": "--name",
+        "description": "Set the package name"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo init",
+        "description": "Turn the current directory into a Cargo project"
+      },
+      {
+        "command": "cargo init --lib --name my_lib",
+        "description": "Initialize as a library with an explicit name"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-new"
+    ]
+  },
+  {
+    "id": "cargo-build",
+    "name": "cargo build",
+    "description": "Compile the current package and its dependencies",
+    "category": "Build & Run",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-r, --release",
+        "description": "Build with optimizations into target/release"
+      },
+      {
+        "flag": "--target",
+        "description": "Build for a target triple",
+        "example": "cargo build --target x86_64-unknown-linux-musl"
+      },
+      {
+        "flag": "-F, --features",
+        "description": "Enable features",
+        "example": "cargo build --features \"serde,tls\""
+      },
+      {
+        "flag": "--all-features",
+        "description": "Enable all features"
+      },
+      {
+        "flag": "--no-default-features",
+        "description": "Disable the default feature set"
+      },
+      {
+        "flag": "-p, --package",
+        "description": "Build only the specified workspace member"
+      },
+      {
+        "flag": "--workspace",
+        "description": "Build all workspace members"
+      },
+      {
+        "flag": "--bin",
+        "description": "Build only the named binary"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo build",
+        "description": "Debug build into target/debug"
+      },
+      {
+        "command": "cargo build --release",
+        "description": "Optimized build into target/release"
+      },
+      {
+        "command": "cargo build --release --target aarch64-unknown-linux-gnu",
+        "description": "Cross-compile for Linux arm64"
+      },
+      {
+        "command": "cargo build -p api --no-default-features --features postgres",
+        "description": "Build one workspace member with custom features"
+      }
+    ],
+    "notes": [
+      "Cross-compiling needs the target's standard library: rustup target add <triple>, plus a suitable linker"
+    ],
+    "relatedCommands": [
+      "cargo-run",
+      "cargo-check",
+      "rustup-target-add"
+    ]
+  },
+  {
+    "id": "cargo-run",
+    "name": "cargo run",
+    "description": "Build and run a binary of the current package",
+    "category": "Build & Run",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-r, --release",
+        "description": "Run the optimized build"
+      },
+      {
+        "flag": "--bin",
+        "description": "Choose which binary to run"
+      },
+      {
+        "flag": "--example",
+        "description": "Run an example from examples/"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo run",
+        "description": "Build and run the default binary"
+      },
+      {
+        "command": "cargo run -- --port 8080",
+        "description": "Pass arguments to your program after --"
+      },
+      {
+        "command": "cargo run --release --bin server",
+        "description": "Run a specific binary in release mode"
+      },
+      {
+        "command": "cargo run --example basic",
+        "description": "Run examples/basic.rs"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-build"
+    ]
+  },
+  {
+    "id": "cargo-check",
+    "name": "cargo check",
+    "description": "Type-check the package without producing binaries (much faster than build)",
+    "category": "Build & Run",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--all-targets",
+        "description": "Also check tests, benches, and examples"
+      },
+      {
+        "flag": "--workspace",
+        "description": "Check all workspace members"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo check",
+        "description": "Quickly check for compile errors"
+      },
+      {
+        "command": "cargo check --workspace --all-targets",
+        "description": "Check everything including tests"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-build",
+      "cargo-clippy"
+    ]
+  },
+  {
+    "id": "cargo-test",
+    "name": "cargo test",
+    "description": "Compile and run unit, integration, and doc tests",
+    "category": "Testing",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--lib",
+        "description": "Test only the library's unit tests"
+      },
+      {
+        "flag": "--doc",
+        "description": "Run only documentation tests"
+      },
+      {
+        "flag": "--test",
+        "description": "Run a specific integration test file",
+        "example": "cargo test --test api"
+      },
+      {
+        "flag": "-p, --package",
+        "description": "Test a specific workspace member"
+      },
+      {
+        "flag": "--release",
+        "description": "Run tests with optimizations"
+      },
+      {
+        "flag": "-- --nocapture",
+        "description": "Show println! output from passing tests"
+      },
+      {
+        "flag": "-- --test-threads=1",
+        "description": "Run tests serially"
+      },
+      {
+        "flag": "-- --ignored",
+        "description": "Run only tests marked #[ignore]"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo test",
+        "description": "Run all tests"
+      },
+      {
+        "command": "cargo test parse_",
+        "description": "Run tests whose name contains parse_"
+      },
+      {
+        "command": "cargo test -- --nocapture",
+        "description": "Run tests and show stdout"
+      },
+      {
+        "command": "cargo test --test integration -- --test-threads=1",
+        "description": "Run one integration test file serially"
+      }
+    ],
+    "notes": [
+      "Arguments before -- go to cargo; arguments after -- go to the test binary"
+    ],
+    "relatedCommands": [
+      "cargo-bench",
+      "cargo-check"
+    ]
+  },
+  {
+    "id": "cargo-bench",
+    "name": "cargo bench",
+    "description": "Compile and run benchmarks",
+    "category": "Testing",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "cargo bench",
+        "description": "Run all benchmarks"
+      },
+      {
+        "command": "cargo bench --bench parser",
+        "description": "Run a specific benchmark target"
+      },
+      {
+        "command": "cargo bench -- parse_json",
+        "description": "Run benchmarks matching a filter"
+      }
+    ],
+    "notes": [
+      "The built-in #[bench] attribute is nightly-only; on stable, use a harness crate such as criterion or divan with harness = false in Cargo.toml"
+    ],
+    "relatedCommands": [
+      "cargo-test"
+    ]
+  },
+  {
+    "id": "cargo-add",
+    "name": "cargo add",
+    "description": "Add dependencies to Cargo.toml",
+    "category": "Dependencies",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--dev",
+        "description": "Add as a dev-dependency"
+      },
+      {
+        "flag": "--build",
+        "description": "Add as a build-dependency"
+      },
+      {
+        "flag": "-F, --features",
+        "description": "Enable features on the dependency",
+        "example": "cargo add tokio -F full"
+      },
+      {
+        "flag": "--no-default-features",
+        "description": "Disable the dependency's default features"
+      },
+      {
+        "flag": "--path",
+        "description": "Add a local path dependency"
+      },
+      {
+        "flag": "--git",
+        "description": "Add a git dependency"
+      },
+      {
+        "flag": "--optional",
+        "description": "Mark the dependency as optional"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo add serde -F derive",
+        "description": "Add serde with the derive feature"
+      },
+      {
+        "command": "cargo add tokio@1 -F full",
+        "description": "Add a version-constrained dependency"
+      },
+      {
+        "command": "cargo add --dev pretty_assertions",
+        "description": "Add a dev-dependency"
+      },
+      {
+        "command": "cargo add my-utils --path ../my-utils",
+        "description": "Add a local crate"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-remove",
+      "cargo-update",
+      "cargo-tree"
+    ]
+  },
+  {
+    "id": "cargo-remove",
+    "name": "cargo remove",
+    "description": "Remove dependencies from Cargo.toml",
+    "category": "Dependencies",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--dev",
+        "description": "Remove from dev-dependencies"
+      },
+      {
+        "flag": "--build",
+        "description": "Remove from build-dependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo remove anyhow",
+        "description": "Remove a dependency"
+      },
+      {
+        "command": "cargo remove --dev mockall",
+        "description": "Remove a dev-dependency"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-add"
+    ]
+  },
+  {
+    "id": "cargo-update",
+    "name": "cargo update",
+    "description": "Update dependencies in Cargo.lock to the latest compatible versions",
+    "category": "Dependencies",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-p, --package",
+        "description": "Update only the specified package"
+      },
+      {
+        "flag": "--precise",
+        "description": "Update a package to an exact version",
+        "example": "cargo update -p serde --precise 1.0.200"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Show what would change without writing"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo update",
+        "description": "Update all dependencies within Cargo.toml constraints"
+      },
+      {
+        "command": "cargo update -p serde",
+        "description": "Update a single dependency"
+      },
+      {
+        "command": "cargo update -p regex --precise 1.10.0",
+        "description": "Pin a dependency to an exact version"
+      }
+    ],
+    "notes": [
+      "cargo update only changes Cargo.lock; to cross a semver-incompatible version, edit Cargo.toml or use cargo add crate@<version>"
+    ],
+    "relatedCommands": [
+      "cargo-add",
+      "cargo-tree"
+    ]
+  },
+  {
+    "id": "cargo-tree",
+    "name": "cargo tree",
+    "description": "Display the dependency graph as a tree",
+    "category": "Dependencies",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-i, --invert",
+        "description": "Show which packages depend on the given package",
+        "example": "cargo tree -i openssl-sys"
+      },
+      {
+        "flag": "-d, --duplicates",
+        "description": "Show packages present in multiple versions"
+      },
+      {
+        "flag": "-e features",
+        "description": "Show which features are enabled"
+      },
+      {
+        "flag": "--depth",
+        "description": "Limit tree depth"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo tree",
+        "description": "Show the full dependency tree"
+      },
+      {
+        "command": "cargo tree -i openssl-sys",
+        "description": "Find out why openssl-sys is being pulled in"
+      },
+      {
+        "command": "cargo tree -d",
+        "description": "Find duplicate crate versions"
+      },
+      {
+        "command": "cargo tree --depth 1",
+        "description": "Show only direct dependencies"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-update",
+      "cargo-add"
+    ]
+  },
+  {
+    "id": "cargo-clippy",
+    "name": "cargo clippy",
+    "description": "Run the Clippy linter to catch common mistakes and non-idiomatic code",
+    "category": "Code Quality",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--all-targets",
+        "description": "Lint tests, benches, and examples too"
+      },
+      {
+        "flag": "--fix",
+        "description": "Automatically apply suggested fixes"
+      },
+      {
+        "flag": "-- -D warnings",
+        "description": "Treat all warnings as errors (CI)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo clippy",
+        "description": "Lint the current package"
+      },
+      {
+        "command": "cargo clippy --all-targets --all-features -- -D warnings",
+        "description": "Strict lint for CI"
+      },
+      {
+        "command": "cargo clippy --fix --allow-dirty",
+        "description": "Apply fixes even with uncommitted changes"
+      }
+    ],
+    "notes": [
+      "Install with rustup component add clippy if it is missing"
+    ],
+    "relatedCommands": [
+      "cargo-fmt",
+      "cargo-fix",
+      "rustup-component-add"
+    ]
+  },
+  {
+    "id": "cargo-fmt",
+    "name": "cargo fmt",
+    "description": "Format all Rust code in the package with rustfmt",
+    "category": "Code Quality",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--check",
+        "description": "Exit non-zero if formatting is needed, without changing files"
+      },
+      {
+        "flag": "--all",
+        "description": "Format all packages in the workspace"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo fmt",
+        "description": "Format the current package"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "description": "Verify formatting in CI"
+      }
+    ],
+    "notes": [
+      "Configure style with rustfmt.toml in the project root"
+    ],
+    "relatedCommands": [
+      "cargo-clippy"
+    ]
+  },
+  {
+    "id": "cargo-fix",
+    "name": "cargo fix",
+    "description": "Automatically apply compiler-suggested fixes",
+    "category": "Code Quality",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--edition",
+        "description": "Apply fixes needed to migrate to the next edition"
+      },
+      {
+        "flag": "--allow-dirty",
+        "description": "Allow running with uncommitted changes"
+      },
+      {
+        "flag": "--allow-staged",
+        "description": "Allow running with staged changes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo fix",
+        "description": "Apply rustc's machine-applicable suggestions"
+      },
+      {
+        "command": "cargo fix --edition",
+        "description": "Prepare code for the next edition, then update edition in Cargo.toml"
+      }
+    ],
+    "notes": [
+      "cargo fix rewrites source files; commit first so you can review the diff"
+    ],
+    "relatedCommands": [
+      "cargo-clippy"
+    ]
+  },
+  {
+    "id": "cargo-doc",
+    "name": "cargo doc",
+    "description": "Build documentation for the package and its dependencies",
+    "category": "Publishing",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--open",
+        "description": "Open the docs in a browser after building"
+      },
+      {
+        "flag": "--no-deps",
+        "description": "Do not build docs for dependencies"
+      },
+      {
+        "flag": "--document-private-items",
+        "description": "Include non-public items"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo doc --open",
+        "description": "Build and open documentation"
+      },
+      {
+        "command": "cargo doc --no-deps --open",
+        "description": "Document only your own crate (faster)"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-publish"
+    ]
+  },
+  {
+    "id": "cargo-publish",
+    "name": "cargo publish",
+    "description": "Package and upload the crate to crates.io",
+    "category": "Publishing",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--dry-run",
+        "description": "Perform all checks without uploading"
+      },
+      {
+        "flag": "-p, --package",
+        "description": "Publish a specific workspace member"
+      },
+      {
+        "flag": "--allow-dirty",
+        "description": "Allow publishing with uncommitted changes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo publish --dry-run",
+        "description": "Verify the package builds and is ready to publish"
+      },
+      {
+        "command": "cargo login",
+        "description": "Authenticate with crates.io (paste the API token when prompted)"
+      },
+      {
+        "command": "cargo publish",
+        "description": "Upload the crate"
+      }
+    ],
+    "notes": [
+      "Published versions are permanent; they can be yanked (cargo yank --version x.y.z) but never deleted or overwritten",
+      "Cargo.toml must include description and license (or license-file)"
+    ],
+    "relatedCommands": [
+      "cargo-doc"
+    ]
+  },
+  {
+    "id": "cargo-install",
+    "name": "cargo install",
+    "description": "Build and install a Rust binary into ~/.cargo/bin",
+    "category": "Tooling",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--locked",
+        "description": "Use the crate's Cargo.lock for reproducible installs"
+      },
+      {
+        "flag": "--git",
+        "description": "Install from a git repository"
+      },
+      {
+        "flag": "--path",
+        "description": "Install from a local path"
+      },
+      {
+        "flag": "--version",
+        "description": "Install a specific version"
+      },
+      {
+        "flag": "--force",
+        "description": "Reinstall even if already installed"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo install ripgrep",
+        "description": "Install a CLI tool from crates.io"
+      },
+      {
+        "command": "cargo install --locked cargo-watch",
+        "description": "Install using the published lockfile"
+      },
+      {
+        "command": "cargo install --path .",
+        "description": "Install the current project's binary"
+      },
+      {
+        "command": "cargo uninstall ripgrep",
+        "description": "Remove an installed binary"
+      }
+    ],
+    "notes": [
+      "cargo install compiles from source; it is for binaries only, not for adding library dependencies (use cargo add)"
+    ],
+    "relatedCommands": [
+      "cargo-add"
+    ]
+  },
+  {
+    "id": "cargo-clean",
+    "name": "cargo clean",
+    "description": "Remove the target directory and build artifacts",
+    "category": "Tooling",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-p, --package",
+        "description": "Clean only the given package"
+      },
+      {
+        "flag": "--release",
+        "description": "Clean only release artifacts"
+      },
+      {
+        "flag": "--doc",
+        "description": "Clean only generated docs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo clean",
+        "description": "Delete the whole target/ directory"
+      },
+      {
+        "command": "cargo clean -p my-crate",
+        "description": "Remove artifacts for one package"
+      }
+    ],
+    "notes": [
+      "The next build will recompile everything from scratch"
+    ],
+    "relatedCommands": [
+      "cargo-build"
+    ]
+  },
+  {
+    "id": "rustup-update",
+    "name": "rustup update",
+    "description": "Update installed Rust toolchains and rustup itself",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup update",
+        "description": "Update all installed toolchains"
+      },
+      {
+        "command": "rustup update stable",
+        "description": "Update only the stable toolchain"
+      }
+    ],
+    "relatedCommands": [
+      "rustup-toolchain",
+      "rustup-show"
+    ]
+  },
+  {
+    "id": "rustup-toolchain",
+    "name": "rustup toolchain",
+    "description": "Install, list, and uninstall toolchains",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup toolchain install nightly",
+        "description": "Install the nightly toolchain"
+      },
+      {
+        "command": "rustup toolchain install 1.80.0",
+        "description": "Install a specific version"
+      },
+      {
+        "command": "rustup toolchain list",
+        "description": "List installed toolchains"
+      },
+      {
+        "command": "rustup toolchain uninstall nightly",
+        "description": "Remove a toolchain"
+      },
+      {
+        "command": "rustup toolchain install",
+        "description": "Install the toolchain pinned in rust-toolchain.toml"
+      }
+    ],
+    "relatedCommands": [
+      "rustup-default",
+      "rustup-override",
+      "rustup-update"
+    ]
+  },
+  {
+    "id": "rustup-default",
+    "name": "rustup default",
+    "description": "Set the default toolchain used globally",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup default stable",
+        "description": "Use stable everywhere by default"
+      },
+      {
+        "command": "rustup default nightly",
+        "description": "Switch the default to nightly"
+      }
+    ],
+    "relatedCommands": [
+      "rustup-override",
+      "rustup-show"
+    ]
+  },
+  {
+    "id": "rustup-override",
+    "name": "rustup override",
+    "description": "Set a toolchain for a specific directory",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup override set nightly",
+        "description": "Use nightly in the current directory"
+      },
+      {
+        "command": "rustup override unset",
+        "description": "Remove the directory override"
+      },
+      {
+        "command": "cargo +nightly build",
+        "description": "Use a toolchain for a single command"
+      }
+    ],
+    "notes": [
+      "For a project-wide pin that is checked into git, prefer a rust-toolchain.toml file"
+    ],
+    "relatedCommands": [
+      "rustup-default",
+      "rustup-toolchain"
+    ]
+  },
+  {
+    "id": "rustup-target-add",
+    "name": "rustup target add",
+    "description": "Install the standard library for a compilation target",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup target add wasm32-unknown-unknown",
+        "description": "Add WebAssembly support"
+      },
+      {
+        "command": "rustup target add x86_64-unknown-linux-musl",
+        "description": "Add a static Linux target"
+      },
+      {
+        "command": "rustup target list --installed",
+        "description": "List installed targets"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-build",
+      "rustup-component-add"
+    ]
+  },
+  {
+    "id": "rustup-component-add",
+    "name": "rustup component add",
+    "description": "Install extra toolchain components such as clippy, rustfmt, or rust-analyzer",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup component add clippy rustfmt",
+        "description": "Install linter and formatter"
+      },
+      {
+        "command": "rustup component add rust-analyzer",
+        "description": "Install the language server"
+      },
+      {
+        "command": "rustup component add rust-src",
+        "description": "Install standard library sources"
+      },
+      {
+        "command": "rustup component list --installed",
+        "description": "List installed components"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-clippy",
+      "cargo-fmt",
+      "rustup-target-add"
+    ]
+  },
+  {
+    "id": "rustup-show",
+    "name": "rustup show",
+    "description": "Show installed toolchains and the active toolchain for this directory",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup show",
+        "description": "Show active and installed toolchains"
+      },
+      {
+        "command": "rustup show active-toolchain",
+        "description": "Print only the active toolchain"
+      }
+    ],
+    "relatedCommands": [
+      "rustup-default",
+      "rustc-version"
+    ]
+  },
+  {
+    "id": "rustc-version",
+    "name": "rustc --version",
+    "description": "Print the Rust compiler version",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-V, --version",
+        "description": "Print version"
+      },
+      {
+        "flag": "-vV",
+        "description": "Print verbose version info including host triple and LLVM version"
+      }
+    ],
+    "examples": [
+      {
+        "command": "rustc --version",
+        "description": "Show compiler version"
+      },
+      {
+        "command": "rustc -vV",
+        "description": "Show host triple and LLVM version"
+      },
+      {
+        "command": "cargo --version",
+        "description": "Show Cargo version"
+      }
+    ],
+    "relatedCommands": [
+      "rustup-show"
+    ]
+  }
+]

@@ -1,0 +1,589 @@
+[
+  {
+    "id": "filament-install",
+    "name": "composer require filament/filament",
+    "description": "Install the Filament package into a Laravel app",
+    "category": "Installation",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "composer require filament/filament:\"^4.0\" -W",
+        "description": "Install Filament v4"
+      },
+      {
+        "command": "composer require filament/filament:\"^3.3\" -W",
+        "description": "Install Filament v3 (older projects)"
+      }
+    ],
+    "notes": [
+      "Filament v4 is the current major version (released August 2025)",
+      "v4 requires PHP 8.2+, Laravel 11.28+ and Tailwind CSS v4 for custom themes",
+      "-W allows Composer to update dependencies Filament needs",
+      "Then run php artisan filament:install --panels"
+    ],
+    "relatedCommands": [
+      "filament-panel",
+      "filament-v4-upgrade"
+    ]
+  },
+  {
+    "id": "filament-panel",
+    "name": "php artisan filament:install",
+    "description": "Install and configure Filament panel",
+    "category": "Installation",
+    "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--panels",
+        "description": "Install Filament Panels"
+      },
+      {
+        "flag": "--scaffold",
+        "description": "Set up standalone Filament packages (forms, tables, etc.) in Livewire components without a panel"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan filament:install --panels",
+        "description": "Install admin panel"
+      },
+      {
+        "command": "php artisan filament:install --scaffold",
+        "description": "Use Filament components outside of a panel"
+      }
+    ],
+    "notes": [
+      "Creates default admin panel at /admin",
+      "Publishes configuration files",
+      "Creates a panel provider at app/Providers/Filament/AdminPanelProvider.php and registers it",
+      "Then create a login with php artisan make:filament-user"
+    ],
+    "relatedCommands": [
+      "filament-install",
+      "filament-user",
+      "filament-make-panel"
+    ]
+  },
+  {
+    "id": "filament-make-panel",
+    "name": "php artisan make:filament-panel",
+    "description": "Create an additional panel (e.g. a customer-facing app next to /admin)",
+    "category": "Installation",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-panel app",
+        "description": "Create a panel with ID 'app' served at /app"
+      }
+    ],
+    "notes": [
+      "Creates app/Providers/Filament/AppPanelProvider.php; check it's registered in bootstrap/providers.php",
+      "Use --panel=app on other make:filament-* commands to target it"
+    ],
+    "relatedCommands": [
+      "filament-panel",
+      "filament-resource"
+    ]
+  },
+  {
+    "id": "filament-user",
+    "name": "php artisan make:filament-user",
+    "description": "Create a new Filament admin user",
+    "category": "User Management",
+    "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--name",
+        "description": "User's name"
+      },
+      {
+        "flag": "--email",
+        "description": "User's email"
+      },
+      {
+        "flag": "--password",
+        "description": "User's password"
+      },
+      {
+        "flag": "--panel",
+        "description": "Panel ID when you have several panels"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:filament-user",
+        "description": "Create admin user interactively"
+      },
+      {
+        "command": "php artisan make:filament-user --name=\"Admin\" --email=admin@example.com",
+        "description": "Create a user non-interactively (prompts for the password)"
+      }
+    ],
+    "notes": [
+      "In production, implement FilamentUser::canAccessPanel() on your User model or nobody can log in",
+      "Avoid passing --password in shared shells; it stays in history"
+    ],
+    "relatedCommands": [
+      "filament-panel"
+    ]
+  },
+  {
+    "id": "filament-resource",
+    "name": "php artisan make:filament-resource",
+    "description": "Create a new Filament resource",
+    "category": "Resources",
+    "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--generate",
+        "description": "Auto-generate form and table fields from database"
+      },
+      {
+        "flag": "--view",
+        "description": "Add view page to resource"
+      },
+      {
+        "flag": "--simple",
+        "description": "Create simple resource (modal-based)"
+      },
+      {
+        "flag": "--soft-deletes",
+        "description": "Add soft-delete filters and actions"
+      },
+      {
+        "flag": "--panel=ID",
+        "description": "Create the resource in a specific panel"
+      },
+      {
+        "flag": "--model-namespace",
+        "description": "Namespace of the model if not App\\Models"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:filament-resource Post",
+        "description": "Create Post resource"
+      },
+      {
+        "command": "php artisan make:filament-resource Post --generate",
+        "description": "Generate resource from database table"
+      },
+      {
+        "command": "php artisan make:filament-resource Category --simple",
+        "description": "Create simple modal-based resource"
+      },
+      {
+        "command": "php artisan make:filament-resource Post --generate --view --soft-deletes",
+        "description": "Full CRUD with a view page and soft deletes"
+      }
+    ],
+    "notes": [
+      "Creates resource class, pages, and navigation items",
+      "Manages CRUD operations for Eloquent models",
+      "v4 creates a folder per resource (e.g. app/Filament/Resources/Posts/) with separate Schemas/PostForm and Tables/PostsTable classes; v3 kept everything in PostResource.php",
+      "--generate needs doctrine/dbal on Laravel 10 only; on Laravel 11+ it reads the schema natively"
+    ],
+    "relatedCommands": [
+      "filament-page"
+    ]
+  },
+  {
+    "id": "filament-page",
+    "name": "php artisan make:filament-page",
+    "description": "Create a new Filament custom page",
+    "category": "Pages",
+    "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--resource",
+        "description": "Specify resource to attach page to"
+      },
+      {
+        "flag": "--type",
+        "description": "Page type (e.g., ManageRecords, ViewRecord)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:filament-page Settings",
+        "description": "Create Settings page"
+      },
+      {
+        "command": "php artisan make:filament-page ManageUsers --resource=UserResource --type=ManageRecords",
+        "description": "Create custom resource page"
+      }
+    ],
+    "notes": [
+      "Custom pages for admin panel",
+      "Can be standalone or attached to resources",
+      "Without --resource the page is standalone and appears in the navigation",
+      "Run without options to be prompted for the page type"
+    ],
+    "relatedCommands": [
+      "filament-resource"
+    ]
+  },
+  {
+    "id": "filament-make-cluster",
+    "name": "php artisan make:filament-cluster",
+    "description": "Create a cluster that groups resources and pages under one navigation item",
+    "category": "Pages",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-cluster Settings",
+        "description": "Create a Settings cluster"
+      },
+      {
+        "command": "php artisan make:filament-resource Tax --cluster=Settings",
+        "description": "Create a resource inside a cluster"
+      }
+    ],
+    "relatedCommands": [
+      "filament-page",
+      "filament-resource"
+    ]
+  },
+  {
+    "id": "filament-widget",
+    "name": "php artisan make:filament-widget",
+    "description": "Create a new Filament dashboard widget",
+    "category": "Widgets",
+    "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--resource",
+        "description": "Attach widget to resource"
+      },
+      {
+        "flag": "--chart",
+        "description": "Create chart widget"
+      },
+      {
+        "flag": "--table",
+        "description": "Create table widget"
+      },
+      {
+        "flag": "--stats-overview",
+        "description": "Create stats overview widget"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:filament-widget StatsOverview --stats-overview",
+        "description": "Create stats overview widget"
+      },
+      {
+        "command": "php artisan make:filament-widget BlogPostsChart --chart",
+        "description": "Create chart widget"
+      },
+      {
+        "command": "php artisan make:filament-widget LatestOrders --table",
+        "description": "Create table widget"
+      }
+    ],
+    "notes": [
+      "Display on dashboard or resource pages",
+      "Support charts, stats, and tables",
+      "Without --resource, widgets go on the dashboard (or any page) when registered"
+    ],
+    "relatedCommands": [
+      "filament-page"
+    ]
+  },
+  {
+    "id": "filament-relation-manager",
+    "name": "php artisan make:filament-relation-manager",
+    "description": "Create a relation manager for resource",
+    "category": "Resources",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-relation-manager PostResource comments title",
+        "description": "Manage comments relation on Post"
+      },
+      {
+        "command": "php artisan make:filament-relation-manager UserResource posts title",
+        "description": "Manage posts relation on User"
+      }
+    ],
+    "notes": [
+      "Manages relationships between models",
+      "Displays as tabs on resource pages",
+      "Arguments: <Resource> <relationship> <title attribute>; omit them to be prompted"
+    ],
+    "relatedCommands": [
+      "filament-resource"
+    ]
+  },
+  {
+    "id": "filament-theme",
+    "name": "php artisan make:filament-theme",
+    "description": "Create a custom Filament theme",
+    "category": "Customization",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-theme",
+        "description": "Generate custom theme files"
+      },
+      {
+        "command": "php artisan make:filament-theme admin",
+        "description": "Create a theme for the panel with ID 'admin'"
+      }
+    ],
+    "notes": [
+      "v4 themes use Tailwind CSS v4 and create resources/css/filament/<panel>/theme.css",
+      "Add the CSS file to the input array in vite.config.js, register it with ->viteTheme() on the panel, then run npm run build"
+    ],
+    "relatedCommands": [
+      "filament-panel"
+    ]
+  },
+  {
+    "id": "filament-upgrade",
+    "name": "php artisan filament:upgrade",
+    "description": "Refresh Filament after a Composer update (clear caches and republish assets)",
+    "category": "Maintenance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:upgrade",
+        "description": "Run upgrade commands and publish assets"
+      },
+      {
+        "command": "composer update && php artisan filament:upgrade",
+        "description": "Update within the same major version"
+      }
+    ],
+    "notes": [
+      "Normally runs automatically from the post-autoload-dump script in composer.json",
+      "It does not perform a major-version upgrade; for v3 to v4 see the upgrade script (vendor/bin/filament-v4)"
+    ],
+    "relatedCommands": [
+      "filament-install",
+      "filament-assets",
+      "filament-v4-upgrade"
+    ]
+  },
+  {
+    "id": "filament-assets",
+    "name": "php artisan filament:assets",
+    "description": "Publish Filament assets",
+    "category": "Maintenance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:assets",
+        "description": "Republish Filament CSS and JS"
+      }
+    ],
+    "notes": [
+      "Useful after upgrading Filament",
+      "Publishes to public/vendor/filament"
+    ],
+    "relatedCommands": [
+      "filament-upgrade"
+    ]
+  },
+  {
+    "id": "filament-v4-upgrade",
+    "name": "vendor/bin/filament-v4",
+    "description": "Automated upgrade script from Filament v3 to v4",
+    "category": "Maintenance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "composer require filament/upgrade:\"^4.0\" -W --dev",
+        "description": "Install the upgrade tool"
+      },
+      {
+        "command": "vendor/bin/filament-v4",
+        "description": "Rewrite code for v4 and print the Composer commands to run next"
+      },
+      {
+        "command": "php artisan filament:upgrade-directory-structure-to-v4 --dry-run",
+        "description": "Optional: preview moving resources to the v4 folder structure"
+      }
+    ],
+    "notes": [
+      "Commit first and review the diff; the script doesn't cover every breaking change, so read the v4 upgrade guide",
+      "Remove filament/upgrade afterwards with composer remove filament/upgrade --dev"
+    ],
+    "relatedCommands": [
+      "filament-upgrade",
+      "filament-install"
+    ]
+  },
+  {
+    "id": "filament-cache-components",
+    "name": "php artisan filament:cache-components",
+    "description": "Cache Filament component configurations",
+    "category": "Performance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:cache-components",
+        "description": "Cache component configs for production"
+      }
+    ],
+    "notes": [
+      "Improves performance in production",
+      "Run after deploying",
+      "Usually run via php artisan filament:optimize, which also caches Blade icons"
+    ],
+    "relatedCommands": [
+      "filament-clear-cached-components"
+    ]
+  },
+  {
+    "id": "filament-clear-cached-components",
+    "name": "php artisan filament:clear-cached-components",
+    "description": "Clear cached Filament components",
+    "category": "Performance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:clear-cached-components",
+        "description": "Clear component cache"
+      }
+    ],
+    "notes": [
+      "Use during development when making changes"
+    ],
+    "relatedCommands": [
+      "filament-cache-components"
+    ]
+  },
+  {
+    "id": "filament-make-page-action",
+    "name": "php artisan make:filament-page-action",
+    "description": "Create a custom page action (not a Filament v3/v4 command)",
+    "category": "Actions",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-page-action ExportUsers",
+        "description": "Create export action"
+      }
+    ],
+    "notes": [
+      "DEPRECATED/UNSUPPORTED: Filament v3 and v4 don't ship this generator. Define actions inline with Action::make('name') in a page's getHeaderActions() or a table's recordActions()/toolbarActions() (v3: actions()/bulkActions()), or extract a reusable Action subclass by hand"
+    ],
+    "relatedCommands": [
+      "filament-page"
+    ]
+  },
+  {
+    "id": "filament-optimize",
+    "name": "php artisan filament:optimize",
+    "description": "Optimize Filament for production",
+    "category": "Performance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:optimize",
+        "description": "Cache and optimize Filament"
+      }
+    ],
+    "notes": [
+      "Runs filament:cache-components and icons:cache; add it to deploy scripts next to php artisan optimize",
+      "Undo with php artisan filament:optimize-clear"
+    ],
+    "relatedCommands": [
+      "filament-cache-components",
+      "filament-optimize-clear"
+    ]
+  },
+  {
+    "id": "filament-optimize-clear",
+    "name": "php artisan filament:optimize-clear",
+    "description": "Clear Filament's cached components and icons",
+    "category": "Performance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:optimize-clear",
+        "description": "Clear Filament caches"
+      }
+    ],
+    "notes": [
+      "Run when new resources or pages don't show up after filament:optimize"
+    ],
+    "relatedCommands": [
+      "filament-optimize",
+      "filament-clear-cached-components"
+    ]
+  },
+  {
+    "id": "filament-make-table-action",
+    "name": "php artisan make:filament-table-action",
+    "description": "Create a custom table action (not a Filament v3/v4 command)",
+    "category": "Actions",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-table-action ArchivePost",
+        "description": "Create archive action for tables"
+      }
+    ],
+    "notes": [
+      "DEPRECATED/UNSUPPORTED: Filament v3 and v4 don't ship this generator. Define actions inline with Action::make('name') in a page's getHeaderActions() or a table's recordActions()/toolbarActions() (v3: actions()/bulkActions()), or extract a reusable Action subclass by hand"
+    ],
+    "relatedCommands": [
+      "filament-resource"
+    ]
+  },
+  {
+    "id": "filament-make-exporter",
+    "name": "php artisan make:filament-exporter",
+    "description": "Create an exporter class for CSV/XLSX export actions",
+    "category": "Actions",
+    "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--generate",
+        "description": "Generate columns from the model's database table"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:filament-exporter Product --generate",
+        "description": "Create ProductExporter with columns"
+      }
+    ],
+    "notes": [
+      "Exports run in queued job batches: create the job batches and notifications tables (php artisan make:queue-batches-table, make:notifications-table) and run a queue worker"
+    ],
+    "relatedCommands": [
+      "filament-make-importer",
+      "filament-resource"
+    ]
+  },
+  {
+    "id": "filament-make-importer",
+    "name": "php artisan make:filament-importer",
+    "description": "Create an importer class for CSV import actions",
+    "category": "Actions",
+    "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--generate",
+        "description": "Generate columns from the model's database table"
+      }
+    ],
+    "examples": [
+      {
+        "command": "php artisan make:filament-importer Product --generate",
+        "description": "Create ProductImporter with columns"
+      }
+    ],
+    "notes": [
+      "Imports also use queued job batches; a queue worker must be running"
+    ],
+    "relatedCommands": [
+      "filament-make-exporter",
+      "filament-resource"
+    ]
+  }
+]

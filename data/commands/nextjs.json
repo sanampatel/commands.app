@@ -1,0 +1,559 @@
+[
+  {
+    "id": "nextjs-create",
+    "name": "npx create-next-app",
+    "description": "Scaffold a new Next.js application",
+    "category": "Project Setup",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "--ts, --typescript",
+        "description": "Initialize as a TypeScript project (default)"
+      },
+      {
+        "flag": "--js, --javascript",
+        "description": "Initialize as a JavaScript project"
+      },
+      {
+        "flag": "--tailwind",
+        "description": "Initialize with Tailwind CSS"
+      },
+      {
+        "flag": "--eslint",
+        "description": "Initialize with ESLint config"
+      },
+      {
+        "flag": "--app",
+        "description": "Use the App Router"
+      },
+      {
+        "flag": "--src-dir",
+        "description": "Put app code inside a src/ directory"
+      },
+      {
+        "flag": "--import-alias <alias>",
+        "description": "Set the import alias, e.g. \"@/*\""
+      },
+      {
+        "flag": "--turbopack",
+        "description": "Use Turbopack (already the default bundler in Next.js 16)"
+      },
+      {
+        "flag": "--use-npm / --use-pnpm / --use-yarn / --use-bun",
+        "description": "Choose the package manager used to install dependencies"
+      },
+      {
+        "flag": "-e, --example <name|github-url>",
+        "description": "Bootstrap from an official example or a GitHub repo"
+      },
+      {
+        "flag": "--empty",
+        "description": "Create a minimal app without the starter content"
+      },
+      {
+        "flag": "--skip-install",
+        "description": "Don't install dependencies"
+      },
+      {
+        "flag": "--disable-git",
+        "description": "Don't initialize a git repository"
+      },
+      {
+        "flag": "--yes",
+        "description": "Use saved preferences or defaults for all prompts"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npx create-next-app@latest my-app",
+        "description": "Create a new app interactively"
+      },
+      {
+        "command": "npx create-next-app@latest my-app --yes",
+        "description": "Skip prompts and use the recommended defaults"
+      },
+      {
+        "command": "npx create-next-app@latest my-app --ts --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-pnpm",
+        "description": "Fully non-interactive setup with pnpm"
+      },
+      {
+        "command": "npx create-next-app@latest my-app --example with-docker",
+        "description": "Start from an official example"
+      }
+    ],
+    "notes": [
+      "Equivalents: pnpm create next-app, yarn create next-app, bun create next-app",
+      "Next.js 16 requires Node.js 20.9 or newer"
+    ],
+    "relatedCommands": [
+      "nextjs-dev"
+    ]
+  },
+  {
+    "id": "nextjs-dev",
+    "name": "next dev",
+    "description": "Start Next.js development server",
+    "category": "Development",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "-p, --port PORT",
+        "description": "Port to listen on (default 3000, or the PORT env var)"
+      },
+      {
+        "flag": "-H, --hostname HOST",
+        "description": "Hostname to bind to (default 0.0.0.0)"
+      },
+      {
+        "flag": "--webpack",
+        "description": "Use webpack instead of Turbopack (Next.js 16+)"
+      },
+      {
+        "flag": "--turbopack",
+        "description": "Use Turbopack; the default since Next.js 16, only needed on 15.x"
+      },
+      {
+        "flag": "--experimental-https",
+        "description": "Serve over HTTPS with a locally generated certificate"
+      }
+    ],
+    "examples": [
+      {
+        "command": "next dev",
+        "description": "Start the dev server on http://localhost:3000 (Turbopack)"
+      },
+      {
+        "command": "npm run dev",
+        "description": "Start via the package.json script"
+      },
+      {
+        "command": "next dev -p 3001",
+        "description": "Start on a custom port"
+      },
+      {
+        "command": "next dev --webpack",
+        "description": "Opt out of Turbopack, e.g. for custom webpack config"
+      }
+    ],
+    "notes": [
+      "Turbopack is the default bundler for next dev and next build in Next.js 16; '--turbo' was the old flag name"
+    ],
+    "relatedCommands": [
+      "nextjs-build",
+      "nextjs-start",
+      "nextjs-dev-turbo"
+    ]
+  },
+  {
+    "id": "nextjs-build",
+    "name": "next build",
+    "description": "Build Next.js application for production",
+    "category": "Build",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "--webpack",
+        "description": "Build with webpack instead of Turbopack (Next.js 16+)"
+      },
+      {
+        "flag": "--debug",
+        "description": "Enable verbose build output"
+      },
+      {
+        "flag": "--profile",
+        "description": "Enable production profiling for React"
+      }
+    ],
+    "examples": [
+      {
+        "command": "next build",
+        "description": "Build production bundle"
+      },
+      {
+        "command": "npm run build",
+        "description": "Build using package.json script"
+      },
+      {
+        "command": "next build --webpack",
+        "description": "Build with webpack (opt out of Turbopack)"
+      }
+    ],
+    "notes": [
+      "Optimizes code for production and writes output to .next/",
+      "Run before 'next start' or deploying",
+      "Next.js 16 no longer runs ESLint during next build; run your linter as a separate CI step",
+      "'next export' was removed in Next.js 14; set output: 'export' in next.config instead (see static export)"
+    ],
+    "relatedCommands": [
+      "nextjs-start",
+      "nextjs-build-standalone",
+      "nextjs-build-static-export"
+    ]
+  },
+  {
+    "id": "nextjs-start",
+    "name": "next start",
+    "description": "Start Next.js production server",
+    "category": "Production",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "-p PORT",
+        "description": "Specify port (default 3000)"
+      },
+      {
+        "flag": "-H HOST",
+        "description": "Specify hostname"
+      }
+    ],
+    "examples": [
+      {
+        "command": "next start",
+        "description": "Start production server"
+      },
+      {
+        "command": "npm run start",
+        "description": "Start using package.json script"
+      },
+      {
+        "command": "next start -p 8080",
+        "description": "Start on custom port"
+      }
+    ],
+    "notes": [
+      "Requires 'next build' first",
+      "Serves optimized production build",
+      "Not used with output: 'standalone'; run node .next/standalone/server.js instead"
+    ],
+    "relatedCommands": [
+      "nextjs-build"
+    ]
+  },
+  {
+    "id": "nextjs-lint",
+    "name": "next lint",
+    "description": "Run ESLint through Next.js (removed in Next.js 16)",
+    "category": "Development",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "--fix",
+        "description": "Automatically fix issues"
+      },
+      {
+        "flag": "--dir",
+        "description": "Specify directory to lint"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npx @next/codemod@canary next-lint-to-eslint-cli .",
+        "description": "Migrate the lint script and config to the ESLint CLI"
+      },
+      {
+        "command": "npx eslint .",
+        "description": "Run ESLint directly (replacement for next lint)"
+      },
+      {
+        "command": "npx eslint . --fix",
+        "description": "Auto-fix with the ESLint CLI"
+      },
+      {
+        "command": "next lint",
+        "description": "Run ESLint"
+      },
+      {
+        "command": "next lint --fix",
+        "description": "Fix auto-fixable issues"
+      },
+      {
+        "command": "npm run lint",
+        "description": "Lint using package.json script"
+      }
+    ],
+    "notes": [
+      "DEPRECATED: next lint was deprecated in Next.js 15.5 and removed in Next.js 16. Use the ESLint CLI (eslint .) or another linter such as Biome",
+      "The next-lint-to-eslint-cli codemod updates package.json scripts and sets up eslint.config.mjs with eslint-config-next",
+      "The 'next lint' examples only work on Next.js 15 and earlier"
+    ],
+    "relatedCommands": [
+      "nextjs-dev"
+    ]
+  },
+  {
+    "id": "nextjs-telemetry",
+    "name": "next telemetry",
+    "description": "Manage Next.js telemetry settings",
+    "category": "Configuration",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "next telemetry status",
+        "description": "Check telemetry status"
+      },
+      {
+        "command": "next telemetry disable",
+        "description": "Disable telemetry"
+      },
+      {
+        "command": "next telemetry enable",
+        "description": "Enable telemetry"
+      }
+    ],
+    "notes": [
+      "Telemetry helps improve Next.js",
+      "Completely anonymous",
+      "Set NEXT_TELEMETRY_DISABLED=1 to disable it in CI"
+    ],
+    "relatedCommands": []
+  },
+  {
+    "id": "nextjs-info",
+    "name": "next info",
+    "description": "Print relevant system and Next.js installation information",
+    "category": "Development",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "next info",
+        "description": "Display system and Next.js info"
+      }
+    ],
+    "notes": [
+      "Useful for bug reports",
+      "Shows Node version, OS, package versions"
+    ],
+    "relatedCommands": [
+      "nextjs-codemod-upgrade"
+    ]
+  },
+  {
+    "id": "nextjs-dev-turbo",
+    "name": "next dev --turbo",
+    "description": "Start the development server with Turbopack (the default since Next.js 16)",
+    "category": "Development",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "next dev",
+        "description": "Next.js 16+: Turbopack is used by default"
+      },
+      {
+        "command": "next dev --webpack",
+        "description": "Next.js 16+: opt out and use webpack"
+      },
+      {
+        "command": "next dev --turbopack",
+        "description": "Next.js 15: enable Turbopack explicitly"
+      }
+    ],
+    "notes": [
+      "Turbopack is stable and the default bundler for both next dev and next build in Next.js 16, so no flag is needed",
+      "'--turbo' is the old flag name; Next.js 15 used '--turbopack'",
+      "Pass --webpack to dev/build if you depend on a custom webpack() config in next.config"
+    ],
+    "relatedCommands": [
+      "nextjs-dev",
+      "nextjs-build"
+    ]
+  },
+  {
+    "id": "nextjs-build-standalone",
+    "name": "next build (standalone)",
+    "description": "Build Next.js app with standalone output",
+    "category": "Build",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "next build",
+        "description": "Build with standalone output in next.config.js"
+      },
+      {
+        "command": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
+        "description": "Copy static assets the standalone server needs"
+      },
+      {
+        "command": "node .next/standalone/server.js",
+        "description": "Run the standalone server"
+      }
+    ],
+    "notes": [
+      "Add 'output: \"standalone\"' in next.config.js",
+      "Creates minimal Node.js server for deployment",
+      "Ideal for Docker containers",
+      "public/ and .next/static are not copied automatically; copy them yourself or serve them from a CDN",
+      "Set PORT and HOSTNAME env vars to configure the standalone server"
+    ],
+    "relatedCommands": [
+      "nextjs-build"
+    ]
+  },
+  {
+    "id": "nextjs-build-static-export",
+    "name": "next build (static export)",
+    "description": "Export a fully static site with output: 'export'",
+    "category": "Build",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "next build",
+        "description": "With output: 'export' in next.config, writes static HTML/CSS/JS to out/"
+      },
+      {
+        "command": "npx serve out",
+        "description": "Preview the exported site locally"
+      }
+    ],
+    "notes": [
+      "Replaces the removed 'next export' command (removed in Next.js 14)",
+      "Set output: 'export' in next.config.ts; set distDir to change the out/ folder",
+      "Features that need a server don't work: rewrites/redirects/headers, proxy (middleware), ISR, default image optimization"
+    ],
+    "relatedCommands": [
+      "nextjs-build",
+      "nextjs-build-standalone"
+    ]
+  },
+  {
+    "id": "nextjs-experimental-https",
+    "name": "next dev --experimental-https",
+    "description": "Run development server with HTTPS",
+    "category": "Development",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "--experimental-https-key <path>",
+        "description": "Path to a custom HTTPS key file"
+      },
+      {
+        "flag": "--experimental-https-cert <path>",
+        "description": "Path to a custom HTTPS certificate file"
+      },
+      {
+        "flag": "--experimental-https-ca <path>",
+        "description": "Path to a custom CA certificate"
+      }
+    ],
+    "examples": [
+      {
+        "command": "next dev --experimental-https",
+        "description": "Start dev server with HTTPS"
+      }
+    ],
+    "notes": [
+      "Generates a locally trusted certificate with mkcert",
+      "For local development only"
+    ],
+    "relatedCommands": [
+      "nextjs-dev"
+    ]
+  },
+  {
+    "id": "nextjs-typegen",
+    "name": "next typegen",
+    "description": "Generate TypeScript types for routes, pages and layouts without running dev or build",
+    "category": "Development",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "next typegen",
+        "description": "Generate route types (PageProps, LayoutProps, RouteContext) into .next/types"
+      },
+      {
+        "command": "next typegen && tsc --noEmit",
+        "description": "Type-check in CI without a full build"
+      }
+    ],
+    "notes": [
+      "Available since Next.js 15.5"
+    ],
+    "relatedCommands": [
+      "nextjs-build",
+      "nextjs-dev"
+    ]
+  },
+  {
+    "id": "nextjs-create-typescript",
+    "name": "create-next-app with TypeScript",
+    "description": "Create Next.js app with TypeScript",
+    "category": "Project Setup",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "npx create-next-app@latest --typescript",
+        "description": "Create with TypeScript"
+      },
+      {
+        "command": "npx create-next-app@latest --ts --tailwind --app",
+        "description": "Create with TypeScript, Tailwind, and App Router"
+      }
+    ],
+    "notes": [
+      "TypeScript is already the default in create-next-app; --ts is only needed to skip the prompt",
+      "Projects need next-env.d.ts and a tsconfig.json, which are generated for you"
+    ],
+    "relatedCommands": [
+      "nextjs-create"
+    ]
+  },
+  {
+    "id": "nextjs-env-check",
+    "name": "Environment Variables",
+    "description": "Using environment variables in Next.js",
+    "category": "Configuration",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "NEXT_PUBLIC_API_URL=https://api.example.com next dev",
+        "description": "Set public env variable"
+      },
+      {
+        "command": "NODE_ENV=production next build",
+        "description": "Build for production"
+      },
+      {
+        "command": "cp .env.example .env.local",
+        "description": "Create local env overrides (keep .env*.local out of git)"
+      }
+    ],
+    "notes": [
+      "Use NEXT_PUBLIC_ prefix for browser-accessible variables",
+      "Create .env.local for local development",
+      ".env.production for production builds",
+      "NEXT_PUBLIC_ variables are inlined into the client bundle at build time, so changing them requires a rebuild",
+      "Load order: process.env, .env.$(NODE_ENV).local, .env.local (skipped in test), .env.$(NODE_ENV), .env"
+    ],
+    "relatedCommands": [
+      "nextjs-build",
+      "nextjs-dev"
+    ]
+  },
+  {
+    "id": "nextjs-codemod-upgrade",
+    "name": "npx @next/codemod upgrade",
+    "description": "Upgrade Next.js and React and run the relevant codemods",
+    "category": "Maintenance",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "npx @next/codemod@canary upgrade latest",
+        "description": "Upgrade to the latest stable Next.js with codemods"
+      },
+      {
+        "command": "npx @next/codemod@canary next-lint-to-eslint-cli .",
+        "description": "Run a single codemod by name"
+      },
+      {
+        "command": "npx @next/codemod --dry --print <transform> <path>",
+        "description": "Preview a codemod's changes without writing files"
+      }
+    ],
+    "notes": [
+      "Commit or stash your work first so you can review the diff"
+    ],
+    "relatedCommands": [
+      "nextjs-info",
+      "nextjs-lint"
+    ]
+  }
+]

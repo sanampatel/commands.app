@@ -1,0 +1,4019 @@
+[
+  {
+    "id": "ls",
+    "name": "ls",
+    "description": "List directory contents",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-l",
+        "description": "Use long listing format showing permissions, owner, size, and modification date"
+      },
+      {
+        "flag": "-a",
+        "description": "Show all files including hidden files (starting with .)"
+      },
+      {
+        "flag": "-h",
+        "description": "Human-readable file sizes (e.g., 1K, 234M, 2G)"
+      },
+      {
+        "flag": "-R",
+        "description": "List subdirectories recursively"
+      },
+      {
+        "flag": "-t",
+        "description": "Sort by modification time, newest first"
+      },
+      {
+        "flag": "-S",
+        "description": "Sort by file size, largest first"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ls",
+        "description": "List files in current directory"
+      },
+      {
+        "command": "ls -la",
+        "description": "List all files with detailed information"
+      },
+      {
+        "command": "ls -lh /var/log",
+        "description": "List log files with human-readable sizes"
+      },
+      {
+        "command": "ls -lt | head",
+        "description": "Show the 10 most recently modified entries"
+      }
+    ],
+    "notes": [
+      "Hidden files start with a dot (.)",
+      "Use with grep to filter results: ls -la | grep pattern"
+    ],
+    "relatedCommands": [
+      "cd",
+      "pwd",
+      "tree"
+    ]
+  },
+  {
+    "id": "cd",
+    "name": "cd",
+    "description": "Change the current directory",
+    "category": "File Management",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "cd /path/to/directory",
+        "description": "Change to specified directory"
+      },
+      {
+        "command": "cd ..",
+        "description": "Move up one directory level"
+      },
+      {
+        "command": "cd ~",
+        "description": "Change to home directory"
+      },
+      {
+        "command": "cd -",
+        "description": "Change to previous directory"
+      }
+    ],
+    "notes": [
+      "Without arguments, cd returns to home directory",
+      "Use Tab key for auto-completion"
+    ],
+    "relatedCommands": [
+      "ls",
+      "pwd"
+    ]
+  },
+  {
+    "id": "pwd",
+    "name": "pwd",
+    "description": "Print working directory - shows current directory path",
+    "category": "File Management",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "pwd",
+        "description": "Display current directory path",
+        "output": "/home/user/documents"
+      }
+    ],
+    "relatedCommands": [
+      "cd",
+      "ls"
+    ]
+  },
+  {
+    "id": "mkdir",
+    "name": "mkdir",
+    "description": "Create new directories",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-p",
+        "description": "Create parent directories as needed"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      },
+      {
+        "flag": "-m mode",
+        "description": "Set file mode (permissions)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mkdir mydir",
+        "description": "Create a directory named mydir"
+      },
+      {
+        "command": "mkdir -p parent/child/grandchild",
+        "description": "Create nested directories"
+      },
+      {
+        "command": "mkdir -m 755 mydir",
+        "description": "Create directory with specific permissions"
+      }
+    ],
+    "relatedCommands": [
+      "rmdir",
+      "rm",
+      "ls"
+    ]
+  },
+  {
+    "id": "touch",
+    "name": "touch",
+    "description": "Create empty files or update file timestamps",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-c",
+        "description": "Do not create the file if it does not exist"
+      },
+      {
+        "flag": "-d date",
+        "description": "Use the given date instead of now (GNU)"
+      },
+      {
+        "flag": "-r ref",
+        "description": "Use the timestamps of file ref"
+      }
+    ],
+    "examples": [
+      {
+        "command": "touch notes.txt",
+        "description": "Create an empty file (or update its modification time)"
+      },
+      {
+        "command": "touch src/{index,app,utils}.js",
+        "description": "Create several files at once using brace expansion"
+      },
+      {
+        "command": "touch -r original.txt copy.txt",
+        "description": "Copy timestamps from another file"
+      }
+    ],
+    "relatedCommands": [
+      "mkdir",
+      "ls"
+    ]
+  },
+  {
+    "id": "cp",
+    "name": "cp",
+    "description": "Copy files and directories",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-r",
+        "description": "Copy directories recursively"
+      },
+      {
+        "flag": "-i",
+        "description": "Prompt before overwrite"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      },
+      {
+        "flag": "-p",
+        "description": "Preserve file attributes"
+      },
+      {
+        "flag": "-a",
+        "description": "Archive mode: copy recursively and preserve permissions, ownership, timestamps and symlinks"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cp file.txt backup.txt",
+        "description": "Copy a file"
+      },
+      {
+        "command": "cp -r source/ destination/",
+        "description": "Copy directory recursively"
+      },
+      {
+        "command": "cp -p file.txt /backup/",
+        "description": "Copy file preserving attributes"
+      },
+      {
+        "command": "cp -a /etc/nginx /etc/nginx.bak",
+        "description": "Back up a config directory with all attributes preserved"
+      }
+    ],
+    "notes": [
+      "cp overwrites existing destination files silently unless you pass -i or -n"
+    ],
+    "relatedCommands": [
+      "mv",
+      "rsync",
+      "scp"
+    ]
+  },
+  {
+    "id": "mv",
+    "name": "mv",
+    "description": "Move or rename files and directories",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Prompt before overwrite"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      },
+      {
+        "flag": "-n",
+        "description": "Do not overwrite existing file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mv oldname.txt newname.txt",
+        "description": "Rename a file"
+      },
+      {
+        "command": "mv file.txt /path/to/destination/",
+        "description": "Move file to another directory"
+      },
+      {
+        "command": "mv -i *.txt documents/",
+        "description": "Move all .txt files with confirmation"
+      }
+    ],
+    "relatedCommands": [
+      "cp",
+      "rm",
+      "rename"
+    ]
+  },
+  {
+    "id": "rm",
+    "name": "rm",
+    "description": "Remove files or directories",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-r",
+        "description": "Remove directories and their contents recursively"
+      },
+      {
+        "flag": "-f",
+        "description": "Force removal without confirmation"
+      },
+      {
+        "flag": "-i",
+        "description": "Prompt before every removal"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "rm file.txt",
+        "description": "Remove a file"
+      },
+      {
+        "command": "rm -rf directory/",
+        "description": "Remove directory and all contents (use with caution!)"
+      },
+      {
+        "command": "rm -i *.txt",
+        "description": "Remove all .txt files with confirmation"
+      }
+    ],
+    "notes": [
+      "WARNING: rm does not use a trash can; deleted files are effectively unrecoverable",
+      "Double-check paths and variables before running 'rm -rf' (e.g. 'rm -rf $DIR/' with an empty $DIR targets /)",
+      "Use 'rm -i' or list targets first with 'ls' when using wildcards"
+    ],
+    "relatedCommands": [
+      "rmdir",
+      "mv",
+      "cp"
+    ]
+  },
+  {
+    "id": "ln",
+    "name": "ln",
+    "description": "Create hard or symbolic links between files",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-s",
+        "description": "Create a symbolic (soft) link"
+      },
+      {
+        "flag": "-f",
+        "description": "Remove an existing destination file"
+      },
+      {
+        "flag": "-n",
+        "description": "Treat a symlink to a directory as a normal file (use with -f to replace it)"
+      },
+      {
+        "flag": "-v",
+        "description": "Print each link created"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ln -s /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/",
+        "description": "Enable an nginx site with a symlink"
+      },
+      {
+        "command": "ln -sfn /opt/app/releases/v2 /opt/app/current",
+        "description": "Atomically repoint a 'current' symlink to a new release"
+      },
+      {
+        "command": "ln file.txt hardlink.txt",
+        "description": "Create a hard link"
+      }
+    ],
+    "notes": [
+      "Argument order is TARGET then LINK_NAME (same as cp: source first)",
+      "Relative symlink targets are resolved relative to the link's location, not your current directory",
+      "Hard links cannot span filesystems or point to directories"
+    ],
+    "relatedCommands": [
+      "ls",
+      "cp"
+    ]
+  },
+  {
+    "id": "find",
+    "name": "find",
+    "description": "Search for files and directories in a directory hierarchy",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-name pattern",
+        "description": "Search by filename pattern"
+      },
+      {
+        "flag": "-type f/d",
+        "description": "Search for files (f) or directories (d)"
+      },
+      {
+        "flag": "-mtime n",
+        "description": "Find files modified n days ago"
+      },
+      {
+        "flag": "-size n",
+        "description": "Find files by size"
+      },
+      {
+        "flag": "-iname pattern",
+        "description": "Case-insensitive name match"
+      },
+      {
+        "flag": "-exec cmd {} +",
+        "description": "Run a command on the matched files"
+      },
+      {
+        "flag": "-delete",
+        "description": "Delete matched files"
+      }
+    ],
+    "examples": [
+      {
+        "command": "find . -name '*.txt'",
+        "description": "Find all .txt files in current directory and subdirectories"
+      },
+      {
+        "command": "find /var/log -type f -mtime +30",
+        "description": "Find files in /var/log older than 30 days"
+      },
+      {
+        "command": "find . -name '*.log' -size +100M",
+        "description": "Find log files larger than 100MB"
+      },
+      {
+        "command": "find . -name '*.js' -not -path '*/node_modules/*'",
+        "description": "Find JavaScript files excluding node_modules"
+      },
+      {
+        "command": "find /tmp -type f -mtime +7 -delete",
+        "description": "Delete files older than 7 days (run without -delete first to preview)"
+      }
+    ],
+    "notes": [
+      "Very powerful when combined with -exec to perform actions on found files",
+      "WARNING: -delete and -exec rm are irreversible; always run the same find without them first to check the matches",
+      "Put -delete last: placed before the tests it deletes everything under the start path"
+    ],
+    "relatedCommands": [
+      "grep",
+      "locate",
+      "xargs",
+      "fd"
+    ]
+  },
+  {
+    "id": "tree",
+    "name": "tree",
+    "description": "Display a directory's contents as an indented tree",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-L level",
+        "description": "Limit the depth of the tree"
+      },
+      {
+        "flag": "-a",
+        "description": "Include hidden files"
+      },
+      {
+        "flag": "-d",
+        "description": "List directories only"
+      },
+      {
+        "flag": "-I pattern",
+        "description": "Exclude files matching pattern (use | for multiple)"
+      },
+      {
+        "flag": "--gitignore",
+        "description": "Respect .gitignore files (tree 2.0+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tree -L 2",
+        "description": "Show two levels of the current directory"
+      },
+      {
+        "command": "tree -I 'node_modules|.git|dist'",
+        "description": "Show a project tree excluding common build folders"
+      },
+      {
+        "command": "tree -d /etc/nginx",
+        "description": "Show only directories"
+      }
+    ],
+    "notes": [
+      "Not installed by default on many systems: sudo apt install tree / brew install tree"
+    ],
+    "relatedCommands": [
+      "ls",
+      "find"
+    ]
+  },
+  {
+    "id": "rmdir",
+    "name": "rmdir",
+    "description": "Remove empty directories",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-p",
+        "description": "Also remove empty parent directories"
+      },
+      {
+        "flag": "-v",
+        "description": "Print each directory removed"
+      }
+    ],
+    "examples": [
+      {
+        "command": "rmdir old-folder",
+        "description": "Remove an empty directory"
+      },
+      {
+        "command": "rmdir -p a/b/c",
+        "description": "Remove c, then b, then a if each becomes empty"
+      }
+    ],
+    "notes": [
+      "Fails if the directory is not empty, which makes it a safe alternative to rm -r",
+      "To delete all empty directories in a tree: find . -type d -empty -delete"
+    ],
+    "relatedCommands": [
+      "mkdir",
+      "rm"
+    ]
+  },
+  {
+    "id": "rename",
+    "name": "rename",
+    "description": "Rename multiple files at once using a pattern",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n",
+        "description": "Dry run: show what would be renamed (Perl rename)"
+      },
+      {
+        "flag": "-v",
+        "description": "Print the names of renamed files"
+      }
+    ],
+    "examples": [
+      {
+        "command": "rename -n 's/\\.jpeg$/.jpg/' *.jpeg",
+        "description": "Preview renaming .jpeg files to .jpg (Perl rename, Debian/Ubuntu)"
+      },
+      {
+        "command": "rename 's/ /_/g' *",
+        "description": "Replace spaces with underscores in file names (Perl rename)"
+      },
+      {
+        "command": "rename .jpeg .jpg *.jpeg",
+        "description": "Same rename using util-linux syntax (Fedora/RHEL/Arch)"
+      }
+    ],
+    "notes": [
+      "Two incompatible versions exist: Perl rename (Debian/Ubuntu 'rename' package) takes a regex, util-linux rename (RHEL/Fedora/Arch) takes FROM TO FILES",
+      "Always do a dry run first; existing files can be overwritten",
+      "For a single file just use mv"
+    ],
+    "relatedCommands": [
+      "mv",
+      "find"
+    ]
+  },
+  {
+    "id": "locate",
+    "name": "locate",
+    "description": "Find files by name using a prebuilt database",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Case-insensitive match"
+      },
+      {
+        "flag": "-c",
+        "description": "Print only the number of matches"
+      },
+      {
+        "flag": "-l N",
+        "description": "Limit output to N results"
+      }
+    ],
+    "examples": [
+      {
+        "command": "locate nginx.conf",
+        "description": "Find all paths containing nginx.conf"
+      },
+      {
+        "command": "locate -i readme | head",
+        "description": "Case-insensitive search, first 10 results"
+      },
+      {
+        "command": "sudo updatedb",
+        "description": "Refresh the file database"
+      }
+    ],
+    "notes": [
+      "Much faster than find but only as current as the last 'updatedb' run (usually daily via cron/timer)",
+      "Provided by plocate or mlocate; may need installing: sudo apt install plocate"
+    ],
+    "relatedCommands": [
+      "find",
+      "fd"
+    ]
+  },
+  {
+    "id": "fd",
+    "name": "fd",
+    "description": "Fast, user-friendly alternative to find (third-party)",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-e ext",
+        "description": "Filter by file extension"
+      },
+      {
+        "flag": "-t f|d",
+        "description": "Filter by type: file or directory"
+      },
+      {
+        "flag": "-H",
+        "description": "Include hidden files"
+      },
+      {
+        "flag": "-I",
+        "description": "Do not respect .gitignore"
+      },
+      {
+        "flag": "-x cmd",
+        "description": "Execute a command for each result"
+      }
+    ],
+    "examples": [
+      {
+        "command": "fd config",
+        "description": "Find files whose name contains 'config'"
+      },
+      {
+        "command": "fd -e ts -e tsx",
+        "description": "Find TypeScript files"
+      },
+      {
+        "command": "fd -t d node_modules -H -I",
+        "description": "Find node_modules directories"
+      },
+      {
+        "command": "fd -e log -x gzip",
+        "description": "Gzip every .log file found"
+      }
+    ],
+    "notes": [
+      "Third-party tool, not preinstalled: brew install fd / sudo apt install fd-find",
+      "On Debian/Ubuntu the binary is named 'fdfind'",
+      "Respects .gitignore and skips hidden files by default"
+    ],
+    "relatedCommands": [
+      "find",
+      "rg"
+    ]
+  },
+  {
+    "id": "cat",
+    "name": "cat",
+    "description": "Concatenate and display file contents",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n",
+        "description": "Number all output lines"
+      },
+      {
+        "flag": "-b",
+        "description": "Number non-empty output lines"
+      },
+      {
+        "flag": "-A",
+        "description": "Show all characters including non-printable"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cat file.txt",
+        "description": "Display contents of file.txt"
+      },
+      {
+        "command": "cat file1.txt file2.txt",
+        "description": "Display contents of multiple files"
+      },
+      {
+        "command": "cat -n script.sh",
+        "description": "Display file with line numbers"
+      }
+    ],
+    "notes": [
+      "For large files, consider using 'less' or 'more' instead",
+      "Can be used to create files: cat > newfile.txt"
+    ],
+    "relatedCommands": [
+      "less",
+      "more",
+      "head",
+      "tail"
+    ]
+  },
+  {
+    "id": "less",
+    "name": "less",
+    "description": "View file contents with pagination",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "less file.txt",
+        "description": "View file with pagination"
+      },
+      {
+        "command": "less +F /var/log/syslog",
+        "description": "Follow file (similar to tail -f)"
+      }
+    ],
+    "notes": [
+      "Press 'q' to quit",
+      "Use arrow keys or Page Up/Down to navigate",
+      "Press '/' to search, 'n' for next match",
+      "Press 'g' to go to beginning, 'G' to go to end"
+    ],
+    "relatedCommands": [
+      "more",
+      "cat",
+      "head",
+      "tail"
+    ]
+  },
+  {
+    "id": "more",
+    "name": "more",
+    "description": "View file contents one screen at a time",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "more file.txt",
+        "description": "Page through a file"
+      },
+      {
+        "command": "dmesg | more",
+        "description": "Page through command output"
+      }
+    ],
+    "notes": [
+      "Press Space for next page, Enter for next line, q to quit",
+      "less is more capable (backward scrolling, search) and usually preferred"
+    ],
+    "relatedCommands": [
+      "less",
+      "cat"
+    ]
+  },
+  {
+    "id": "head",
+    "name": "head",
+    "description": "Display the first lines of a file",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n NUM",
+        "description": "Print first NUM lines (default 10)"
+      },
+      {
+        "flag": "-c NUM",
+        "description": "Print first NUM bytes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "head file.txt",
+        "description": "Display first 10 lines"
+      },
+      {
+        "command": "head -n 20 file.txt",
+        "description": "Display first 20 lines"
+      },
+      {
+        "command": "head -n -5 file.txt",
+        "description": "Display all except last 5 lines"
+      }
+    ],
+    "notes": [
+      "Negative counts like 'head -n -5' are a GNU coreutils feature and do not work with the BSD head on macOS"
+    ],
+    "relatedCommands": [
+      "tail",
+      "cat",
+      "less"
+    ]
+  },
+  {
+    "id": "tail",
+    "name": "tail",
+    "description": "Display the last lines of a file",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n NUM",
+        "description": "Print last NUM lines (default 10)"
+      },
+      {
+        "flag": "-f",
+        "description": "Follow file, showing new lines as they are added"
+      },
+      {
+        "flag": "-F",
+        "description": "Follow file, retry if file is renamed or deleted"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tail file.txt",
+        "description": "Display last 10 lines"
+      },
+      {
+        "command": "tail -n 50 file.txt",
+        "description": "Display last 50 lines"
+      },
+      {
+        "command": "tail -f /var/log/syslog",
+        "description": "Follow log file in real-time"
+      }
+    ],
+    "notes": [
+      "tail -f is essential for monitoring log files",
+      "Press Ctrl+C to stop following"
+    ],
+    "relatedCommands": [
+      "head",
+      "cat",
+      "less"
+    ]
+  },
+  {
+    "id": "grep",
+    "name": "grep",
+    "description": "Search for patterns in files or output",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Case-insensitive search"
+      },
+      {
+        "flag": "-r",
+        "description": "Recursive search in directories"
+      },
+      {
+        "flag": "-n",
+        "description": "Show line numbers with matches"
+      },
+      {
+        "flag": "-v",
+        "description": "Invert match (show non-matching lines)"
+      },
+      {
+        "flag": "-c",
+        "description": "Count matching lines"
+      },
+      {
+        "flag": "-E",
+        "description": "Use extended regular expressions (e.g. alternation with |)"
+      },
+      {
+        "flag": "-l",
+        "description": "Print only the names of files that contain a match"
+      },
+      {
+        "flag": "-w",
+        "description": "Match whole words only"
+      },
+      {
+        "flag": "-A/-B/-C NUM",
+        "description": "Show NUM lines of context after, before, or around each match"
+      },
+      {
+        "flag": "--include=GLOB",
+        "description": "With -r, only search files matching GLOB"
+      }
+    ],
+    "examples": [
+      {
+        "command": "grep 'pattern' file.txt",
+        "description": "Search for 'pattern' in file.txt"
+      },
+      {
+        "command": "grep -ri 'error' /var/log/",
+        "description": "Recursively search for 'error' in log files (case-insensitive)"
+      },
+      {
+        "command": "ps aux | grep nginx",
+        "description": "Find nginx processes"
+      },
+      {
+        "command": "grep -rn --include='*.js' 'TODO' src/",
+        "description": "Find TODOs in JavaScript files with line numbers"
+      },
+      {
+        "command": "grep -E 'error|warn' app.log",
+        "description": "Match either of two patterns"
+      },
+      {
+        "command": "grep -C 3 'Exception' app.log",
+        "description": "Show 3 lines of context around each match"
+      }
+    ],
+    "notes": [
+      "Supports regular expressions for complex pattern matching",
+      "Use quotes around patterns with spaces or special characters"
+    ],
+    "relatedCommands": [
+      "awk",
+      "sed",
+      "find",
+      "rg"
+    ]
+  },
+  {
+    "id": "sed",
+    "name": "sed",
+    "description": "Stream editor for filtering and transforming text",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Edit files in-place"
+      },
+      {
+        "flag": "-e",
+        "description": "Add script to commands to be executed"
+      },
+      {
+        "flag": "-n",
+        "description": "Suppress automatic printing"
+      },
+      {
+        "flag": "-E",
+        "description": "Use extended regular expressions"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sed 's/old/new/' file.txt",
+        "description": "Replace first occurrence of 'old' with 'new' on each line"
+      },
+      {
+        "command": "sed 's/old/new/g' file.txt",
+        "description": "Replace all occurrences of 'old' with 'new'"
+      },
+      {
+        "command": "sed -i 's/old/new/g' file.txt",
+        "description": "Replace in file (in-place edit)"
+      },
+      {
+        "command": "sed -n '10,20p' file.txt",
+        "description": "Print only lines 10 to 20"
+      },
+      {
+        "command": "sed -i '/^#/d' config.conf",
+        "description": "Delete all comment lines in place"
+      }
+    ],
+    "notes": [
+      "On macOS (BSD sed), in-place editing needs an explicit backup suffix: sed -i '' 's/old/new/g' file.txt",
+      "Use 'sed -i.bak ...' to keep a backup of the original file"
+    ],
+    "relatedCommands": [
+      "awk",
+      "grep",
+      "tr"
+    ]
+  },
+  {
+    "id": "awk",
+    "name": "awk",
+    "description": "Pattern scanning and text processing language",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-F sep",
+        "description": "Set the input field separator (default is whitespace)"
+      },
+      {
+        "flag": "-v var=value",
+        "description": "Assign a variable before the program runs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "awk '{print $1}' file.txt",
+        "description": "Print first column of each line"
+      },
+      {
+        "command": "awk '/pattern/ {print $0}' file.txt",
+        "description": "Print lines matching pattern"
+      },
+      {
+        "command": "ps aux | awk '{print $1, $11}'",
+        "description": "Print username and command from ps output"
+      },
+      {
+        "command": "awk -F, '{print $2}' data.csv",
+        "description": "Print the second column of a CSV file"
+      },
+      {
+        "command": "awk '{sum += $3} END {print sum}' sales.txt",
+        "description": "Sum the values in the third column"
+      }
+    ],
+    "notes": [
+      "Powerful for column-based data processing",
+      "$1, $2, etc. refer to columns (fields)",
+      "$0 refers to the entire line"
+    ],
+    "relatedCommands": [
+      "sed",
+      "grep",
+      "cut"
+    ]
+  },
+  {
+    "id": "wc",
+    "name": "wc",
+    "description": "Count lines, words, and bytes",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-l",
+        "description": "Count lines"
+      },
+      {
+        "flag": "-w",
+        "description": "Count words"
+      },
+      {
+        "flag": "-c",
+        "description": "Count bytes"
+      },
+      {
+        "flag": "-m",
+        "description": "Count characters"
+      }
+    ],
+    "examples": [
+      {
+        "command": "wc -l access.log",
+        "description": "Count lines in a file",
+        "output": "15342 access.log"
+      },
+      {
+        "command": "ls | wc -l",
+        "description": "Count entries in a directory"
+      },
+      {
+        "command": "grep -c ERROR app.log",
+        "description": "Count matching lines (grep alternative to grep | wc -l)"
+      }
+    ],
+    "relatedCommands": [
+      "grep",
+      "sort"
+    ]
+  },
+  {
+    "id": "sort",
+    "name": "sort",
+    "description": "Sort lines of text",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n",
+        "description": "Numeric sort"
+      },
+      {
+        "flag": "-r",
+        "description": "Reverse order"
+      },
+      {
+        "flag": "-h",
+        "description": "Human-readable numeric sort (2K, 1G)"
+      },
+      {
+        "flag": "-k N",
+        "description": "Sort by field N"
+      },
+      {
+        "flag": "-t sep",
+        "description": "Field separator"
+      },
+      {
+        "flag": "-u",
+        "description": "Output only unique lines"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sort names.txt",
+        "description": "Sort lines alphabetically"
+      },
+      {
+        "command": "du -sh * | sort -h",
+        "description": "Sort directory sizes smallest to largest"
+      },
+      {
+        "command": "sort -t, -k3 -n data.csv",
+        "description": "Sort a CSV numerically by the third column"
+      },
+      {
+        "command": "sort -u emails.txt",
+        "description": "Sort and remove duplicates"
+      }
+    ],
+    "notes": [
+      "Sort order depends on locale; use LC_ALL=C sort for byte-wise, consistent results"
+    ],
+    "relatedCommands": [
+      "uniq",
+      "wc",
+      "cut"
+    ]
+  },
+  {
+    "id": "uniq",
+    "name": "uniq",
+    "description": "Report or filter out repeated adjacent lines",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-c",
+        "description": "Prefix lines with the number of occurrences"
+      },
+      {
+        "flag": "-d",
+        "description": "Only print duplicated lines"
+      },
+      {
+        "flag": "-u",
+        "description": "Only print lines that are not repeated"
+      },
+      {
+        "flag": "-i",
+        "description": "Ignore case"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sort list.txt | uniq",
+        "description": "Remove duplicate lines"
+      },
+      {
+        "command": "awk '{print $1}' access.log | sort | uniq -c | sort -rn | head",
+        "description": "Top 10 client IPs in an access log"
+      },
+      {
+        "command": "sort list.txt | uniq -d",
+        "description": "Show only lines that appear more than once"
+      }
+    ],
+    "notes": [
+      "uniq only collapses ADJACENT duplicates, so sort the input first"
+    ],
+    "relatedCommands": [
+      "sort",
+      "cut",
+      "awk"
+    ]
+  },
+  {
+    "id": "cut",
+    "name": "cut",
+    "description": "Extract columns or character ranges from each line",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-d delim",
+        "description": "Field delimiter (default is tab)"
+      },
+      {
+        "flag": "-f list",
+        "description": "Fields to select, e.g. 1,3 or 2-4"
+      },
+      {
+        "flag": "-c list",
+        "description": "Character positions to select"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cut -d: -f1 /etc/passwd",
+        "description": "List all user names"
+      },
+      {
+        "command": "cut -d, -f1,3 data.csv",
+        "description": "Print the first and third CSV columns"
+      },
+      {
+        "command": "echo 'abcdef' | cut -c1-3",
+        "description": "Print the first three characters",
+        "output": "abc"
+      }
+    ],
+    "notes": [
+      "cut cannot handle multiple spaces as a single delimiter or quoted CSV fields; use awk for that"
+    ],
+    "relatedCommands": [
+      "awk",
+      "tr",
+      "sort"
+    ]
+  },
+  {
+    "id": "tr",
+    "name": "tr",
+    "description": "Translate, squeeze, or delete characters from stdin",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-d",
+        "description": "Delete the listed characters"
+      },
+      {
+        "flag": "-s",
+        "description": "Squeeze repeated characters into one"
+      },
+      {
+        "flag": "-c",
+        "description": "Use the complement of the character set"
+      }
+    ],
+    "examples": [
+      {
+        "command": "echo 'hello' | tr 'a-z' 'A-Z'",
+        "description": "Convert to uppercase",
+        "output": "HELLO"
+      },
+      {
+        "command": "tr -d '\\r' < windows.txt > unix.txt",
+        "description": "Strip Windows carriage returns"
+      },
+      {
+        "command": "echo 'a   b    c' | tr -s ' '",
+        "description": "Collapse repeated spaces",
+        "output": "a b c"
+      },
+      {
+        "command": "echo $PATH | tr ':' '\\n'",
+        "description": "Print each PATH entry on its own line"
+      }
+    ],
+    "notes": [
+      "tr only reads stdin; it does not take file name arguments"
+    ],
+    "relatedCommands": [
+      "sed",
+      "cut"
+    ]
+  },
+  {
+    "id": "diff",
+    "name": "diff",
+    "description": "Compare files or directories line by line",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-u",
+        "description": "Unified format (the format used by git and patch)"
+      },
+      {
+        "flag": "-r",
+        "description": "Recursively compare directories"
+      },
+      {
+        "flag": "-q",
+        "description": "Only report whether files differ"
+      },
+      {
+        "flag": "-w",
+        "description": "Ignore all whitespace"
+      },
+      {
+        "flag": "--color",
+        "description": "Colorize output (GNU diff)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "diff -u old.conf new.conf",
+        "description": "Show differences in unified format"
+      },
+      {
+        "command": "diff -rq dir1/ dir2/",
+        "description": "List files that differ between two directories"
+      },
+      {
+        "command": "diff -u old.conf new.conf > changes.patch",
+        "description": "Create a patch file"
+      },
+      {
+        "command": "diff <(sort a.txt) <(sort b.txt)",
+        "description": "Compare sorted versions of two files (bash/zsh process substitution)"
+      }
+    ],
+    "notes": [
+      "Exit status is 0 if identical, 1 if different, 2 on error, which is handy in scripts"
+    ],
+    "relatedCommands": [
+      "sha256sum",
+      "sort"
+    ]
+  },
+  {
+    "id": "tee",
+    "name": "tee",
+    "description": "Read from stdin and write to both stdout and files",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Append to files instead of overwriting"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm run build 2>&1 | tee build.log",
+        "description": "See build output while saving it to a file"
+      },
+      {
+        "command": "echo '127.0.0.1 myapp.local' | sudo tee -a /etc/hosts",
+        "description": "Append to a root-owned file (sudo echo >> does not work)"
+      },
+      {
+        "command": "ping example.com | tee -a ping.log",
+        "description": "Log output while watching it"
+      }
+    ],
+    "notes": [
+      "'sudo echo x > /root/file' fails because the redirection runs as your user; pipe to 'sudo tee' instead",
+      "Without -a, tee truncates the target file"
+    ],
+    "relatedCommands": [
+      "echo",
+      "sudo"
+    ]
+  },
+  {
+    "id": "xargs",
+    "name": "xargs",
+    "description": "Build and run commands from standard input",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-0",
+        "description": "Input items are separated by null characters (pair with find -print0)"
+      },
+      {
+        "flag": "-I {}",
+        "description": "Replace {} in the command with each input item"
+      },
+      {
+        "flag": "-n N",
+        "description": "Use at most N arguments per command"
+      },
+      {
+        "flag": "-P N",
+        "description": "Run up to N processes in parallel"
+      },
+      {
+        "flag": "-r",
+        "description": "Do not run the command if input is empty (GNU; default on BSD)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "find . -name '*.log' -print0 | xargs -0 rm",
+        "description": "Delete all .log files, safe with spaces in names"
+      },
+      {
+        "command": "cat urls.txt | xargs -n 1 -P 4 curl -sO",
+        "description": "Download URLs four at a time"
+      },
+      {
+        "command": "ls *.png | xargs -I {} cp {} backup/{}",
+        "description": "Copy each file using a placeholder"
+      },
+      {
+        "command": "grep -rl 'oldName' src/ | xargs sed -i 's/oldName/newName/g'",
+        "description": "Find-and-replace across files (GNU sed)"
+      }
+    ],
+    "notes": [
+      "Use -print0 / -0 to avoid breaking on file names with spaces or newlines",
+      "WARNING: piping into destructive commands like rm runs on every item; preview with 'xargs echo' first"
+    ],
+    "relatedCommands": [
+      "find",
+      "grep"
+    ]
+  },
+  {
+    "id": "jq",
+    "name": "jq",
+    "description": "Command-line JSON processor for filtering and transforming JSON",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-r",
+        "description": "Output raw strings without quotes"
+      },
+      {
+        "flag": "-c",
+        "description": "Compact output (one JSON value per line)"
+      },
+      {
+        "flag": "-s",
+        "description": "Read all inputs into a single array"
+      },
+      {
+        "flag": "--arg name value",
+        "description": "Pass a shell value into the filter as $name"
+      }
+    ],
+    "examples": [
+      {
+        "command": "curl -s https://api.example.com/users | jq '.'",
+        "description": "Pretty-print JSON"
+      },
+      {
+        "command": "jq -r '.[].name' users.json",
+        "description": "Print the name of each object in an array"
+      },
+      {
+        "command": "jq '.[] | select(.active == true) | {id, email}' users.json",
+        "description": "Filter objects and pick fields"
+      },
+      {
+        "command": "jq -r --arg v \"$VERSION\" '.version = $v' package.json > tmp.json && mv tmp.json package.json",
+        "description": "Update a field in a JSON file"
+      }
+    ],
+    "notes": [
+      "Not preinstalled on most systems: sudo apt install jq / brew install jq",
+      "jq cannot edit files in place; write to a temp file and move it"
+    ],
+    "relatedCommands": [
+      "curl",
+      "grep"
+    ]
+  },
+  {
+    "id": "rg",
+    "name": "rg",
+    "description": "ripgrep: very fast recursive text search (third-party)",
+    "category": "Text Processing",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Case-insensitive search"
+      },
+      {
+        "flag": "-l",
+        "description": "Only print matching file names"
+      },
+      {
+        "flag": "-t type",
+        "description": "Only search files of a type, e.g. -t py"
+      },
+      {
+        "flag": "-g glob",
+        "description": "Include/exclude paths by glob, e.g. -g '!dist'"
+      },
+      {
+        "flag": "--hidden",
+        "description": "Search hidden files and directories"
+      },
+      {
+        "flag": "-F",
+        "description": "Treat the pattern as a literal string"
+      }
+    ],
+    "examples": [
+      {
+        "command": "rg 'TODO'",
+        "description": "Search the current directory recursively"
+      },
+      {
+        "command": "rg -i 'connection refused' /var/log",
+        "description": "Case-insensitive search in logs"
+      },
+      {
+        "command": "rg -t py 'import requests'",
+        "description": "Search only Python files"
+      },
+      {
+        "command": "rg -l 'useEffect' -g '!node_modules'",
+        "description": "List files containing a match, excluding a folder"
+      }
+    ],
+    "notes": [
+      "Third-party tool, not preinstalled: brew install ripgrep / sudo apt install ripgrep",
+      "Respects .gitignore and skips hidden/binary files by default"
+    ],
+    "relatedCommands": [
+      "grep",
+      "fd"
+    ]
+  },
+  {
+    "id": "chmod",
+    "name": "chmod",
+    "description": "Change file permissions",
+    "category": "Permissions",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-R",
+        "description": "Change files and directories recursively"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose mode, show all processed files"
+      }
+    ],
+    "examples": [
+      {
+        "command": "chmod 755 script.sh",
+        "description": "Give owner full permissions, group and others read+execute"
+      },
+      {
+        "command": "chmod +x script.sh",
+        "description": "Make file executable"
+      },
+      {
+        "command": "chmod -R 644 /var/www/html",
+        "description": "Set permissions recursively for web files"
+      },
+      {
+        "command": "chmod u+x,g-w,o-rwx deploy.sh",
+        "description": "Use symbolic mode to add/remove specific permissions"
+      }
+    ],
+    "notes": [
+      "Permission format: rwx (read=4, write=2, execute=1)",
+      "Three digit format represents: owner-group-others",
+      "Common values: 755 (rwxr-xr-x), 644 (rw-r--r--), 777 (rwxrwxrwx)",
+      "Avoid 777: it lets any user modify the file. Directories need the execute bit (x) to be entered"
+    ],
+    "relatedCommands": [
+      "chown",
+      "chgrp"
+    ]
+  },
+  {
+    "id": "chown",
+    "name": "chown",
+    "description": "Change file owner and group",
+    "category": "Permissions",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-R",
+        "description": "Change ownership recursively"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "chown user file.txt",
+        "description": "Change file owner to user"
+      },
+      {
+        "command": "chown user:group file.txt",
+        "description": "Change owner and group"
+      },
+      {
+        "command": "chown -R www-data:www-data /var/www",
+        "description": "Change ownership recursively"
+      }
+    ],
+    "notes": [
+      "Requires root or sudo privileges",
+      "Format: chown user:group file"
+    ],
+    "relatedCommands": [
+      "chmod",
+      "chgrp"
+    ]
+  },
+  {
+    "id": "chgrp",
+    "name": "chgrp",
+    "description": "Change the group ownership of files",
+    "category": "Permissions",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-R",
+        "description": "Operate recursively"
+      },
+      {
+        "flag": "-v",
+        "description": "Print each file processed"
+      }
+    ],
+    "examples": [
+      {
+        "command": "chgrp developers project.txt",
+        "description": "Set the group of a file"
+      },
+      {
+        "command": "sudo chgrp -R www-data /var/www/html",
+        "description": "Set the group recursively for a web root"
+      }
+    ],
+    "notes": [
+      "You must own the file and be a member of the target group, or use sudo",
+      "chown :group file does the same thing"
+    ],
+    "relatedCommands": [
+      "chown",
+      "chmod",
+      "usermod"
+    ]
+  },
+  {
+    "id": "sudo",
+    "name": "sudo",
+    "description": "Run a command as another user, usually root",
+    "category": "Permissions",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-u user",
+        "description": "Run as the specified user"
+      },
+      {
+        "flag": "-i",
+        "description": "Start a login shell as the target user"
+      },
+      {
+        "flag": "-s",
+        "description": "Start a shell as the target user"
+      },
+      {
+        "flag": "-l",
+        "description": "List the commands you are allowed to run"
+      },
+      {
+        "flag": "-E",
+        "description": "Preserve your environment variables"
+      },
+      {
+        "flag": "-k",
+        "description": "Forget cached credentials"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo apt update",
+        "description": "Run a command as root"
+      },
+      {
+        "command": "sudo -u postgres psql",
+        "description": "Run a command as another user"
+      },
+      {
+        "command": "sudo -i",
+        "description": "Open a root login shell"
+      },
+      {
+        "command": "sudo !!",
+        "description": "Re-run the previous command with sudo (bash/zsh history expansion)"
+      },
+      {
+        "command": "sudo visudo",
+        "description": "Safely edit the sudoers file"
+      }
+    ],
+    "notes": [
+      "Always edit /etc/sudoers with visudo; a syntax error can lock you out of sudo",
+      "Shell redirection is not elevated: use 'sudo tee' to write root-owned files"
+    ],
+    "relatedCommands": [
+      "whoami",
+      "useradd",
+      "tee"
+    ]
+  },
+  {
+    "id": "ps",
+    "name": "ps",
+    "description": "Display information about running processes",
+    "category": "Process Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "aux",
+        "description": "Show all processes with detailed information"
+      },
+      {
+        "flag": "-ef",
+        "description": "Show all processes with full format listing"
+      },
+      {
+        "flag": "-u username",
+        "description": "Show processes for specific user"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ps aux",
+        "description": "List all running processes with details"
+      },
+      {
+        "command": "ps aux | grep nginx",
+        "description": "Find nginx processes"
+      },
+      {
+        "command": "ps -u www-data",
+        "description": "Show processes run by www-data user"
+      }
+    ],
+    "notes": [
+      "Use 'top' or 'htop' for real-time process monitoring",
+      "Process ID (PID) is used to kill or manage processes"
+    ],
+    "relatedCommands": [
+      "top",
+      "htop",
+      "kill"
+    ]
+  },
+  {
+    "id": "top",
+    "name": "top",
+    "description": "Display real-time system resource usage and processes",
+    "category": "Process Management",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "top",
+        "description": "Display real-time process information"
+      },
+      {
+        "command": "top -u username",
+        "description": "Show processes for specific user"
+      }
+    ],
+    "notes": [
+      "Press 'q' to quit",
+      "Press 'k' to kill a process",
+      "Press 'M' to sort by memory usage",
+      "Press 'P' to sort by CPU usage",
+      "Consider using 'htop' for a more user-friendly interface"
+    ],
+    "relatedCommands": [
+      "ps",
+      "htop",
+      "free"
+    ]
+  },
+  {
+    "id": "htop",
+    "name": "htop",
+    "description": "Interactive process viewer (better alternative to top)",
+    "category": "Process Management",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "htop",
+        "description": "Launch interactive process viewer"
+      }
+    ],
+    "notes": [
+      "More user-friendly than top",
+      "Use arrow keys to navigate",
+      "Press F9 to kill a process",
+      "Press F6 to sort by different columns",
+      "May need to install: sudo apt install htop"
+    ],
+    "relatedCommands": [
+      "top",
+      "ps",
+      "kill"
+    ]
+  },
+  {
+    "id": "kill",
+    "name": "kill",
+    "description": "Terminate processes by PID",
+    "category": "Process Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-9",
+        "description": "Force kill (SIGKILL)"
+      },
+      {
+        "flag": "-15",
+        "description": "Graceful termination (SIGTERM, default)"
+      },
+      {
+        "flag": "-l",
+        "description": "List all signal names"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kill 1234",
+        "description": "Gracefully terminate process with PID 1234"
+      },
+      {
+        "command": "kill -9 1234",
+        "description": "Force kill process with PID 1234"
+      },
+      {
+        "command": "kill -HUP 1234",
+        "description": "Send SIGHUP (many daemons reload their config on this signal)"
+      }
+    ],
+    "notes": [
+      "Use ps, pgrep, or top to find process IDs",
+      "Always try SIGTERM before SIGKILL (-9); SIGKILL cannot be caught, so the process gets no chance to clean up",
+      "To kill processes by name, use pkill or killall"
+    ],
+    "relatedCommands": [
+      "ps",
+      "top",
+      "pkill"
+    ]
+  },
+  {
+    "id": "pkill",
+    "name": "pkill",
+    "description": "Send signals to processes by name or other attributes",
+    "category": "Process Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Match against the full command line, not just the process name"
+      },
+      {
+        "flag": "-u user",
+        "description": "Only match processes owned by user"
+      },
+      {
+        "flag": "-SIGNAL",
+        "description": "Signal to send, e.g. -9 or -HUP (default TERM)"
+      },
+      {
+        "flag": "-x",
+        "description": "Require an exact name match"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pkill nginx",
+        "description": "Terminate processes named nginx"
+      },
+      {
+        "command": "pkill -f 'node server.js'",
+        "description": "Kill a process by its full command line"
+      },
+      {
+        "command": "pkill -HUP -x sshd",
+        "description": "Send SIGHUP to processes named exactly sshd"
+      },
+      {
+        "command": "pgrep -af node",
+        "description": "Preview which processes would match (pgrep takes the same options)"
+      }
+    ],
+    "notes": [
+      "WARNING: patterns are regex and can match more than you expect, especially with -f; check with pgrep first",
+      "killall is similar but matches exact names by default"
+    ],
+    "relatedCommands": [
+      "kill",
+      "ps",
+      "top"
+    ]
+  },
+  {
+    "id": "nohup",
+    "name": "nohup",
+    "description": "Run a command that keeps running after you log out",
+    "category": "Process Management",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "nohup ./long-task.sh > task.log 2>&1 &",
+        "description": "Run a script in the background, immune to hangups, with output logged"
+      },
+      {
+        "command": "nohup python3 worker.py &",
+        "description": "Run in background; output goes to nohup.out"
+      },
+      {
+        "command": "jobs -l",
+        "description": "List background jobs of the current shell"
+      }
+    ],
+    "notes": [
+      "Without a redirect, output is appended to nohup.out",
+      "For long-lived services prefer a systemd unit; for interactive sessions use tmux or screen",
+      "In bash, 'disown' detaches an already-running background job"
+    ],
+    "relatedCommands": [
+      "ps",
+      "kill",
+      "systemctl"
+    ]
+  },
+  {
+    "id": "watch",
+    "name": "watch",
+    "description": "Run a command repeatedly and show its output full-screen",
+    "category": "Process Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n secs",
+        "description": "Interval between runs (default 2 seconds)"
+      },
+      {
+        "flag": "-d",
+        "description": "Highlight changes between updates"
+      },
+      {
+        "flag": "-t",
+        "description": "Hide the header"
+      }
+    ],
+    "examples": [
+      {
+        "command": "watch -n 1 'ls -l /tmp/uploads'",
+        "description": "Refresh a directory listing every second"
+      },
+      {
+        "command": "watch -d free -h",
+        "description": "Watch memory usage and highlight changes"
+      },
+      {
+        "command": "watch -n 5 'kubectl get pods'",
+        "description": "Poll a command every 5 seconds"
+      }
+    ],
+    "notes": [
+      "Quote commands that contain pipes or special characters",
+      "Not installed on macOS by default: brew install watch",
+      "Press Ctrl+C to exit"
+    ],
+    "relatedCommands": [
+      "top",
+      "tail"
+    ]
+  },
+  {
+    "id": "df",
+    "name": "df",
+    "description": "Display disk space usage of file systems",
+    "category": "System Info",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-h",
+        "description": "Human-readable format (KB, MB, GB)"
+      },
+      {
+        "flag": "-T",
+        "description": "Show file system type"
+      },
+      {
+        "flag": "-i",
+        "description": "Show inode information instead of block usage"
+      }
+    ],
+    "examples": [
+      {
+        "command": "df -h",
+        "description": "Show disk usage in human-readable format"
+      },
+      {
+        "command": "df -hT",
+        "description": "Show disk usage with file system types"
+      }
+    ],
+    "relatedCommands": [
+      "du",
+      "free"
+    ]
+  },
+  {
+    "id": "du",
+    "name": "du",
+    "description": "Estimate file and directory space usage",
+    "category": "System Info",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-h",
+        "description": "Human-readable format"
+      },
+      {
+        "flag": "-s",
+        "description": "Display only total for each argument"
+      },
+      {
+        "flag": "-a",
+        "description": "Show sizes for all files, not just directories"
+      },
+      {
+        "flag": "--max-depth=N",
+        "description": "Limit directory depth to N levels"
+      }
+    ],
+    "examples": [
+      {
+        "command": "du -sh /var/log",
+        "description": "Show total size of /var/log directory"
+      },
+      {
+        "command": "du -h --max-depth=1",
+        "description": "Show size of immediate subdirectories"
+      }
+    ],
+    "notes": [
+      "--max-depth is GNU-only; on macOS use 'du -h -d 1'",
+      "Sort output by size with: du -sh * | sort -h"
+    ],
+    "relatedCommands": [
+      "df",
+      "ls",
+      "sort"
+    ]
+  },
+  {
+    "id": "free",
+    "name": "free",
+    "description": "Display memory usage information",
+    "category": "System Info",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-h",
+        "description": "Human-readable output"
+      },
+      {
+        "flag": "-m",
+        "description": "Display in megabytes"
+      },
+      {
+        "flag": "-g",
+        "description": "Display in gigabytes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "free -h",
+        "description": "Show memory usage in human-readable format"
+      },
+      {
+        "command": "free -m",
+        "description": "Show memory usage in megabytes"
+      }
+    ],
+    "relatedCommands": [
+      "top",
+      "htop",
+      "vmstat"
+    ]
+  },
+  {
+    "id": "uname",
+    "name": "uname",
+    "description": "Print system and kernel information",
+    "category": "System Info",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Print all information"
+      },
+      {
+        "flag": "-r",
+        "description": "Kernel release"
+      },
+      {
+        "flag": "-m",
+        "description": "Machine hardware name (architecture)"
+      },
+      {
+        "flag": "-s",
+        "description": "Kernel name"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uname -a",
+        "description": "Show all system information"
+      },
+      {
+        "command": "uname -r",
+        "description": "Show kernel version",
+        "output": "6.8.0-45-generic"
+      },
+      {
+        "command": "uname -m",
+        "description": "Show CPU architecture",
+        "output": "x86_64"
+      }
+    ],
+    "notes": [
+      "For the distribution name and version, run: cat /etc/os-release"
+    ],
+    "relatedCommands": [
+      "uptime",
+      "whoami"
+    ]
+  },
+  {
+    "id": "uptime",
+    "name": "uptime",
+    "description": "Show how long the system has been running and load averages",
+    "category": "System Info",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-p",
+        "description": "Pretty format (procps)"
+      },
+      {
+        "flag": "-s",
+        "description": "Show the time the system booted (procps)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uptime",
+        "description": "Show uptime, logged-in users and load averages",
+        "output": " 10:15:02 up 12 days,  3:41,  2 users,  load average: 0.15, 0.20, 0.18"
+      },
+      {
+        "command": "uptime -p",
+        "description": "Human-readable uptime",
+        "output": "up 1 week, 5 days, 3 hours, 41 minutes"
+      }
+    ],
+    "notes": [
+      "Load averages cover the last 1, 5, and 15 minutes; compare them against the number of CPU cores (nproc)"
+    ],
+    "relatedCommands": [
+      "top",
+      "vmstat",
+      "free"
+    ]
+  },
+  {
+    "id": "vmstat",
+    "name": "vmstat",
+    "description": "Report virtual memory, CPU, and I/O statistics",
+    "category": "System Info",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-s",
+        "description": "Display a table of memory and event counters"
+      },
+      {
+        "flag": "-w",
+        "description": "Wide output"
+      },
+      {
+        "flag": "-S M",
+        "description": "Show memory in megabytes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "vmstat 1 5",
+        "description": "Print stats every second, 5 times"
+      },
+      {
+        "command": "vmstat -w -S M 2",
+        "description": "Wide output in MB every 2 seconds"
+      },
+      {
+        "command": "vmstat -s",
+        "description": "Show summary of memory statistics"
+      }
+    ],
+    "notes": [
+      "The first line shows averages since boot; following lines show the interval",
+      "High 'si'/'so' (swap in/out) indicates memory pressure; high 'wa' indicates I/O wait",
+      "Part of procps on Linux; not available on macOS (use vm_stat)"
+    ],
+    "relatedCommands": [
+      "free",
+      "top",
+      "uptime"
+    ]
+  },
+  {
+    "id": "curl",
+    "name": "curl",
+    "description": "Transfer data from or to a server using various protocols",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-X METHOD",
+        "description": "Specify request method (GET, POST, PUT, DELETE, etc.)"
+      },
+      {
+        "flag": "-H 'Header'",
+        "description": "Add custom header to request"
+      },
+      {
+        "flag": "-d 'data'",
+        "description": "Send data in POST request"
+      },
+      {
+        "flag": "-o file",
+        "description": "Write output to file instead of stdout"
+      },
+      {
+        "flag": "-I",
+        "description": "Fetch headers only"
+      },
+      {
+        "flag": "-L",
+        "description": "Follow redirects"
+      },
+      {
+        "flag": "-s",
+        "description": "Silent mode (no progress bar or error messages)"
+      },
+      {
+        "flag": "-f",
+        "description": "Fail with a non-zero exit code on HTTP errors (4xx/5xx)"
+      },
+      {
+        "flag": "-O",
+        "description": "Save to a file named like the remote file"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output, including request and response headers"
+      }
+    ],
+    "examples": [
+      {
+        "command": "curl https://api.example.com",
+        "description": "Make a GET request to API"
+      },
+      {
+        "command": "curl -X POST -H 'Content-Type: application/json' -d '{\"key\":\"value\"}' https://api.example.com",
+        "description": "Make a POST request with JSON data"
+      },
+      {
+        "command": "curl -I https://example.com",
+        "description": "Fetch only HTTP headers"
+      },
+      {
+        "command": "curl -fsSL https://example.com/install.sh -o install.sh",
+        "description": "Download a script quietly, following redirects and failing on HTTP errors"
+      },
+      {
+        "command": "curl -H 'Authorization: Bearer <token>' https://api.example.com/me",
+        "description": "Call an API with a bearer token"
+      }
+    ],
+    "notes": [
+      "Supports HTTP, HTTPS, FTP, and many other protocols",
+      "Use -v for verbose output to debug requests",
+      "Review scripts before piping them to a shell (curl ... | bash runs remote code with your privileges)"
+    ],
+    "relatedCommands": [
+      "wget",
+      "ping"
+    ]
+  },
+  {
+    "id": "wget",
+    "name": "wget",
+    "description": "Download files from the web",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-O filename",
+        "description": "Save with different filename"
+      },
+      {
+        "flag": "-c",
+        "description": "Continue partially downloaded file"
+      },
+      {
+        "flag": "-r",
+        "description": "Recursive download"
+      },
+      {
+        "flag": "-q",
+        "description": "Quiet mode"
+      }
+    ],
+    "examples": [
+      {
+        "command": "wget https://example.com/file.zip",
+        "description": "Download a file"
+      },
+      {
+        "command": "wget -O custom-name.zip https://example.com/file.zip",
+        "description": "Download and save with custom name"
+      },
+      {
+        "command": "wget -c https://example.com/large-file.iso",
+        "description": "Resume interrupted download"
+      }
+    ],
+    "relatedCommands": [
+      "curl",
+      "scp",
+      "rsync"
+    ]
+  },
+  {
+    "id": "ssh",
+    "name": "ssh",
+    "description": "Secure Shell - connect to remote machines securely",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-p port",
+        "description": "Specify port number (default is 22)"
+      },
+      {
+        "flag": "-i keyfile",
+        "description": "Use specific private key file"
+      },
+      {
+        "flag": "-L port:host:hostport",
+        "description": "Local port forwarding"
+      },
+      {
+        "flag": "-J jumphost",
+        "description": "Connect through a bastion/jump host"
+      },
+      {
+        "flag": "-N",
+        "description": "Do not run a remote command (useful with port forwarding)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ssh user@hostname",
+        "description": "Connect to remote host"
+      },
+      {
+        "command": "ssh -p 2222 user@hostname",
+        "description": "Connect to remote host on specific port"
+      },
+      {
+        "command": "ssh -i ~/.ssh/private_key user@hostname",
+        "description": "Connect using specific SSH key"
+      },
+      {
+        "command": "ssh -N -L 5432:localhost:5432 user@db-server",
+        "description": "Forward local port 5432 to PostgreSQL on the remote server"
+      },
+      {
+        "command": "ssh user@hostname 'df -h'",
+        "description": "Run a single command remotely"
+      }
+    ],
+    "notes": [
+      "First connection will prompt to verify host fingerprint",
+      "Use ssh-keygen to generate SSH key pairs",
+      "Config file: ~/.ssh/config for saving connection settings"
+    ],
+    "relatedCommands": [
+      "scp",
+      "rsync",
+      "sftp"
+    ]
+  },
+  {
+    "id": "scp",
+    "name": "scp",
+    "description": "Securely copy files between hosts over SSH",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-r",
+        "description": "Recursively copy directories"
+      },
+      {
+        "flag": "-P port",
+        "description": "Specify SSH port"
+      },
+      {
+        "flag": "-i keyfile",
+        "description": "Use specific private key"
+      }
+    ],
+    "examples": [
+      {
+        "command": "scp file.txt user@remote:/path/",
+        "description": "Copy local file to remote server"
+      },
+      {
+        "command": "scp user@remote:/path/file.txt .",
+        "description": "Copy remote file to local directory"
+      },
+      {
+        "command": "scp -r directory/ user@remote:/path/",
+        "description": "Copy directory recursively"
+      }
+    ],
+    "notes": [
+      "Recent OpenSSH versions use the SFTP protocol under the hood for scp",
+      "For large or repeated transfers prefer rsync, which can resume and skip unchanged files"
+    ],
+    "relatedCommands": [
+      "ssh",
+      "rsync",
+      "sftp"
+    ]
+  },
+  {
+    "id": "rsync",
+    "name": "rsync",
+    "description": "Efficiently sync files and directories between locations",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Archive mode (preserves permissions, times, etc.)"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      },
+      {
+        "flag": "-z",
+        "description": "Compress data during transfer"
+      },
+      {
+        "flag": "--delete",
+        "description": "Delete files in destination not in source"
+      },
+      {
+        "flag": "-n / --dry-run",
+        "description": "Show what would be transferred without doing it"
+      },
+      {
+        "flag": "--progress",
+        "description": "Show transfer progress"
+      },
+      {
+        "flag": "-e 'ssh -p 2222'",
+        "description": "Specify the remote shell, e.g. a custom SSH port"
+      }
+    ],
+    "examples": [
+      {
+        "command": "rsync -avz source/ destination/",
+        "description": "Sync directories with compression"
+      },
+      {
+        "command": "rsync -avz user@remote:/path/ /local/path/",
+        "description": "Sync from remote to local"
+      },
+      {
+        "command": "rsync -avz --delete source/ backup/",
+        "description": "Mirror source to backup (delete extra files)"
+      }
+    ],
+    "notes": [
+      "More efficient than scp for repeated transfers; only changed files are sent",
+      "A trailing slash on the source matters: 'src/' copies the contents, 'src' copies the directory itself",
+      "WARNING: --delete removes files from the destination; run with --dry-run first"
+    ],
+    "relatedCommands": [
+      "scp",
+      "cp",
+      "ssh"
+    ]
+  },
+  {
+    "id": "ping",
+    "name": "ping",
+    "description": "Test network connectivity to a host",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-c count",
+        "description": "Stop after sending count packets"
+      },
+      {
+        "flag": "-i interval",
+        "description": "Wait interval seconds between packets"
+      },
+      {
+        "flag": "-W timeout",
+        "description": "Time to wait for response"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ping example.com",
+        "description": "Ping a host continuously"
+      },
+      {
+        "command": "ping -c 4 example.com",
+        "description": "Send only 4 ping packets"
+      }
+    ],
+    "notes": [
+      "Press Ctrl+C to stop continuous ping",
+      "Useful for checking network connectivity",
+      "Many hosts and firewalls block ICMP, so no reply does not always mean the host is down"
+    ],
+    "relatedCommands": [
+      "traceroute",
+      "netstat",
+      "curl"
+    ]
+  },
+  {
+    "id": "ip",
+    "name": "ip",
+    "description": "Show and manage network interfaces, addresses, and routes",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-br",
+        "description": "Brief, one-line-per-interface output"
+      },
+      {
+        "flag": "-4 / -6",
+        "description": "Restrict to IPv4 or IPv6"
+      },
+      {
+        "flag": "-c",
+        "description": "Colorize output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ip -br a",
+        "description": "List interfaces and their IP addresses briefly"
+      },
+      {
+        "command": "ip addr show eth0",
+        "description": "Show addresses on one interface"
+      },
+      {
+        "command": "ip route",
+        "description": "Show the routing table"
+      },
+      {
+        "command": "ip route get 8.8.8.8",
+        "description": "Show which route and interface reach an address"
+      },
+      {
+        "command": "sudo ip link set eth0 up",
+        "description": "Bring an interface up"
+      }
+    ],
+    "notes": [
+      "Replaces the deprecated ifconfig and route commands (net-tools)",
+      "Changes made with ip are not persistent across reboots; use your distro's network config (netplan, NetworkManager)",
+      "Linux only; not available on macOS"
+    ],
+    "relatedCommands": [
+      "ss",
+      "ping",
+      "traceroute"
+    ]
+  },
+  {
+    "id": "ss",
+    "name": "ss",
+    "description": "Inspect sockets: listening ports and active connections",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-t",
+        "description": "TCP sockets"
+      },
+      {
+        "flag": "-u",
+        "description": "UDP sockets"
+      },
+      {
+        "flag": "-l",
+        "description": "Listening sockets only"
+      },
+      {
+        "flag": "-n",
+        "description": "Do not resolve names or ports"
+      },
+      {
+        "flag": "-p",
+        "description": "Show the owning process (needs sudo for other users' processes)"
+      },
+      {
+        "flag": "-s",
+        "description": "Summary statistics"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo ss -tulpn",
+        "description": "Show all listening TCP/UDP ports with processes"
+      },
+      {
+        "command": "ss -tn state established",
+        "description": "List established TCP connections"
+      },
+      {
+        "command": "sudo ss -ltnp 'sport = :443'",
+        "description": "Find what is listening on port 443"
+      },
+      {
+        "command": "ss -s",
+        "description": "Show socket summary"
+      }
+    ],
+    "notes": [
+      "Modern, faster replacement for netstat (part of iproute2)",
+      "Linux only; on macOS use lsof or netstat"
+    ],
+    "relatedCommands": [
+      "netstat",
+      "lsof",
+      "ip"
+    ]
+  },
+  {
+    "id": "netstat",
+    "name": "netstat",
+    "description": "Display network connections, routing tables, and interface statistics",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Show all sockets"
+      },
+      {
+        "flag": "-t",
+        "description": "Show TCP connections"
+      },
+      {
+        "flag": "-u",
+        "description": "Show UDP connections"
+      },
+      {
+        "flag": "-l",
+        "description": "Show listening sockets"
+      },
+      {
+        "flag": "-n",
+        "description": "Show numerical addresses"
+      }
+    ],
+    "examples": [
+      {
+        "command": "netstat -tuln",
+        "description": "Show all listening TCP and UDP ports"
+      },
+      {
+        "command": "netstat -an | grep :80",
+        "description": "Check if port 80 is in use"
+      }
+    ],
+    "notes": [
+      "netstat is part of the deprecated net-tools package and is not installed by default on many modern distros; prefer 'ss'",
+      "Add -p (with sudo) to show the owning process of each socket"
+    ],
+    "relatedCommands": [
+      "ss",
+      "lsof",
+      "ping"
+    ]
+  },
+  {
+    "id": "lsof",
+    "name": "lsof",
+    "description": "List open files, including network sockets, and the processes using them",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-i [:port]",
+        "description": "Network connections, optionally filtered by port"
+      },
+      {
+        "flag": "-p PID",
+        "description": "Files opened by a process"
+      },
+      {
+        "flag": "-u user",
+        "description": "Files opened by a user"
+      },
+      {
+        "flag": "-n -P",
+        "description": "Skip DNS and port-name lookups (faster)"
+      },
+      {
+        "flag": "+D dir",
+        "description": "Files open under a directory (recursive)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo lsof -i :3000",
+        "description": "Find which process is using port 3000"
+      },
+      {
+        "command": "lsof -nP -iTCP -sTCP:LISTEN",
+        "description": "List listening TCP ports (works on Linux and macOS)"
+      },
+      {
+        "command": "lsof -p 1234",
+        "description": "List files opened by PID 1234"
+      },
+      {
+        "command": "sudo lsof +L1",
+        "description": "Find deleted files still held open (common cause of 'disk full' with free space missing)"
+      }
+    ],
+    "notes": [
+      "Run with sudo to see processes owned by other users",
+      "Kill the process on a port: kill $(lsof -t -i :3000)"
+    ],
+    "relatedCommands": [
+      "ss",
+      "netstat",
+      "kill"
+    ]
+  },
+  {
+    "id": "dig",
+    "name": "dig",
+    "description": "Query DNS servers for records",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "+short",
+        "description": "Print only the answer"
+      },
+      {
+        "flag": "@server",
+        "description": "Query a specific DNS server"
+      },
+      {
+        "flag": "-x addr",
+        "description": "Reverse lookup"
+      },
+      {
+        "flag": "+trace",
+        "description": "Trace delegation from the root servers"
+      },
+      {
+        "flag": "+noall +answer",
+        "description": "Show only the answer section"
+      }
+    ],
+    "examples": [
+      {
+        "command": "dig example.com +short",
+        "description": "Get A records only",
+        "output": "93.184.215.14"
+      },
+      {
+        "command": "dig example.com MX",
+        "description": "Look up mail servers"
+      },
+      {
+        "command": "dig @1.1.1.1 example.com AAAA +short",
+        "description": "Query Cloudflare DNS for IPv6 records"
+      },
+      {
+        "command": "dig -x 8.8.8.8 +short",
+        "description": "Reverse DNS lookup",
+        "output": "dns.google."
+      },
+      {
+        "command": "dig example.com TXT +noall +answer",
+        "description": "Check TXT records (SPF, verification)"
+      }
+    ],
+    "notes": [
+      "Install with: sudo apt install dnsutils (Debian/Ubuntu) or bind-utils (RHEL/Fedora)",
+      "Querying the domain's authoritative server shows changes before resolver caches expire"
+    ],
+    "relatedCommands": [
+      "nslookup",
+      "ping",
+      "traceroute"
+    ]
+  },
+  {
+    "id": "nslookup",
+    "name": "nslookup",
+    "description": "Query DNS for a domain's addresses or records",
+    "category": "Networking",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "nslookup example.com",
+        "description": "Look up the IP addresses of a domain"
+      },
+      {
+        "command": "nslookup example.com 8.8.8.8",
+        "description": "Query a specific DNS server"
+      },
+      {
+        "command": "nslookup -type=MX example.com",
+        "description": "Look up mail exchange records"
+      }
+    ],
+    "notes": [
+      "dig gives more detailed and script-friendly output",
+      "Also available on Windows and macOS"
+    ],
+    "relatedCommands": [
+      "dig",
+      "ping"
+    ]
+  },
+  {
+    "id": "traceroute",
+    "name": "traceroute",
+    "description": "Show the network path packets take to a host",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n",
+        "description": "Do not resolve hop addresses to names"
+      },
+      {
+        "flag": "-m max",
+        "description": "Maximum number of hops (default 30)"
+      },
+      {
+        "flag": "-I",
+        "description": "Use ICMP echo instead of UDP (requires root)"
+      },
+      {
+        "flag": "-T",
+        "description": "Use TCP SYN (requires root), useful through firewalls"
+      }
+    ],
+    "examples": [
+      {
+        "command": "traceroute example.com",
+        "description": "Trace the route to a host"
+      },
+      {
+        "command": "traceroute -n 8.8.8.8",
+        "description": "Trace without DNS lookups"
+      },
+      {
+        "command": "sudo traceroute -T -p 443 example.com",
+        "description": "Trace using TCP port 443"
+      }
+    ],
+    "notes": [
+      "May need installing: sudo apt install traceroute (tracepath is often preinstalled)",
+      "'* * *' means a hop did not reply; it does not necessarily mean packets were dropped",
+      "mtr combines ping and traceroute into a live view"
+    ],
+    "relatedCommands": [
+      "ping",
+      "dig",
+      "ip"
+    ]
+  },
+  {
+    "id": "nc",
+    "name": "nc",
+    "description": "Netcat: read and write raw TCP/UDP connections",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-z",
+        "description": "Scan for listening daemons without sending data"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose output"
+      },
+      {
+        "flag": "-l",
+        "description": "Listen for incoming connections"
+      },
+      {
+        "flag": "-u",
+        "description": "Use UDP instead of TCP"
+      },
+      {
+        "flag": "-w secs",
+        "description": "Connection timeout"
+      }
+    ],
+    "examples": [
+      {
+        "command": "nc -zv db.example.com 5432",
+        "description": "Check if a TCP port is reachable"
+      },
+      {
+        "command": "nc -zv example.com 80-443",
+        "description": "Scan a range of ports"
+      },
+      {
+        "command": "nc -l 9000",
+        "description": "Listen on port 9000 (OpenBSD netcat; traditional netcat needs -l -p 9000)"
+      },
+      {
+        "command": "nc -zvw 3 redis.internal 6379",
+        "description": "Port check with a 3 second timeout"
+      }
+    ],
+    "notes": [
+      "Several variants exist (OpenBSD, traditional, ncat) with slightly different flags",
+      "Only scan hosts you own or are authorized to test"
+    ],
+    "relatedCommands": [
+      "ss",
+      "curl",
+      "ping"
+    ]
+  },
+  {
+    "id": "sftp",
+    "name": "sftp",
+    "description": "Interactive file transfer over SSH",
+    "category": "Networking",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-P port",
+        "description": "Connect to a specific SSH port"
+      },
+      {
+        "flag": "-i keyfile",
+        "description": "Use a specific private key"
+      },
+      {
+        "flag": "-b batchfile",
+        "description": "Run commands from a file non-interactively"
+      },
+      {
+        "flag": "-r",
+        "description": "Recursively copy directories"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sftp user@example.com",
+        "description": "Open an interactive SFTP session"
+      },
+      {
+        "command": "sftp -P 2222 user@example.com",
+        "description": "Connect on a custom port"
+      },
+      {
+        "command": "get -r /var/www/uploads ./uploads",
+        "description": "(inside sftp) Download a directory"
+      },
+      {
+        "command": "put backup.tar.gz /home/user/",
+        "description": "(inside sftp) Upload a file"
+      }
+    ],
+    "notes": [
+      "Interactive commands: ls, cd, lcd (local cd), lls, get, put, mkdir, rm, bye",
+      "Uses the same authentication and ~/.ssh/config as ssh"
+    ],
+    "relatedCommands": [
+      "scp",
+      "ssh",
+      "rsync"
+    ]
+  },
+  {
+    "id": "tar",
+    "name": "tar",
+    "description": "Archive files and directories",
+    "category": "Compression & Archives",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-c",
+        "description": "Create a new archive"
+      },
+      {
+        "flag": "-x",
+        "description": "Extract files from archive"
+      },
+      {
+        "flag": "-v",
+        "description": "Verbose mode, show files being processed"
+      },
+      {
+        "flag": "-f file",
+        "description": "Specify archive filename"
+      },
+      {
+        "flag": "-z",
+        "description": "Compress with gzip (.tar.gz)"
+      },
+      {
+        "flag": "-t",
+        "description": "List archive contents"
+      },
+      {
+        "flag": "-j / -J",
+        "description": "Use bzip2 (.tar.bz2) or xz (.tar.xz) compression"
+      },
+      {
+        "flag": "-C dir",
+        "description": "Change to dir before extracting or archiving"
+      },
+      {
+        "flag": "--exclude=PATTERN",
+        "description": "Exclude files matching PATTERN"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tar -czf archive.tar.gz /path/to/directory",
+        "description": "Create compressed archive"
+      },
+      {
+        "command": "tar -xzf archive.tar.gz",
+        "description": "Extract compressed archive"
+      },
+      {
+        "command": "tar -tzf archive.tar.gz",
+        "description": "List contents without extracting"
+      },
+      {
+        "command": "tar -xzf archive.tar.gz -C /opt/app",
+        "description": "Extract into a specific directory"
+      },
+      {
+        "command": "tar -czf site.tar.gz --exclude='node_modules' my-site/",
+        "description": "Archive a project excluding node_modules"
+      }
+    ],
+    "notes": [
+      "Common pattern: -czf (create), -xzf (extract), -tzf (list)",
+      "GNU and modern BSD tar auto-detect compression on extract, so 'tar -xf file.tar.xz' also works",
+      "Extracting overwrites existing files with the same names"
+    ],
+    "relatedCommands": [
+      "zip",
+      "gzip",
+      "unzip"
+    ]
+  },
+  {
+    "id": "gzip",
+    "name": "gzip",
+    "description": "Compress or decompress files with gzip",
+    "category": "Compression & Archives",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-d",
+        "description": "Decompress (same as gunzip)"
+      },
+      {
+        "flag": "-k",
+        "description": "Keep the original file"
+      },
+      {
+        "flag": "-c",
+        "description": "Write to stdout"
+      },
+      {
+        "flag": "-9",
+        "description": "Best compression (slowest)"
+      },
+      {
+        "flag": "-l",
+        "description": "List compression stats"
+      },
+      {
+        "flag": "-r",
+        "description": "Compress files in directories recursively"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gzip access.log",
+        "description": "Compress to access.log.gz (removes the original)"
+      },
+      {
+        "command": "gzip -k dump.sql",
+        "description": "Compress but keep the original"
+      },
+      {
+        "command": "gunzip access.log.gz",
+        "description": "Decompress a file"
+      },
+      {
+        "command": "zcat access.log.gz | grep 404",
+        "description": "Search a compressed file without extracting"
+      },
+      {
+        "command": "pg_dump mydb | gzip > mydb.sql.gz",
+        "description": "Compress a stream on the fly"
+      }
+    ],
+    "notes": [
+      "By default gzip replaces the original file; use -k to keep it",
+      "gzip compresses single files; use tar -czf to bundle directories"
+    ],
+    "relatedCommands": [
+      "tar",
+      "zip",
+      "unzip"
+    ]
+  },
+  {
+    "id": "zip",
+    "name": "zip",
+    "description": "Package and compress files",
+    "category": "Compression & Archives",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-r",
+        "description": "Recursively include directories"
+      },
+      {
+        "flag": "-e",
+        "description": "Encrypt archive with password"
+      },
+      {
+        "flag": "-9",
+        "description": "Maximum compression"
+      },
+      {
+        "flag": "-x pattern",
+        "description": "Exclude files matching pattern"
+      }
+    ],
+    "examples": [
+      {
+        "command": "zip archive.zip file.txt",
+        "description": "Create a zip archive"
+      },
+      {
+        "command": "zip -r archive.zip directory/",
+        "description": "Zip a directory recursively"
+      },
+      {
+        "command": "zip -r site.zip my-site/ -x '*/node_modules/*'",
+        "description": "Zip a directory excluding node_modules"
+      }
+    ],
+    "notes": [
+      "Use unzip to extract .zip archives",
+      "The -e password encryption uses weak legacy ZipCrypto; don't rely on it for sensitive data"
+    ],
+    "relatedCommands": [
+      "tar",
+      "gzip",
+      "unzip"
+    ]
+  },
+  {
+    "id": "unzip",
+    "name": "unzip",
+    "description": "List, test, and extract .zip archives",
+    "category": "Compression & Archives",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-l",
+        "description": "List archive contents"
+      },
+      {
+        "flag": "-d dir",
+        "description": "Extract into dir"
+      },
+      {
+        "flag": "-o",
+        "description": "Overwrite existing files without prompting"
+      },
+      {
+        "flag": "-n",
+        "description": "Never overwrite existing files"
+      },
+      {
+        "flag": "-q",
+        "description": "Quiet mode"
+      }
+    ],
+    "examples": [
+      {
+        "command": "unzip archive.zip",
+        "description": "Extract into the current directory"
+      },
+      {
+        "command": "unzip archive.zip -d /opt/app",
+        "description": "Extract into a specific directory"
+      },
+      {
+        "command": "unzip -l archive.zip",
+        "description": "List contents without extracting"
+      },
+      {
+        "command": "unzip archive.zip 'docs/*'",
+        "description": "Extract only matching files"
+      }
+    ],
+    "notes": [
+      "Check contents with -l first; some archives extract many files into the current directory",
+      "-o silently overwrites existing files"
+    ],
+    "relatedCommands": [
+      "zip",
+      "tar",
+      "gzip"
+    ]
+  },
+  {
+    "id": "base64",
+    "name": "base64",
+    "description": "Encode or decode data as Base64",
+    "category": "Compression & Archives",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-d",
+        "description": "Decode"
+      },
+      {
+        "flag": "-w 0",
+        "description": "Disable line wrapping (GNU; macOS does not wrap by default)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "echo -n 'user:pass' | base64",
+        "description": "Encode a string (-n avoids encoding a trailing newline)",
+        "output": "dXNlcjpwYXNz"
+      },
+      {
+        "command": "echo 'dXNlcjpwYXNz' | base64 -d",
+        "description": "Decode a string",
+        "output": "user:pass"
+      },
+      {
+        "command": "base64 -w 0 logo.png > logo.b64",
+        "description": "Encode a file on one line"
+      },
+      {
+        "command": "kubectl get secret my-secret -o jsonpath='{.data.password}' | base64 -d",
+        "description": "Decode a Kubernetes secret value"
+      }
+    ],
+    "notes": [
+      "Base64 is an encoding, not encryption; anyone can decode it",
+      "Older macOS versions use -D instead of -d to decode"
+    ],
+    "relatedCommands": [
+      "sha256sum",
+      "echo"
+    ]
+  },
+  {
+    "id": "sha256sum",
+    "name": "sha256sum",
+    "description": "Compute or verify SHA-256 checksums",
+    "category": "Compression & Archives",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-c file",
+        "description": "Verify checksums listed in a file"
+      },
+      {
+        "flag": "--quiet",
+        "description": "With -c, only print failures"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sha256sum ubuntu.iso",
+        "description": "Print a file's SHA-256 hash"
+      },
+      {
+        "command": "sha256sum -c SHA256SUMS --ignore-missing",
+        "description": "Verify downloaded files against a checksum list"
+      },
+      {
+        "command": "echo '<expected-hash>  app.tar.gz' | sha256sum -c",
+        "description": "Verify a single file against a known hash"
+      }
+    ],
+    "notes": [
+      "On macOS use: shasum -a 256 file",
+      "md5sum and sha1sum exist too but are not collision-resistant; prefer SHA-256 for integrity checks"
+    ],
+    "relatedCommands": [
+      "base64",
+      "diff"
+    ]
+  },
+  {
+    "id": "whoami",
+    "name": "whoami",
+    "description": "Print the current user name",
+    "category": "Users & Groups",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "whoami",
+        "description": "Show the effective user",
+        "output": "alice"
+      },
+      {
+        "command": "id",
+        "description": "Show user ID, group ID, and all groups",
+        "output": "uid=1000(alice) gid=1000(alice) groups=1000(alice),27(sudo),999(docker)"
+      },
+      {
+        "command": "groups alice",
+        "description": "List the groups a user belongs to"
+      }
+    ],
+    "relatedCommands": [
+      "sudo",
+      "usermod"
+    ]
+  },
+  {
+    "id": "useradd",
+    "name": "useradd",
+    "description": "Create a new user account",
+    "category": "Users & Groups",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-m",
+        "description": "Create the home directory"
+      },
+      {
+        "flag": "-s shell",
+        "description": "Login shell, e.g. /bin/bash"
+      },
+      {
+        "flag": "-G groups",
+        "description": "Supplementary groups (comma-separated)"
+      },
+      {
+        "flag": "-c comment",
+        "description": "Full name or description"
+      },
+      {
+        "flag": "-r",
+        "description": "Create a system account"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo useradd -m -s /bin/bash -G sudo alice",
+        "description": "Create a user with a home directory, bash, and sudo access"
+      },
+      {
+        "command": "sudo useradd -r -s /usr/sbin/nologin myapp",
+        "description": "Create a system user for running a service"
+      },
+      {
+        "command": "sudo userdel -r alice",
+        "description": "Delete a user and their home directory"
+      }
+    ],
+    "notes": [
+      "Set a password afterwards with 'sudo passwd alice'",
+      "On Debian/Ubuntu, 'adduser' is an interactive, friendlier wrapper",
+      "WARNING: userdel -r permanently deletes the user's home directory and mail spool"
+    ],
+    "relatedCommands": [
+      "usermod",
+      "passwd",
+      "sudo"
+    ]
+  },
+  {
+    "id": "usermod",
+    "name": "usermod",
+    "description": "Modify an existing user account",
+    "category": "Users & Groups",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-aG groups",
+        "description": "Append the user to supplementary groups"
+      },
+      {
+        "flag": "-s shell",
+        "description": "Change the login shell"
+      },
+      {
+        "flag": "-L / -U",
+        "description": "Lock or unlock the account password"
+      },
+      {
+        "flag": "-d dir -m",
+        "description": "Move the home directory"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo usermod -aG docker alice",
+        "description": "Add a user to the docker group"
+      },
+      {
+        "command": "sudo usermod -s /bin/zsh alice",
+        "description": "Change a user's shell"
+      },
+      {
+        "command": "sudo usermod -L alice",
+        "description": "Lock a user's password"
+      }
+    ],
+    "notes": [
+      "WARNING: -G without -a REPLACES all supplementary groups, which can remove sudo access",
+      "Group changes take effect on the user's next login (or run 'newgrp docker')"
+    ],
+    "relatedCommands": [
+      "useradd",
+      "chgrp",
+      "whoami"
+    ]
+  },
+  {
+    "id": "passwd",
+    "name": "passwd",
+    "description": "Change a user's password or password status",
+    "category": "Users & Groups",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-l",
+        "description": "Lock the account password"
+      },
+      {
+        "flag": "-u",
+        "description": "Unlock the account password"
+      },
+      {
+        "flag": "-e",
+        "description": "Expire the password, forcing a change at next login"
+      },
+      {
+        "flag": "-S",
+        "description": "Show password status"
+      }
+    ],
+    "examples": [
+      {
+        "command": "passwd",
+        "description": "Change your own password"
+      },
+      {
+        "command": "sudo passwd alice",
+        "description": "Set another user's password"
+      },
+      {
+        "command": "sudo passwd -e alice",
+        "description": "Force a password change at next login"
+      },
+      {
+        "command": "sudo passwd -S alice",
+        "description": "Show password status"
+      }
+    ],
+    "relatedCommands": [
+      "useradd",
+      "usermod"
+    ]
+  },
+  {
+    "id": "systemctl",
+    "name": "systemctl",
+    "description": "Control systemd services and system state",
+    "category": "Services & Logs",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "--now",
+        "description": "With enable/disable, also start/stop the unit immediately"
+      },
+      {
+        "flag": "--user",
+        "description": "Manage the calling user's services instead of system services"
+      },
+      {
+        "flag": "--failed",
+        "description": "List units that failed"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo systemctl start nginx",
+        "description": "Start nginx service"
+      },
+      {
+        "command": "sudo systemctl stop nginx",
+        "description": "Stop nginx service"
+      },
+      {
+        "command": "sudo systemctl restart nginx",
+        "description": "Restart nginx service"
+      },
+      {
+        "command": "systemctl status nginx",
+        "description": "Check status of nginx service"
+      },
+      {
+        "command": "sudo systemctl enable nginx",
+        "description": "Enable nginx to start at boot"
+      },
+      {
+        "command": "sudo systemctl enable --now nginx",
+        "description": "Enable at boot and start immediately"
+      },
+      {
+        "command": "sudo systemctl reload nginx",
+        "description": "Reload configuration without a full restart"
+      },
+      {
+        "command": "sudo systemctl daemon-reload",
+        "description": "Reload unit files after editing them"
+      },
+      {
+        "command": "systemctl list-units --type=service --state=running",
+        "description": "List running services"
+      },
+      {
+        "command": "systemctl --failed",
+        "description": "Show failed units"
+      }
+    ],
+    "notes": [
+      "Used in modern Linux distributions with systemd",
+      "Requires root or sudo privileges for most commands"
+    ],
+    "relatedCommands": [
+      "service",
+      "journalctl"
+    ]
+  },
+  {
+    "id": "journalctl",
+    "name": "journalctl",
+    "description": "Query and follow logs from the systemd journal",
+    "category": "Services & Logs",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-u unit",
+        "description": "Show logs for a specific unit"
+      },
+      {
+        "flag": "-f",
+        "description": "Follow new log entries"
+      },
+      {
+        "flag": "-n N",
+        "description": "Show the last N lines"
+      },
+      {
+        "flag": "--since / --until",
+        "description": "Filter by time, e.g. '1 hour ago' or '2026-01-01 10:00'"
+      },
+      {
+        "flag": "-p level",
+        "description": "Filter by priority, e.g. err or warning"
+      },
+      {
+        "flag": "-b",
+        "description": "Logs from the current boot (-b -1 for the previous boot)"
+      },
+      {
+        "flag": "-k",
+        "description": "Kernel messages only"
+      },
+      {
+        "flag": "-o format",
+        "description": "Output format, e.g. json-pretty or cat"
+      },
+      {
+        "flag": "--no-pager",
+        "description": "Print without paging"
+      }
+    ],
+    "examples": [
+      {
+        "command": "journalctl -u nginx -f",
+        "description": "Follow nginx logs"
+      },
+      {
+        "command": "journalctl -u myapp --since '1 hour ago'",
+        "description": "Logs for a service from the last hour"
+      },
+      {
+        "command": "journalctl -p err -b",
+        "description": "Errors since the last boot"
+      },
+      {
+        "command": "journalctl -n 100 --no-pager",
+        "description": "Last 100 lines without the pager"
+      },
+      {
+        "command": "journalctl --disk-usage",
+        "description": "Show how much disk the journal uses"
+      },
+      {
+        "command": "sudo journalctl --vacuum-time=2weeks",
+        "description": "Delete journal entries older than two weeks"
+      }
+    ],
+    "notes": [
+      "Add your user to the systemd-journal or adm group to read system logs without sudo",
+      "WARNING: --vacuum-* permanently deletes old log entries"
+    ],
+    "relatedCommands": [
+      "systemctl",
+      "service",
+      "tail"
+    ]
+  },
+  {
+    "id": "service",
+    "name": "service",
+    "description": "Run a System V init script or systemd unit (legacy wrapper)",
+    "category": "Services & Logs",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "sudo service nginx restart",
+        "description": "Restart a service"
+      },
+      {
+        "command": "service nginx status",
+        "description": "Check a service's status"
+      },
+      {
+        "command": "service --status-all",
+        "description": "List all services and their status"
+      }
+    ],
+    "notes": [
+      "On systemd distributions this just forwards to systemctl; prefer systemctl for enable/disable and other features",
+      "Still common in older guides and in Docker containers without systemd"
+    ],
+    "relatedCommands": [
+      "systemctl",
+      "journalctl"
+    ]
+  },
+  {
+    "id": "crontab",
+    "name": "crontab",
+    "description": "Install, edit, or list scheduled cron jobs",
+    "category": "Services & Logs",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-e",
+        "description": "Edit the current user's crontab"
+      },
+      {
+        "flag": "-l",
+        "description": "List the current user's crontab"
+      },
+      {
+        "flag": "-r",
+        "description": "Remove the current user's crontab"
+      },
+      {
+        "flag": "-u user",
+        "description": "Operate on another user's crontab (root only)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "crontab -e",
+        "description": "Edit your cron jobs"
+      },
+      {
+        "command": "crontab -l",
+        "description": "List your cron jobs"
+      },
+      {
+        "command": "(crontab -l 2>/dev/null; echo '0 2 * * * /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1') | crontab -",
+        "description": "Append a job that runs daily at 02:00"
+      },
+      {
+        "command": "sudo crontab -u www-data -l",
+        "description": "List another user's cron jobs"
+      }
+    ],
+    "notes": [
+      "Schedule format: minute hour day-of-month month day-of-week command, e.g. '*/5 * * * *' = every 5 minutes",
+      "WARNING: 'crontab -r' deletes all your jobs without confirmation, and r is next to e on the keyboard; back up with 'crontab -l > cron.bak'",
+      "Cron runs with a minimal PATH and environment; use absolute paths in jobs",
+      "systemd timers are a modern alternative with logging via journalctl"
+    ],
+    "relatedCommands": [
+      "systemctl",
+      "journalctl"
+    ]
+  },
+  {
+    "id": "echo",
+    "name": "echo",
+    "description": "Print text or variable values to standard output",
+    "category": "Shell",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-n",
+        "description": "Do not print the trailing newline"
+      },
+      {
+        "flag": "-e",
+        "description": "Interpret backslash escapes like \\n and \\t (bash)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "echo \"Hello, $USER\"",
+        "description": "Print text with a variable"
+      },
+      {
+        "command": "echo $PATH",
+        "description": "Show the PATH variable"
+      },
+      {
+        "command": "echo 'export EDITOR=vim' >> ~/.bashrc",
+        "description": "Append a line to a file"
+      },
+      {
+        "command": "echo $?",
+        "description": "Show the exit code of the last command"
+      }
+    ],
+    "notes": [
+      "> overwrites a file, >> appends",
+      "echo's handling of -e and escapes differs between shells; use printf for portable formatted output",
+      "Single quotes prevent variable expansion; double quotes allow it"
+    ],
+    "relatedCommands": [
+      "env",
+      "export",
+      "tee"
+    ]
+  },
+  {
+    "id": "export",
+    "name": "export",
+    "description": "Set an environment variable for the current shell and its child processes",
+    "category": "Shell",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "export NODE_ENV=production",
+        "description": "Set an environment variable"
+      },
+      {
+        "command": "export PATH=\"$HOME/.local/bin:$PATH\"",
+        "description": "Prepend a directory to PATH"
+      },
+      {
+        "command": "set -a; source .env; set +a",
+        "description": "Export all variables defined in a .env file"
+      },
+      {
+        "command": "unset NODE_ENV",
+        "description": "Remove a variable"
+      }
+    ],
+    "notes": [
+      "Variables only last for the current session; add export lines to ~/.bashrc or ~/.zshrc to persist them",
+      "No spaces around = (export A = b is an error)",
+      "Avoid exporting secrets in shell history; prefix the command with a space if HISTCONTROL=ignorespace is set"
+    ],
+    "relatedCommands": [
+      "env",
+      "echo",
+      "alias"
+    ]
+  },
+  {
+    "id": "env",
+    "name": "env",
+    "description": "Print the environment or run a command with a modified environment",
+    "category": "Shell",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-i",
+        "description": "Start with an empty environment"
+      },
+      {
+        "flag": "-u NAME",
+        "description": "Remove a variable from the environment"
+      }
+    ],
+    "examples": [
+      {
+        "command": "env",
+        "description": "List all environment variables"
+      },
+      {
+        "command": "env | grep -i proxy",
+        "description": "Find proxy-related variables"
+      },
+      {
+        "command": "env NODE_ENV=test npm test",
+        "description": "Run a single command with an extra variable"
+      },
+      {
+        "command": "env -i bash --noprofile --norc",
+        "description": "Start a shell with a clean environment"
+      }
+    ],
+    "notes": [
+      "'#!/usr/bin/env bash' in scripts finds the interpreter via PATH, making scripts portable",
+      "printenv NAME prints a single variable"
+    ],
+    "relatedCommands": [
+      "export",
+      "echo"
+    ]
+  },
+  {
+    "id": "which",
+    "name": "which",
+    "description": "Show the full path of the executable that would run for a command",
+    "category": "Shell",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Show all matching executables in PATH"
+      }
+    ],
+    "examples": [
+      {
+        "command": "which python3",
+        "description": "Locate the python3 executable",
+        "output": "/usr/bin/python3"
+      },
+      {
+        "command": "which -a node",
+        "description": "Show every node binary on the PATH"
+      },
+      {
+        "command": "type ll",
+        "description": "Show whether a name is an alias, function, builtin, or file (bash/zsh)"
+      },
+      {
+        "command": "command -v docker",
+        "description": "POSIX-portable way to check if a command exists (good in scripts)"
+      }
+    ],
+    "notes": [
+      "which does not know about shell aliases or functions; use type for that",
+      "In scripts prefer 'command -v' since which's behaviour varies between systems"
+    ],
+    "relatedCommands": [
+      "alias",
+      "env"
+    ]
+  },
+  {
+    "id": "alias",
+    "name": "alias",
+    "description": "Create shortcuts for commands in your shell",
+    "category": "Shell",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "alias ll='ls -lah'",
+        "description": "Create an alias for a long listing"
+      },
+      {
+        "command": "alias",
+        "description": "List all defined aliases"
+      },
+      {
+        "command": "unalias ll",
+        "description": "Remove an alias"
+      },
+      {
+        "command": "\\ls",
+        "description": "Run the original command, bypassing an alias"
+      }
+    ],
+    "notes": [
+      "Aliases only last for the current session; add them to ~/.bashrc or ~/.zshrc to persist",
+      "Aliases cannot take arguments in the middle; use a shell function for that"
+    ],
+    "relatedCommands": [
+      "history",
+      "which",
+      "export"
+    ]
+  },
+  {
+    "id": "history",
+    "name": "history",
+    "description": "Show and reuse previously run shell commands",
+    "category": "Shell",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-c",
+        "description": "Clear the history list for the current session (bash)"
+      },
+      {
+        "flag": "-d N",
+        "description": "Delete history entry N (bash)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "history | grep docker",
+        "description": "Search past commands"
+      },
+      {
+        "command": "history 20",
+        "description": "Show the last 20 commands (bash)"
+      },
+      {
+        "command": "!!",
+        "description": "Re-run the previous command"
+      },
+      {
+        "command": "!42",
+        "description": "Re-run command number 42"
+      }
+    ],
+    "notes": [
+      "Press Ctrl+R for interactive reverse search",
+      "History is saved to ~/.bash_history or ~/.zsh_history when the shell exits",
+      "Commands containing secrets end up in history; prefix them with a space when HISTCONTROL=ignorespace (bash) or setopt HIST_IGNORE_SPACE (zsh) is set"
+    ],
+    "relatedCommands": [
+      "alias",
+      "echo"
+    ]
+  }
+]

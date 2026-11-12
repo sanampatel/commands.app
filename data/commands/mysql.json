@@ -1,0 +1,952 @@
+[
+  {
+    "id": "mysql-connect",
+    "name": "mysql",
+    "description": "Connect to a MySQL server with the mysql command-line client.",
+    "category": "Connection",
+    "technologyId": "mysql",
+    "flags": [
+      {
+        "flag": "-h, --host",
+        "description": "Server hostname or IP (default localhost via socket)"
+      },
+      {
+        "flag": "-P, --port",
+        "description": "TCP port (default 3306)"
+      },
+      {
+        "flag": "-u, --user",
+        "description": "MySQL user name"
+      },
+      {
+        "flag": "-p, --password",
+        "description": "Prompt for password; -pSECRET (no space) passes it inline"
+      },
+      {
+        "flag": "-D, --database",
+        "description": "Database to use after connecting"
+      },
+      {
+        "flag": "-S, --socket",
+        "description": "Unix socket file to connect through"
+      },
+      {
+        "flag": "--ssl-mode",
+        "description": "TLS mode: DISABLED, PREFERRED, REQUIRED, VERIFY_CA, VERIFY_IDENTITY"
+      },
+      {
+        "flag": "--login-path",
+        "description": "Read connection options from ~/.mylogin.cnf"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mysql -u root -p",
+        "description": "Connect to the local server as root and prompt for the password"
+      },
+      {
+        "command": "mysql -h db.example.com -P 3306 -u app_user -p myapp",
+        "description": "Connect to a remote server and select the myapp database"
+      },
+      {
+        "command": "mysql -h 127.0.0.1 -u app_user -p -D myapp --ssl-mode=REQUIRED",
+        "description": "Force an encrypted connection over TCP"
+      },
+      {
+        "command": "mysql --login-path=local myapp",
+        "description": "Connect using credentials stored with mysql_config_editor"
+      }
+    ],
+    "notes": [
+      "Avoid -pSECRET on shared machines: the password is visible in shell history and process lists. Use -p alone or --login-path.",
+      "On Linux, \"localhost\" connects via the Unix socket; use -h 127.0.0.1 to force TCP.",
+      "Exit the client with \\q, quit or exit."
+    ],
+    "relatedCommands": [
+      "mysql-execute",
+      "mysql-config-editor",
+      "mysql-use"
+    ]
+  },
+  {
+    "id": "mysql-execute",
+    "name": "mysql -e",
+    "description": "Run SQL statements or a .sql file non-interactively from the shell.",
+    "category": "Connection",
+    "technologyId": "mysql",
+    "flags": [
+      {
+        "flag": "-e, --execute",
+        "description": "Execute the statement and exit"
+      },
+      {
+        "flag": "-B, --batch",
+        "description": "Tab-separated output, no table borders"
+      },
+      {
+        "flag": "-N, --skip-column-names",
+        "description": "Omit column names from output"
+      },
+      {
+        "flag": "-t, --table",
+        "description": "Force table-formatted output"
+      },
+      {
+        "flag": "--force",
+        "description": "Continue executing a file even if an SQL error occurs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mysql -u root -p myapp < schema.sql",
+        "description": "Execute a SQL file against the myapp database"
+      },
+      {
+        "command": "mysql -u root -p -e \"SHOW DATABASES;\"",
+        "description": "Run a single statement and exit"
+      },
+      {
+        "command": "mysql -u root -p -N -B -e \"SELECT id, email FROM myapp.users\" > users.tsv",
+        "description": "Export query results as tab-separated values without headers"
+      },
+      {
+        "command": "SOURCE /path/to/schema.sql;",
+        "description": "Run a SQL file from inside an interactive mysql session"
+      }
+    ],
+    "notes": [
+      "End a statement with \\G instead of ; inside the client to print rows vertically, which is easier to read for wide rows."
+    ],
+    "relatedCommands": [
+      "mysql-connect",
+      "mysql-restore"
+    ]
+  },
+  {
+    "id": "mysql-config-editor",
+    "name": "mysql_config_editor",
+    "description": "Store connection credentials in an obfuscated login-path file so you don't type passwords.",
+    "category": "Connection",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "mysql_config_editor set --login-path=local --host=localhost --user=root --password",
+        "description": "Save a login path named local (prompts for password)"
+      },
+      {
+        "command": "mysql_config_editor print --all",
+        "description": "List stored login paths (passwords are masked)"
+      },
+      {
+        "command": "mysql_config_editor remove --login-path=local",
+        "description": "Delete a stored login path"
+      }
+    ],
+    "notes": [
+      "Credentials are stored in ~/.mylogin.cnf. The file is obfuscated, not encrypted, so keep its permissions restricted.",
+      "The login path also works with mysqldump, mysqladmin and mysqlcheck via --login-path."
+    ],
+    "relatedCommands": [
+      "mysql-connect"
+    ]
+  },
+  {
+    "id": "mysql-secure-installation",
+    "name": "mysql_secure_installation",
+    "description": "Interactively harden a fresh MySQL install (root password, anonymous users, test database).",
+    "category": "Connection",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "sudo mysql_secure_installation",
+        "description": "Run the hardening wizard on a new server"
+      }
+    ],
+    "notes": [
+      "Removes anonymous users, disallows remote root login and drops the test database if you answer yes."
+    ],
+    "relatedCommands": [
+      "mysql-create-user"
+    ]
+  },
+  {
+    "id": "mysql-show-databases",
+    "name": "SHOW DATABASES",
+    "description": "List all databases the current user can see.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW DATABASES;",
+        "description": "List all databases"
+      },
+      {
+        "command": "SHOW DATABASES LIKE 'myapp%';",
+        "description": "Filter databases by name pattern"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-use",
+      "mysql-create-database"
+    ]
+  },
+  {
+    "id": "mysql-use",
+    "name": "USE",
+    "description": "Switch the default database for the current session.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "USE myapp;",
+        "description": "Make myapp the default database"
+      },
+      {
+        "command": "SELECT DATABASE();",
+        "description": "Show which database is currently selected"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-show-databases",
+      "mysql-show-tables"
+    ]
+  },
+  {
+    "id": "mysql-create-database",
+    "name": "CREATE DATABASE",
+    "description": "Create a new database, optionally with a character set and collation.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "CREATE DATABASE myapp CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;",
+        "description": "Create a database with full Unicode (emoji) support"
+      },
+      {
+        "command": "CREATE DATABASE IF NOT EXISTS myapp;",
+        "description": "Create only if it doesn't already exist"
+      },
+      {
+        "command": "SHOW CREATE DATABASE myapp;",
+        "description": "Show the charset and collation of an existing database"
+      }
+    ],
+    "notes": [
+      "Use utf8mb4, not utf8 (utf8mb3), which cannot store 4-byte characters like emoji.",
+      "utf8mb4_0900_ai_ci is the MySQL 8.0+ default collation; MariaDB does not support it."
+    ],
+    "relatedCommands": [
+      "mysql-drop-database",
+      "mysql-grant"
+    ]
+  },
+  {
+    "id": "mysql-drop-database",
+    "name": "DROP DATABASE",
+    "description": "Permanently delete a database and all of its tables.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "DROP DATABASE IF EXISTS myapp_test;",
+        "description": "Drop a database without erroring if it is missing"
+      }
+    ],
+    "notes": [
+      "DESTRUCTIVE: all tables and data are deleted immediately and cannot be rolled back. Take a mysqldump first.",
+      "Double-check the database name; there is no confirmation prompt."
+    ],
+    "relatedCommands": [
+      "mysql-create-database",
+      "mysqldump"
+    ]
+  },
+  {
+    "id": "mysql-show-tables",
+    "name": "SHOW TABLES",
+    "description": "List tables (and optionally views) in the current or a named database.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW TABLES;",
+        "description": "List tables in the current database"
+      },
+      {
+        "command": "SHOW TABLES FROM myapp LIKE 'user%';",
+        "description": "List tables in myapp matching a pattern"
+      },
+      {
+        "command": "SHOW FULL TABLES WHERE Table_type = 'VIEW';",
+        "description": "List only views"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-describe",
+      "mysql-show-create-table"
+    ]
+  },
+  {
+    "id": "mysql-describe",
+    "name": "DESCRIBE",
+    "description": "Show the columns, types, nullability, keys and defaults of a table.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "DESCRIBE users;",
+        "description": "Show column definitions for the users table"
+      },
+      {
+        "command": "SHOW FULL COLUMNS FROM users;",
+        "description": "Include collation, privileges and column comments"
+      },
+      {
+        "command": "SHOW INDEX FROM users;",
+        "description": "List indexes on the table"
+      }
+    ],
+    "notes": [
+      "DESC users; is a shorthand for DESCRIBE."
+    ],
+    "relatedCommands": [
+      "mysql-show-create-table",
+      "mysql-show-tables"
+    ]
+  },
+  {
+    "id": "mysql-show-create-table",
+    "name": "SHOW CREATE TABLE",
+    "description": "Print the exact CREATE TABLE statement for a table, including indexes and engine.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW CREATE TABLE users\\G",
+        "description": "Show the DDL for users in vertical format"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-describe"
+    ]
+  },
+  {
+    "id": "mysql-table-sizes",
+    "name": "information_schema.TABLES",
+    "description": "Query table sizes and row estimates from information_schema.",
+    "category": "Databases & Tables",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SELECT table_name, ROUND((data_length + index_length) / 1024 / 1024, 1) AS size_mb FROM information_schema.TABLES WHERE table_schema = 'myapp' ORDER BY size_mb DESC;",
+        "description": "List the largest tables in myapp"
+      },
+      {
+        "command": "SELECT table_schema, ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS size_mb FROM information_schema.TABLES GROUP BY table_schema;",
+        "description": "Total size per database"
+      }
+    ],
+    "notes": [
+      "TABLE_ROWS is an estimate for InnoDB tables; use SELECT COUNT(*) for an exact count."
+    ],
+    "relatedCommands": [
+      "mysql-show-tables"
+    ]
+  },
+  {
+    "id": "mysql-create-user",
+    "name": "CREATE USER",
+    "description": "Create a new MySQL account for a given host.",
+    "category": "Users & Privileges",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "CREATE USER 'app_user'@'%' IDENTIFIED BY '<password>';",
+        "description": "Create a user that can connect from any host"
+      },
+      {
+        "command": "CREATE USER 'app_user'@'localhost' IDENTIFIED BY '<password>';",
+        "description": "Create a user restricted to local connections"
+      },
+      {
+        "command": "SELECT user, host, plugin FROM mysql.user;",
+        "description": "List existing accounts and their auth plugin"
+      }
+    ],
+    "notes": [
+      "An account is user + host: 'app'@'localhost' and 'app'@'%' are different accounts.",
+      "MySQL 8.0+ defaults to caching_sha2_password. mysql_native_password is disabled by default in 8.4 and removed in 9.0."
+    ],
+    "relatedCommands": [
+      "mysql-grant",
+      "mysql-alter-user",
+      "mysql-drop-user"
+    ]
+  },
+  {
+    "id": "mysql-grant",
+    "name": "GRANT",
+    "description": "Give privileges on databases or tables to an account.",
+    "category": "Users & Privileges",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "GRANT ALL PRIVILEGES ON myapp.* TO 'app_user'@'%';",
+        "description": "Full access to every table in myapp"
+      },
+      {
+        "command": "GRANT SELECT, INSERT, UPDATE, DELETE ON myapp.* TO 'app_user'@'%';",
+        "description": "Typical read/write application access"
+      },
+      {
+        "command": "GRANT SELECT ON myapp.* TO 'readonly'@'10.0.%';",
+        "description": "Read-only access from a private subnet"
+      }
+    ],
+    "notes": [
+      "GRANT no longer creates users in MySQL 8.0+; run CREATE USER first.",
+      "FLUSH PRIVILEGES is not needed after GRANT/REVOKE; it is only required after editing the mysql.* grant tables directly."
+    ],
+    "relatedCommands": [
+      "mysql-show-grants",
+      "mysql-revoke",
+      "mysql-create-user"
+    ]
+  },
+  {
+    "id": "mysql-revoke",
+    "name": "REVOKE",
+    "description": "Remove privileges from an account.",
+    "category": "Users & Privileges",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "REVOKE DELETE ON myapp.* FROM 'app_user'@'%';",
+        "description": "Remove only the DELETE privilege"
+      },
+      {
+        "command": "REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'app_user'@'%';",
+        "description": "Strip every privilege from an account"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-grant",
+      "mysql-show-grants"
+    ]
+  },
+  {
+    "id": "mysql-show-grants",
+    "name": "SHOW GRANTS",
+    "description": "Show the privileges assigned to an account.",
+    "category": "Users & Privileges",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW GRANTS;",
+        "description": "Show privileges for the current user"
+      },
+      {
+        "command": "SHOW GRANTS FOR 'app_user'@'%';",
+        "description": "Show privileges for a specific account"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-grant",
+      "mysql-revoke"
+    ]
+  },
+  {
+    "id": "mysql-alter-user",
+    "name": "ALTER USER",
+    "description": "Change an account's password, authentication plugin or lock state.",
+    "category": "Users & Privileges",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "ALTER USER 'app_user'@'%' IDENTIFIED BY '<new-password>';",
+        "description": "Change a user's password"
+      },
+      {
+        "command": "ALTER USER USER() IDENTIFIED BY '<new-password>';",
+        "description": "Change your own password"
+      },
+      {
+        "command": "ALTER USER 'app_user'@'%' ACCOUNT LOCK;",
+        "description": "Disable logins for an account without dropping it"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-create-user",
+      "mysql-drop-user"
+    ]
+  },
+  {
+    "id": "mysql-drop-user",
+    "name": "DROP USER",
+    "description": "Delete a MySQL account and its privileges.",
+    "category": "Users & Privileges",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "DROP USER IF EXISTS 'app_user'@'%';",
+        "description": "Remove an account"
+      }
+    ],
+    "notes": [
+      "DESTRUCTIVE: applications using this account will immediately fail to connect."
+    ],
+    "relatedCommands": [
+      "mysql-create-user"
+    ]
+  },
+  {
+    "id": "mysql-explain",
+    "name": "EXPLAIN",
+    "description": "Show the execution plan the optimizer will use for a query.",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "EXPLAIN SELECT * FROM orders WHERE customer_id = 42;",
+        "description": "Show the plan in tabular form (check type, key, rows)"
+      },
+      {
+        "command": "EXPLAIN FORMAT=TREE SELECT * FROM orders WHERE customer_id = 42;",
+        "description": "Show the plan as a readable tree (8.0.16+)"
+      },
+      {
+        "command": "EXPLAIN FORMAT=JSON SELECT * FROM orders WHERE customer_id = 42\\G",
+        "description": "Detailed JSON plan with cost estimates"
+      }
+    ],
+    "notes": [
+      "type = ALL means a full table scan; look for a suitable index.",
+      "key shows which index was chosen; NULL means none."
+    ],
+    "relatedCommands": [
+      "mysql-explain-analyze",
+      "mysql-slow-query-log"
+    ]
+  },
+  {
+    "id": "mysql-explain-analyze",
+    "name": "EXPLAIN ANALYZE",
+    "description": "Execute a query and report actual timings and row counts for each plan step.",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 42;",
+        "description": "Compare estimated vs actual rows and time per step"
+      }
+    ],
+    "notes": [
+      "Available in MySQL 8.0.18+.",
+      "The query is actually executed, so be careful running slow queries on production."
+    ],
+    "relatedCommands": [
+      "mysql-explain"
+    ]
+  },
+  {
+    "id": "mysql-show-processlist",
+    "name": "SHOW PROCESSLIST",
+    "description": "List active connections and the queries they are running.",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW FULL PROCESSLIST;",
+        "description": "Show all connections with full query text"
+      },
+      {
+        "command": "SELECT id, user, host, db, time, state, info FROM information_schema.PROCESSLIST WHERE command <> 'Sleep' ORDER BY time DESC;",
+        "description": "Show only active queries, longest-running first"
+      },
+      {
+        "command": "KILL QUERY 1234;",
+        "description": "Cancel the running statement on connection 1234 but keep the connection"
+      },
+      {
+        "command": "KILL 1234;",
+        "description": "Terminate connection 1234 entirely"
+      }
+    ],
+    "notes": [
+      "Without the PROCESS privilege you only see your own threads.",
+      "Killing a long-running write may trigger a lengthy rollback."
+    ],
+    "relatedCommands": [
+      "mysql-show-status",
+      "mysqladmin"
+    ]
+  },
+  {
+    "id": "mysql-show-variables",
+    "name": "SHOW VARIABLES",
+    "description": "Inspect server configuration variables.",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW VARIABLES LIKE 'max_connections';",
+        "description": "Check a single setting"
+      },
+      {
+        "command": "SHOW VARIABLES LIKE 'innodb_buffer_pool%';",
+        "description": "Show all buffer pool settings"
+      },
+      {
+        "command": "SHOW GLOBAL VARIABLES LIKE '%timeout%';",
+        "description": "Show global timeout settings"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-set-global",
+      "mysql-show-status"
+    ]
+  },
+  {
+    "id": "mysql-show-status",
+    "name": "SHOW STATUS",
+    "description": "Inspect server status counters such as connections, queries and buffer pool usage.",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW GLOBAL STATUS LIKE 'Threads_connected';",
+        "description": "Current number of open connections"
+      },
+      {
+        "command": "SHOW GLOBAL STATUS LIKE 'Slow_queries';",
+        "description": "Number of queries that exceeded long_query_time"
+      },
+      {
+        "command": "SHOW ENGINE INNODB STATUS\\G",
+        "description": "Detailed InnoDB state including the latest deadlock"
+      }
+    ],
+    "relatedCommands": [
+      "mysql-show-variables",
+      "mysql-show-processlist"
+    ]
+  },
+  {
+    "id": "mysql-set-global",
+    "name": "SET GLOBAL",
+    "description": "Change a server variable at runtime, optionally persisting it across restarts.",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SET GLOBAL max_connections = 500;",
+        "description": "Change a setting until the next restart"
+      },
+      {
+        "command": "SET PERSIST max_connections = 500;",
+        "description": "Change a setting and persist it to mysqld-auto.cnf (8.0+)"
+      },
+      {
+        "command": "SET SESSION sql_mode = 'STRICT_TRANS_TABLES';",
+        "description": "Change a setting for the current connection only"
+      }
+    ],
+    "notes": [
+      "SET GLOBAL changes are lost on restart unless also added to my.cnf or set with SET PERSIST.",
+      "Requires SYSTEM_VARIABLES_ADMIN (or SUPER on older versions)."
+    ],
+    "relatedCommands": [
+      "mysql-show-variables"
+    ]
+  },
+  {
+    "id": "mysql-slow-query-log",
+    "name": "slow_query_log",
+    "description": "Enable and analyze the slow query log to find expensive queries.",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SET GLOBAL slow_query_log = 'ON';",
+        "description": "Turn on the slow query log at runtime"
+      },
+      {
+        "command": "SET GLOBAL long_query_time = 1;",
+        "description": "Log queries taking longer than 1 second (applies to new connections)"
+      },
+      {
+        "command": "SHOW VARIABLES LIKE 'slow_query_log_file';",
+        "description": "Find where the log is written"
+      },
+      {
+        "command": "mysqldumpslow -s t -t 10 /var/lib/mysql/myhost-slow.log",
+        "description": "Summarize the 10 slowest query patterns by total time"
+      }
+    ],
+    "notes": [
+      "Set log_queries_not_using_indexes = ON to also log full scans, but it can be noisy.",
+      "To keep the setting after a restart add slow_query_log = 1 and long_query_time to my.cnf."
+    ],
+    "relatedCommands": [
+      "mysql-explain",
+      "mysql-set-global"
+    ]
+  },
+  {
+    "id": "mysqldump",
+    "name": "mysqldump",
+    "description": "Create a logical SQL backup of one or more databases.",
+    "category": "Backup & Restore",
+    "technologyId": "mysql",
+    "flags": [
+      {
+        "flag": "--single-transaction",
+        "description": "Consistent snapshot for InnoDB without locking tables"
+      },
+      {
+        "flag": "--all-databases, -A",
+        "description": "Dump every database"
+      },
+      {
+        "flag": "--databases, -B",
+        "description": "Dump several named databases and include CREATE DATABASE statements"
+      },
+      {
+        "flag": "--no-data, -d",
+        "description": "Schema only"
+      },
+      {
+        "flag": "--no-create-info, -t",
+        "description": "Data only, no CREATE TABLE statements"
+      },
+      {
+        "flag": "--routines, -R",
+        "description": "Include stored procedures and functions"
+      },
+      {
+        "flag": "--triggers",
+        "description": "Include triggers (on by default)"
+      },
+      {
+        "flag": "--events, -E",
+        "description": "Include scheduled events"
+      },
+      {
+        "flag": "--quick, -q",
+        "description": "Stream rows instead of buffering whole tables (on by default via --opt)"
+      },
+      {
+        "flag": "--set-gtid-purged=OFF",
+        "description": "Omit GTID statements, useful when restoring onto a server with different GTIDs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mysqldump -u root -p --single-transaction --routines --triggers myapp > myapp.sql",
+        "description": "Consistent backup of one InnoDB database without locking tables"
+      },
+      {
+        "command": "mysqldump -u root -p --single-transaction myapp | gzip > myapp-$(date +%F).sql.gz",
+        "description": "Compressed, dated backup"
+      },
+      {
+        "command": "mysqldump -u root -p --all-databases --single-transaction --routines --events > all.sql",
+        "description": "Back up every database on the server"
+      },
+      {
+        "command": "mysqldump -u root -p --no-data myapp > schema.sql",
+        "description": "Dump the schema only, no rows"
+      },
+      {
+        "command": "mysqldump -u root -p myapp users orders > tables.sql",
+        "description": "Dump only specific tables"
+      }
+    ],
+    "notes": [
+      "--single-transaction only gives a consistent snapshot for InnoDB tables; MyISAM tables can still change during the dump.",
+      "Without --databases, the dump has no CREATE DATABASE/USE, so you must name the target database when restoring.",
+      "For large databases, consider MySQL Shell's util.dumpInstance(), which is parallel and much faster. mysqlpump was removed in MySQL 8.4."
+    ],
+    "relatedCommands": [
+      "mysql-restore",
+      "mysqlsh"
+    ]
+  },
+  {
+    "id": "mysql-restore",
+    "name": "mysql < dump.sql",
+    "description": "Restore a database from a mysqldump file.",
+    "category": "Backup & Restore",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "mysql -u root -p myapp < myapp.sql",
+        "description": "Restore into an existing database named myapp"
+      },
+      {
+        "command": "gunzip < myapp-2026-11-01.sql.gz | mysql -u root -p myapp",
+        "description": "Restore from a gzip-compressed dump"
+      },
+      {
+        "command": "mysql -u root -p < all.sql",
+        "description": "Restore a dump made with --all-databases or --databases"
+      }
+    ],
+    "notes": [
+      "Create the target database first if the dump was made without --databases.",
+      "Restoring overwrites tables that exist in the dump (they include DROP TABLE IF EXISTS by default)."
+    ],
+    "relatedCommands": [
+      "mysqldump",
+      "mysql-create-database",
+      "mysql-execute"
+    ]
+  },
+  {
+    "id": "mysqlsh",
+    "name": "mysqlsh",
+    "description": "MySQL Shell: an advanced client with SQL, JavaScript and Python modes plus parallel dump/load utilities.",
+    "category": "Backup & Restore",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "mysqlsh --sql root@localhost:3306",
+        "description": "Connect in SQL mode"
+      },
+      {
+        "command": "util.dumpInstance(\"/backups/full\", {threads: 8})",
+        "description": "Parallel dump of the whole instance (run in JS mode)"
+      },
+      {
+        "command": "util.loadDump(\"/backups/full\", {threads: 8})",
+        "description": "Load a dump created by dumpInstance/dumpSchemas (JS mode)"
+      }
+    ],
+    "notes": [
+      "Installed separately from the server (package mysql-shell).",
+      "Switch modes inside the shell with \\sql, \\js or \\py.",
+      "util.loadDump requires local_infile=ON on the target server."
+    ],
+    "relatedCommands": [
+      "mysqldump"
+    ]
+  },
+  {
+    "id": "mysqladmin",
+    "name": "mysqladmin",
+    "description": "Perform server administration tasks such as health checks and shutdown from the shell.",
+    "category": "Administration",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "mysqladmin -u root -p status",
+        "description": "Show uptime, threads, queries and slow query count"
+      },
+      {
+        "command": "mysqladmin -h db.example.com -u monitor -p ping",
+        "description": "Check whether the server is alive (prints \"mysqld is alive\")",
+        "output": "mysqld is alive"
+      },
+      {
+        "command": "mysqladmin -u root -p processlist",
+        "description": "Show running threads"
+      },
+      {
+        "command": "mysqladmin -u root -p extended-status",
+        "description": "Dump all global status counters"
+      },
+      {
+        "command": "mysqladmin -u root -p shutdown",
+        "description": "Cleanly shut down the server"
+      }
+    ],
+    "notes": [
+      "shutdown stops the server for every client; prefer systemctl stop mysql on systemd hosts so the service manager stays in sync."
+    ],
+    "relatedCommands": [
+      "mysql-show-processlist",
+      "mysql-show-status"
+    ]
+  },
+  {
+    "id": "mysqlcheck",
+    "name": "mysqlcheck",
+    "description": "Check, analyze, optimize or repair tables while the server is running.",
+    "category": "Administration",
+    "technologyId": "mysql",
+    "flags": [
+      {
+        "flag": "-c, --check",
+        "description": "Check tables for errors (default)"
+      },
+      {
+        "flag": "-a, --analyze",
+        "description": "Analyze key distribution"
+      },
+      {
+        "flag": "-o, --optimize",
+        "description": "Optimize (rebuild) tables"
+      },
+      {
+        "flag": "-r, --repair",
+        "description": "Repair tables (MyISAM/ARCHIVE/CSV only)"
+      },
+      {
+        "flag": "-A, --all-databases",
+        "description": "Process all databases"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mysqlcheck -u root -p --all-databases",
+        "description": "Check all tables in all databases for errors"
+      },
+      {
+        "command": "mysqlcheck -u root -p --analyze myapp",
+        "description": "Refresh index statistics for the optimizer"
+      },
+      {
+        "command": "mysqlcheck -u root -p --optimize myapp orders",
+        "description": "Rebuild a table to reclaim space"
+      }
+    ],
+    "notes": [
+      "--repair does not work on InnoDB tables.",
+      "--optimize on InnoDB rebuilds the table, which can take a long time and lots of disk on large tables."
+    ],
+    "relatedCommands": [
+      "mysqladmin"
+    ]
+  },
+  {
+    "id": "mysql-service",
+    "name": "systemctl mysql",
+    "description": "Start, stop and check the MySQL server service on systemd-based Linux.",
+    "category": "Administration",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "sudo systemctl status mysql",
+        "description": "Check whether the server is running (service is mysqld on RHEL/Fedora)"
+      },
+      {
+        "command": "sudo systemctl restart mysql",
+        "description": "Restart the server to apply my.cnf changes"
+      },
+      {
+        "command": "sudo journalctl -u mysql -n 100",
+        "description": "View recent server log entries"
+      },
+      {
+        "command": "brew services restart mysql",
+        "description": "Restart MySQL installed with Homebrew on macOS"
+      }
+    ],
+    "notes": [
+      "The service is called mysql on Debian/Ubuntu and mysqld on RHEL, Fedora and Oracle Linux."
+    ],
+    "relatedCommands": [
+      "mysqladmin"
+    ]
+  }
+]

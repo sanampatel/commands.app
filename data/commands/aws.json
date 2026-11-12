@@ -1,0 +1,1066 @@
+[
+  {
+    "id": "aws-configure",
+    "name": "aws configure",
+    "description": "Interactively set access keys, default region, and output format for a profile.",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--profile",
+        "description": "Configure a named profile instead of default",
+        "example": "aws configure --profile staging"
+      },
+      {
+        "flag": "list",
+        "description": "Show the current resolved configuration and where each value came from"
+      },
+      {
+        "flag": "get / set",
+        "description": "Read or write a single config value",
+        "example": "aws configure set region eu-west-1 --profile staging"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws configure",
+        "description": "Set up the default profile"
+      },
+      {
+        "command": "aws configure list",
+        "description": "Check which credentials and region are in effect"
+      },
+      {
+        "command": "aws configure set region us-east-1 --profile dev",
+        "description": "Change one setting without prompts"
+      },
+      {
+        "command": "aws configure list-profiles",
+        "description": "List all configured profile names"
+      }
+    ],
+    "notes": [
+      "Writes to ~/.aws/credentials and ~/.aws/config. Prefer SSO or short-lived role credentials over long-lived access keys."
+    ],
+    "relatedCommands": [
+      "aws-configure-sso",
+      "aws-sts-get-caller-identity",
+      "aws-global-options"
+    ]
+  },
+  {
+    "id": "aws-configure-sso",
+    "name": "aws configure sso",
+    "description": "Create a profile that authenticates through IAM Identity Center (AWS SSO).",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws configure sso",
+        "description": "Interactive wizard: start URL, region, account, and role"
+      },
+      {
+        "command": "aws configure sso-session",
+        "description": "Create a reusable sso-session block shared by several profiles"
+      }
+    ],
+    "notes": [
+      "Results in a profile in ~/.aws/config that uses short-lived credentials refreshed by `aws sso login`."
+    ],
+    "relatedCommands": [
+      "aws-sso-login",
+      "aws-configure"
+    ]
+  },
+  {
+    "id": "aws-sso-login",
+    "name": "aws sso login",
+    "description": "Sign in through IAM Identity Center and cache temporary credentials.",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--profile",
+        "description": "Profile to log in with"
+      },
+      {
+        "flag": "--sso-session",
+        "description": "Log in to a named sso-session"
+      },
+      {
+        "flag": "--use-device-code",
+        "description": "Use the device code flow (e.g. on a remote/headless machine)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws sso login --profile dev",
+        "description": "Open the browser to authenticate the dev profile"
+      },
+      {
+        "command": "aws sso logout",
+        "description": "Clear cached SSO tokens"
+      }
+    ],
+    "relatedCommands": [
+      "aws-configure-sso",
+      "aws-sts-get-caller-identity"
+    ]
+  },
+  {
+    "id": "aws-sts-get-caller-identity",
+    "name": "aws sts get-caller-identity",
+    "description": "Show the account, user/role ARN, and user ID of the current credentials.",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws sts get-caller-identity",
+        "description": "Check who you are authenticated as",
+        "output": "{\n  \"UserId\": \"AROAEXAMPLEID:jane\",\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:sts::123456789012:assumed-role/Developer/jane\"\n}"
+      },
+      {
+        "command": "aws sts get-caller-identity --query Account --output text",
+        "description": "Print only the account ID"
+      }
+    ],
+    "notes": [
+      "Works with any valid credentials and needs no IAM permissions: the first thing to run when debugging auth."
+    ],
+    "relatedCommands": [
+      "aws-configure",
+      "aws-sts-assume-role"
+    ]
+  },
+  {
+    "id": "aws-sts-assume-role",
+    "name": "aws sts assume-role",
+    "description": "Get temporary credentials for an IAM role, e.g. in another account.",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--role-arn",
+        "description": "ARN of the role to assume"
+      },
+      {
+        "flag": "--role-session-name",
+        "description": "Identifier for the session (shows up in CloudTrail)"
+      },
+      {
+        "flag": "--duration-seconds",
+        "description": "Credential lifetime (default 3600)"
+      },
+      {
+        "flag": "--serial-number / --token-code",
+        "description": "MFA device ARN and current code if the role requires MFA"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws sts assume-role --role-arn arn:aws:iam::123456789012:role/Deploy --role-session-name ci-deploy",
+        "description": "Assume a role and print temporary credentials"
+      },
+      {
+        "command": "aws sts assume-role --role-arn arn:aws:iam::123456789012:role/Deploy --role-session-name me --query Credentials --output json",
+        "description": "Return only the credentials block"
+      }
+    ],
+    "notes": [
+      "Usually easier: add `role_arn` and `source_profile` to a profile in ~/.aws/config and use --profile; the CLI assumes and refreshes the role automatically."
+    ],
+    "relatedCommands": [
+      "aws-sts-get-caller-identity",
+      "aws-global-options"
+    ]
+  },
+  {
+    "id": "aws-global-options",
+    "name": "--profile / --region / --output / --query",
+    "description": "Global options that work with every AWS CLI command to pick credentials, region, and format output.",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--profile",
+        "description": "Use a named profile (or set AWS_PROFILE)",
+        "example": "aws s3 ls --profile prod"
+      },
+      {
+        "flag": "--region",
+        "description": "Override the region (or set AWS_REGION)",
+        "example": "aws ec2 describe-instances --region eu-west-1"
+      },
+      {
+        "flag": "--output",
+        "description": "Output format: json, text, table, yaml, yaml-stream",
+        "example": "aws iam list-users --output table"
+      },
+      {
+        "flag": "--query",
+        "description": "JMESPath expression to filter output client-side",
+        "example": "--query 'Reservations[].Instances[].InstanceId'"
+      },
+      {
+        "flag": "--no-cli-pager",
+        "description": "Disable the pager (or set AWS_PAGER=\"\")"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Check permissions without making the change (EC2 and some other services)"
+      },
+      {
+        "flag": "--debug",
+        "description": "Print full request/response debug logs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "export AWS_PROFILE=dev AWS_REGION=us-east-1",
+        "description": "Set defaults for the shell session"
+      },
+      {
+        "command": "aws lambda list-functions --query 'Functions[].FunctionName' --output text",
+        "description": "List only function names"
+      },
+      {
+        "command": "aws ec2 describe-instances --output table --query 'Reservations[].Instances[].[InstanceId,State.Name]'",
+        "description": "Readable table of instance IDs and states"
+      }
+    ],
+    "notes": [
+      "--query filters after download; use service-side --filter/--filters options to reduce data on large accounts.",
+      "Most commands auto-paginate; use --max-items and --starting-token to page manually."
+    ],
+    "relatedCommands": [
+      "aws-configure",
+      "aws-ec2-describe-instances"
+    ]
+  },
+  {
+    "id": "aws-s3-ls",
+    "name": "aws s3 ls",
+    "description": "List buckets, or objects and prefixes within a bucket.",
+    "category": "S3",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--recursive",
+        "description": "List all objects under the prefix"
+      },
+      {
+        "flag": "--human-readable",
+        "description": "Show sizes in KiB/MiB/GiB"
+      },
+      {
+        "flag": "--summarize",
+        "description": "Print total object count and size"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws s3 ls",
+        "description": "List all buckets"
+      },
+      {
+        "command": "aws s3 ls s3://<bucket-name>/logs/",
+        "description": "List a prefix"
+      },
+      {
+        "command": "aws s3 ls s3://<bucket-name> --recursive --human-readable --summarize",
+        "description": "Total size of a bucket"
+      }
+    ],
+    "relatedCommands": [
+      "aws-s3-cp",
+      "aws-s3-sync",
+      "aws-s3-mb"
+    ]
+  },
+  {
+    "id": "aws-s3-cp",
+    "name": "aws s3 cp",
+    "description": "Copy files between local disk and S3, or between S3 locations.",
+    "category": "S3",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--recursive",
+        "description": "Copy a whole directory/prefix"
+      },
+      {
+        "flag": "--exclude / --include",
+        "description": "Filter files by pattern (evaluated in order)",
+        "example": "--exclude '*' --include '*.jpg'"
+      },
+      {
+        "flag": "--acl",
+        "description": "Canned ACL such as bucket-owner-full-control"
+      },
+      {
+        "flag": "--content-type",
+        "description": "Override the Content-Type"
+      },
+      {
+        "flag": "--cache-control",
+        "description": "Set Cache-Control header",
+        "example": "--cache-control 'max-age=31536000'"
+      },
+      {
+        "flag": "--sse",
+        "description": "Server-side encryption: AES256 or aws:kms"
+      },
+      {
+        "flag": "--storage-class",
+        "description": "e.g. STANDARD_IA, GLACIER_IR, INTELLIGENT_TIERING"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws s3 cp report.csv s3://<bucket-name>/reports/",
+        "description": "Upload a file"
+      },
+      {
+        "command": "aws s3 cp s3://<bucket-name>/reports/report.csv .",
+        "description": "Download a file"
+      },
+      {
+        "command": "aws s3 cp ./build s3://<bucket-name>/ --recursive",
+        "description": "Upload a directory"
+      },
+      {
+        "command": "aws s3 cp s3://<bucket-name>/data.json - | jq .",
+        "description": "Stream an object to stdout"
+      }
+    ],
+    "relatedCommands": [
+      "aws-s3-sync",
+      "aws-s3-mv",
+      "aws-s3-presign"
+    ]
+  },
+  {
+    "id": "aws-s3-sync",
+    "name": "aws s3 sync",
+    "description": "Sync a directory and an S3 prefix, copying only new or changed files.",
+    "category": "S3",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--delete",
+        "description": "Delete destination files that do not exist in the source"
+      },
+      {
+        "flag": "--dryrun",
+        "description": "Show what would happen without doing it"
+      },
+      {
+        "flag": "--exclude / --include",
+        "description": "Filter by pattern"
+      },
+      {
+        "flag": "--size-only",
+        "description": "Compare by size only, ignoring timestamps"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws s3 sync ./dist s3://<bucket-name> --delete",
+        "description": "Deploy a static site, removing stale files"
+      },
+      {
+        "command": "aws s3 sync s3://<bucket-name>/backups ./backups",
+        "description": "Download a prefix"
+      },
+      {
+        "command": "aws s3 sync ./dist s3://<bucket-name> --delete --dryrun",
+        "description": "Preview a sync"
+      }
+    ],
+    "notes": [
+      "WARNING: --delete removes objects in the destination; run with --dryrun first (and enable bucket versioning for important data)."
+    ],
+    "relatedCommands": [
+      "aws-s3-cp",
+      "aws-s3-rm"
+    ]
+  },
+  {
+    "id": "aws-s3-mv",
+    "name": "aws s3 mv",
+    "description": "Move or rename objects (copy then delete the source).",
+    "category": "S3",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--recursive",
+        "description": "Move everything under a prefix"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws s3 mv s3://<bucket-name>/old.txt s3://<bucket-name>/new.txt",
+        "description": "Rename an object"
+      },
+      {
+        "command": "aws s3 mv s3://<bucket-name>/incoming/ s3://<bucket-name>/processed/ --recursive",
+        "description": "Move a prefix"
+      }
+    ],
+    "relatedCommands": [
+      "aws-s3-cp",
+      "aws-s3-rm"
+    ]
+  },
+  {
+    "id": "aws-s3-rm",
+    "name": "aws s3 rm",
+    "description": "Delete objects from S3.",
+    "category": "S3",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--recursive",
+        "description": "Delete all objects under a prefix"
+      },
+      {
+        "flag": "--dryrun",
+        "description": "Show what would be deleted"
+      },
+      {
+        "flag": "--exclude / --include",
+        "description": "Filter by pattern"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws s3 rm s3://<bucket-name>/tmp/file.txt",
+        "description": "Delete one object"
+      },
+      {
+        "command": "aws s3 rm s3://<bucket-name>/tmp/ --recursive --dryrun",
+        "description": "Preview deleting a prefix"
+      },
+      {
+        "command": "aws s3 rb s3://<bucket-name> --force",
+        "description": "Delete all objects and then the bucket"
+      }
+    ],
+    "notes": [
+      "WARNING: Deletion is permanent unless bucket versioning is enabled. `aws s3 rb --force` deletes the bucket and everything in it."
+    ],
+    "relatedCommands": [
+      "aws-s3-ls",
+      "aws-s3-mb"
+    ]
+  },
+  {
+    "id": "aws-s3-mb",
+    "name": "aws s3 mb",
+    "description": "Create a new S3 bucket.",
+    "category": "S3",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--region",
+        "description": "Region to create the bucket in"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws s3 mb s3://my-app-assets-123456 --region eu-west-1",
+        "description": "Create a bucket in a specific region"
+      }
+    ],
+    "notes": [
+      "Bucket names are globally unique, lowercase, 3-63 characters. New buckets block public access and use SSE-S3 encryption by default."
+    ],
+    "relatedCommands": [
+      "aws-s3-ls",
+      "aws-s3api"
+    ]
+  },
+  {
+    "id": "aws-s3-presign",
+    "name": "aws s3 presign",
+    "description": "Generate a temporary pre-signed URL to download an object without credentials.",
+    "category": "S3",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--expires-in",
+        "description": "Lifetime in seconds (default 3600, max 604800 = 7 days)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws s3 presign s3://<bucket-name>/reports/q3.pdf --expires-in 900",
+        "description": "15-minute download link"
+      }
+    ],
+    "notes": [
+      "URLs signed with temporary (SSO/role) credentials expire when those credentials expire, even if --expires-in is longer."
+    ],
+    "relatedCommands": [
+      "aws-s3-cp"
+    ]
+  },
+  {
+    "id": "aws-s3api",
+    "name": "aws s3api",
+    "description": "Low-level S3 API calls for bucket settings and object metadata not covered by aws s3.",
+    "category": "S3",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws s3api head-object --bucket <bucket-name> --key path/file.txt",
+        "description": "Get object metadata (size, ETag, content type)"
+      },
+      {
+        "command": "aws s3api put-bucket-versioning --bucket <bucket-name> --versioning-configuration Status=Enabled",
+        "description": "Enable versioning"
+      },
+      {
+        "command": "aws s3api get-bucket-policy --bucket <bucket-name> --query Policy --output text | jq .",
+        "description": "Show the bucket policy"
+      },
+      {
+        "command": "aws s3api list-object-versions --bucket <bucket-name> --prefix path/file.txt",
+        "description": "List versions of an object"
+      }
+    ],
+    "relatedCommands": [
+      "aws-s3-ls",
+      "aws-s3-mb"
+    ]
+  },
+  {
+    "id": "aws-ec2-describe-instances",
+    "name": "aws ec2 describe-instances",
+    "description": "List EC2 instances and their details.",
+    "category": "EC2",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--instance-ids",
+        "description": "Limit to specific instances"
+      },
+      {
+        "flag": "--filters",
+        "description": "Server-side filters",
+        "example": "--filters Name=instance-state-name,Values=running Name=tag:Env,Values=prod"
+      },
+      {
+        "flag": "--query",
+        "description": "JMESPath to select fields"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].[InstanceId,InstanceType,PrivateIpAddress,Tags[?Key==`Name`]|[0].Value]' --output table",
+        "description": "Table of running instances with names and IPs"
+      },
+      {
+        "command": "aws ec2 describe-instances --filters Name=tag:Name,Values=web-* --query 'Reservations[].Instances[].InstanceId' --output text",
+        "description": "Find instance IDs by Name tag"
+      },
+      {
+        "command": "aws ec2 describe-instances --instance-ids i-0123456789abcdef0",
+        "description": "Details of one instance"
+      }
+    ],
+    "notes": [
+      "Instances are nested under Reservations; the `Reservations[].Instances[]` pattern flattens them."
+    ],
+    "relatedCommands": [
+      "aws-ec2-start-stop",
+      "aws-global-options",
+      "aws-ssm-start-session"
+    ]
+  },
+  {
+    "id": "aws-ec2-start-stop",
+    "name": "aws ec2 start-instances / stop-instances",
+    "description": "Start, stop, or reboot EC2 instances.",
+    "category": "EC2",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--instance-ids",
+        "description": "One or more instance IDs"
+      },
+      {
+        "flag": "--hibernate",
+        "description": "Hibernate instead of stop (if enabled on the instance)"
+      },
+      {
+        "flag": "--force",
+        "description": "Force stop without a graceful OS shutdown"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws ec2 start-instances --instance-ids i-0123456789abcdef0",
+        "description": "Start an instance"
+      },
+      {
+        "command": "aws ec2 stop-instances --instance-ids i-0123456789abcdef0 i-0fedcba9876543210",
+        "description": "Stop two instances"
+      },
+      {
+        "command": "aws ec2 wait instance-running --instance-ids i-0123456789abcdef0",
+        "description": "Block until the instance is running"
+      }
+    ],
+    "notes": [
+      "Stopping loses instance-store data and changes the public IP unless an Elastic IP is attached.",
+      "WARNING: `aws ec2 terminate-instances` permanently deletes instances; there is no undo."
+    ],
+    "relatedCommands": [
+      "aws-ec2-describe-instances"
+    ]
+  },
+  {
+    "id": "aws-iam-list-users",
+    "name": "aws iam list-users",
+    "description": "List IAM users in the account.",
+    "category": "IAM",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws iam list-users --query 'Users[].[UserName,CreateDate]' --output table",
+        "description": "Table of users and creation dates"
+      },
+      {
+        "command": "aws iam list-attached-user-policies --user-name jane",
+        "description": "Show managed policies attached to a user"
+      },
+      {
+        "command": "aws iam list-roles --query 'Roles[].RoleName' --output text",
+        "description": "List role names"
+      }
+    ],
+    "relatedCommands": [
+      "aws-iam-create-user",
+      "aws-iam-attach-user-policy"
+    ]
+  },
+  {
+    "id": "aws-iam-create-user",
+    "name": "aws iam create-user",
+    "description": "Create a new IAM user.",
+    "category": "IAM",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws iam create-user --user-name ci-bot --tags Key=team,Value=platform",
+        "description": "Create a tagged user"
+      },
+      {
+        "command": "aws iam create-access-key --user-name ci-bot",
+        "description": "Create access keys for the user (shown only once)"
+      }
+    ],
+    "notes": [
+      "Prefer IAM Identity Center for humans and IAM roles (e.g. OIDC for CI) for workloads instead of long-lived user keys."
+    ],
+    "relatedCommands": [
+      "aws-iam-attach-user-policy",
+      "aws-iam-list-users"
+    ]
+  },
+  {
+    "id": "aws-iam-attach-user-policy",
+    "name": "aws iam attach-user-policy",
+    "description": "Attach a managed policy to an IAM user.",
+    "category": "IAM",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--user-name",
+        "description": "Target user"
+      },
+      {
+        "flag": "--policy-arn",
+        "description": "ARN of the managed policy"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws iam attach-user-policy --user-name ci-bot --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess",
+        "description": "Grant read-only access"
+      },
+      {
+        "command": "aws iam detach-user-policy --user-name ci-bot --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess",
+        "description": "Remove it again"
+      }
+    ],
+    "notes": [
+      "Attaching policies to groups or roles scales better than per-user policies."
+    ],
+    "relatedCommands": [
+      "aws-iam-create-user",
+      "aws-iam-list-users"
+    ]
+  },
+  {
+    "id": "aws-lambda-list-functions",
+    "name": "aws lambda list-functions",
+    "description": "List Lambda functions in the region.",
+    "category": "Lambda",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws lambda list-functions --query 'Functions[].[FunctionName,Runtime,LastModified]' --output table",
+        "description": "Overview of functions"
+      },
+      {
+        "command": "aws lambda get-function-configuration --function-name my-function",
+        "description": "Show config of one function"
+      }
+    ],
+    "relatedCommands": [
+      "aws-lambda-invoke",
+      "aws-lambda-update-function-code"
+    ]
+  },
+  {
+    "id": "aws-lambda-invoke",
+    "name": "aws lambda invoke",
+    "description": "Invoke a Lambda function and save the response to a file.",
+    "category": "Lambda",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--payload",
+        "description": "JSON event payload"
+      },
+      {
+        "flag": "--cli-binary-format raw-in-base64-out",
+        "description": "Send --payload as raw JSON (required in CLI v2 for plain JSON)"
+      },
+      {
+        "flag": "--invocation-type",
+        "description": "RequestResponse (default), Event (async), or DryRun"
+      },
+      {
+        "flag": "--log-type Tail",
+        "description": "Return the last 4 KB of logs, base64 encoded"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws lambda invoke --function-name my-function --cli-binary-format raw-in-base64-out --payload '{\"id\": 42}' response.json && cat response.json",
+        "description": "Invoke synchronously with a JSON payload"
+      },
+      {
+        "command": "aws lambda invoke --function-name my-function --invocation-type Event --cli-binary-format raw-in-base64-out --payload file://event.json /dev/null",
+        "description": "Fire-and-forget async invoke"
+      }
+    ],
+    "notes": [
+      "The outfile argument is required. A 200 StatusCode with FunctionError set still means the function threw."
+    ],
+    "relatedCommands": [
+      "aws-lambda-list-functions",
+      "aws-logs-tail"
+    ]
+  },
+  {
+    "id": "aws-lambda-update-function-code",
+    "name": "aws lambda update-function-code",
+    "description": "Deploy new code to an existing Lambda function.",
+    "category": "Lambda",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--zip-file",
+        "description": "Local zip package",
+        "example": "--zip-file fileb://function.zip"
+      },
+      {
+        "flag": "--image-uri",
+        "description": "Container image URI in ECR"
+      },
+      {
+        "flag": "--s3-bucket / --s3-key",
+        "description": "Package stored in S3"
+      },
+      {
+        "flag": "--publish",
+        "description": "Publish a new version after updating"
+      }
+    ],
+    "examples": [
+      {
+        "command": "zip -r function.zip . && aws lambda update-function-code --function-name my-function --zip-file fileb://function.zip",
+        "description": "Package and deploy"
+      },
+      {
+        "command": "aws lambda update-function-code --function-name my-function --image-uri 123456789012.dkr.ecr.us-east-1.amazonaws.com/my-function:latest",
+        "description": "Deploy a new container image"
+      },
+      {
+        "command": "aws lambda wait function-updated --function-name my-function",
+        "description": "Wait until the update finishes"
+      }
+    ],
+    "notes": [
+      "Use fileb:// (binary) for zip files, not file://."
+    ],
+    "relatedCommands": [
+      "aws-lambda-invoke",
+      "aws-ecr-login"
+    ]
+  },
+  {
+    "id": "aws-logs-tail",
+    "name": "aws logs tail",
+    "description": "Stream or read recent CloudWatch Logs from a log group.",
+    "category": "Monitoring",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--follow",
+        "description": "Keep streaming new events"
+      },
+      {
+        "flag": "--since",
+        "description": "Start time, relative or absolute",
+        "example": "--since 1h"
+      },
+      {
+        "flag": "--filter-pattern",
+        "description": "CloudWatch filter pattern",
+        "example": "--filter-pattern ERROR"
+      },
+      {
+        "flag": "--format",
+        "description": "detailed, short, or json"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws logs tail /aws/lambda/my-function --follow",
+        "description": "Live-tail a Lambda's logs"
+      },
+      {
+        "command": "aws logs tail /ecs/my-app --since 30m --filter-pattern ERROR --format short",
+        "description": "Errors from the last 30 minutes"
+      }
+    ],
+    "relatedCommands": [
+      "aws-lambda-invoke"
+    ]
+  },
+  {
+    "id": "aws-ecr-login",
+    "name": "aws ecr get-login-password",
+    "description": "Get an ECR auth token and log Docker in to a private registry.",
+    "category": "Containers & Deploy",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com",
+        "description": "Log Docker in to ECR"
+      },
+      {
+        "command": "aws ecr create-repository --repository-name my-app --image-scanning-configuration scanOnPush=true",
+        "description": "Create a repository"
+      },
+      {
+        "command": "aws ecr describe-images --repository-name my-app --query 'sort_by(imageDetails,&imagePushedAt)[-1].imageTags'",
+        "description": "Tags of the most recently pushed image"
+      }
+    ],
+    "notes": [
+      "Token is valid for 12 hours. `aws ecr get-login` (v1) was removed; use get-login-password."
+    ],
+    "relatedCommands": [
+      "aws-lambda-update-function-code",
+      "aws-cloudformation-deploy"
+    ]
+  },
+  {
+    "id": "aws-cloudformation-deploy",
+    "name": "aws cloudformation deploy",
+    "description": "Create or update a CloudFormation stack from a template via a change set.",
+    "category": "Containers & Deploy",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--template-file",
+        "description": "Path to the template"
+      },
+      {
+        "flag": "--stack-name",
+        "description": "Stack to create or update"
+      },
+      {
+        "flag": "--parameter-overrides",
+        "description": "Key=Value pairs for template parameters"
+      },
+      {
+        "flag": "--capabilities",
+        "description": "Acknowledge IAM resource creation",
+        "example": "--capabilities CAPABILITY_NAMED_IAM"
+      },
+      {
+        "flag": "--no-execute-changeset",
+        "description": "Create the change set but do not run it (review first)"
+      },
+      {
+        "flag": "--no-fail-on-empty-changeset",
+        "description": "Exit 0 when there is nothing to change (CI friendly)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws cloudformation deploy --template-file template.yaml --stack-name my-app --parameter-overrides Env=prod --capabilities CAPABILITY_IAM",
+        "description": "Deploy a stack"
+      },
+      {
+        "command": "aws cloudformation describe-stack-events --stack-name my-app --max-items 20",
+        "description": "Debug a failed deployment"
+      },
+      {
+        "command": "aws cloudformation package --template-file template.yaml --s3-bucket <bucket-name> --output-template-file packaged.yaml",
+        "description": "Upload local artifacts before deploy"
+      }
+    ],
+    "notes": [
+      "WARNING: `aws cloudformation delete-stack` deletes every resource in the stack unless it has a Retain deletion policy."
+    ],
+    "relatedCommands": [
+      "aws-ecr-login"
+    ]
+  },
+  {
+    "id": "aws-ssm-start-session",
+    "name": "aws ssm start-session",
+    "description": "Open a shell or port forward to an instance through Systems Manager, no SSH or open ports needed.",
+    "category": "Operations",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--target",
+        "description": "Instance ID (or managed node ID)"
+      },
+      {
+        "flag": "--document-name",
+        "description": "Session document, e.g. AWS-StartPortForwardingSessionToRemoteHost"
+      },
+      {
+        "flag": "--parameters",
+        "description": "Document parameters"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws ssm start-session --target i-0123456789abcdef0",
+        "description": "Interactive shell on an instance"
+      },
+      {
+        "command": "aws ssm start-session --target i-0123456789abcdef0 --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters '{\"host\":[\"mydb.cluster-xyz.us-east-1.rds.amazonaws.com\"],\"portNumber\":[\"5432\"],\"localPortNumber\":[\"5432\"]}'",
+        "description": "Tunnel to a private RDS database via the instance"
+      }
+    ],
+    "notes": [
+      "Requires the Session Manager plugin installed locally and the SSM agent + instance profile on the target."
+    ],
+    "relatedCommands": [
+      "aws-ec2-describe-instances",
+      "aws-secretsmanager-get-secret-value"
+    ]
+  },
+  {
+    "id": "aws-secretsmanager-get-secret-value",
+    "name": "aws secretsmanager get-secret-value",
+    "description": "Retrieve the value of a secret from Secrets Manager.",
+    "category": "Operations",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--secret-id",
+        "description": "Secret name or ARN"
+      },
+      {
+        "flag": "--version-stage",
+        "description": "e.g. AWSCURRENT (default) or AWSPREVIOUS"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws secretsmanager get-secret-value --secret-id prod/my-app/db --query SecretString --output text",
+        "description": "Print the secret string"
+      },
+      {
+        "command": "aws secretsmanager get-secret-value --secret-id prod/my-app/db --query SecretString --output text | jq -r .password",
+        "description": "Extract one field from a JSON secret"
+      },
+      {
+        "command": "aws ssm get-parameter --name /my-app/prod/api-url --with-decryption --query Parameter.Value --output text",
+        "description": "Read a Parameter Store value instead"
+      }
+    ],
+    "notes": [
+      "Avoid printing secrets in CI logs or shell history."
+    ],
+    "relatedCommands": [
+      "aws-ssm-start-session"
+    ]
+  },
+  {
+    "id": "aws-dynamodb",
+    "name": "aws dynamodb scan / get-item",
+    "description": "Read items from a DynamoDB table.",
+    "category": "Operations",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--table-name",
+        "description": "Table to read"
+      },
+      {
+        "flag": "--key",
+        "description": "Primary key in DynamoDB JSON for get-item"
+      },
+      {
+        "flag": "--filter-expression",
+        "description": "Filter applied after reading (scan/query)"
+      },
+      {
+        "flag": "--expression-attribute-values",
+        "description": "Values referenced in expressions"
+      },
+      {
+        "flag": "--max-items",
+        "description": "Limit results returned by the CLI"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws dynamodb get-item --table-name Users --key '{\"pk\": {\"S\": \"USER#42\"}}'",
+        "description": "Get a single item by key"
+      },
+      {
+        "command": "aws dynamodb query --table-name Orders --key-condition-expression 'pk = :pk' --expression-attribute-values '{\":pk\": {\"S\": \"USER#42\"}}'",
+        "description": "Query items by partition key"
+      },
+      {
+        "command": "aws dynamodb scan --table-name Users --max-items 10",
+        "description": "Peek at the first items"
+      },
+      {
+        "command": "aws dynamodb scan --table-name Users --select COUNT",
+        "description": "Count items (reads the whole table)"
+      }
+    ],
+    "notes": [
+      "Scan reads the entire table and consumes read capacity; prefer query on large tables."
+    ],
+    "relatedCommands": [
+      "aws-global-options"
+    ]
+  }
+]

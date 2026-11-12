@@ -1,0 +1,226 @@
+[
+  {
+    "id": "linux",
+    "name": "Linux",
+    "description": "Essential Linux command line tools and utilities",
+    "icon": "🐧",
+    "color": "#FCC624",
+    "group": "Shell & System"
+  },
+  {
+    "id": "docker",
+    "name": "Docker",
+    "description": "Container management and orchestration commands",
+    "icon": "🐳",
+    "color": "#2496ED",
+    "group": "DevOps & Cloud"
+  },
+  {
+    "id": "git",
+    "name": "Git",
+    "description": "Version control system commands",
+    "icon": "🌿",
+    "color": "#F05032",
+    "group": "Version Control"
+  },
+  {
+    "id": "laravel",
+    "name": "Laravel",
+    "description": "Laravel Artisan CLI commands for PHP development",
+    "icon": "⚡",
+    "color": "#FF2D20",
+    "group": "Frameworks"
+  },
+  {
+    "id": "nextjs",
+    "name": "Next.js",
+    "description": "Next.js CLI commands for React application development",
+    "icon": "▲",
+    "color": "#000000",
+    "group": "Frameworks"
+  },
+  {
+    "id": "npm",
+    "name": "npm",
+    "description": "Node Package Manager commands for JavaScript development",
+    "icon": "📦",
+    "color": "#CB3837",
+    "group": "Package Managers"
+  },
+  {
+    "id": "yarn",
+    "name": "Yarn",
+    "description": "Fast, reliable package manager for JavaScript",
+    "icon": "🧶",
+    "color": "#2C8EBB",
+    "group": "Package Managers"
+  },
+  {
+    "id": "python",
+    "name": "Python",
+    "description": "Python and pip commands for Python development",
+    "icon": "🐍",
+    "color": "#3776AB",
+    "group": "Languages & Runtimes"
+  },
+  {
+    "id": "filament",
+    "name": "Laravel Filament",
+    "description": "Filament Admin Panel commands for Laravel applications",
+    "icon": "🎨",
+    "color": "#FDAE4B",
+    "group": "Frameworks"
+  },
+  {
+    "id": "postgresql",
+    "name": "PostgreSQL",
+    "description": "PostgreSQL database management commands and psql utilities",
+    "icon": "🐘",
+    "color": "#336791",
+    "group": "Databases"
+  },
+  {
+    "id": "redis",
+    "name": "Redis",
+    "description": "Redis in-memory data store commands and redis-cli utilities",
+    "icon": "🔴",
+    "color": "#DC382D",
+    "group": "Databases"
+  },
+  {
+    "id": "kubernetes",
+    "name": "Kubernetes",
+    "description": "Kubernetes container orchestration and kubectl commands",
+    "icon": "☸️",
+    "color": "#326CE5",
+    "group": "DevOps & Cloud"
+  },
+  {
+    "id": "go",
+    "name": "Go",
+    "description": "Go toolchain commands for building, testing and managing modules",
+    "icon": "🐹",
+    "color": "#00ADD8",
+    "group": "Languages & Runtimes"
+  },
+  {
+    "id": "rust",
+    "name": "Rust & Cargo",
+    "description": "Cargo and rustup commands for building and managing Rust projects",
+    "icon": "🦀",
+    "color": "#DEA584",
+    "group": "Languages & Runtimes"
+  },
+  {
+    "id": "bun",
+    "name": "Bun",
+    "description": "All-in-one JavaScript runtime, package manager, bundler and test runner",
+    "icon": "🥟",
+    "color": "#FBF0DF",
+    "group": "Languages & Runtimes"
+  },
+  {
+    "id": "pnpm",
+    "name": "pnpm",
+    "description": "Fast, disk-efficient package manager for JavaScript and monorepos",
+    "icon": "📦",
+    "color": "#F69220",
+    "group": "Package Managers"
+  },
+  {
+    "id": "uv",
+    "name": "uv",
+    "description": "Extremely fast Python package and project manager written in Rust",
+    "icon": "⚡",
+    "color": "#DE5FE9",
+    "group": "Package Managers"
+  },
+  {
+    "id": "composer",
+    "name": "Composer",
+    "description": "Dependency manager for PHP projects",
+    "icon": "🎼",
+    "color": "#885630",
+    "group": "Package Managers"
+  },
+  {
+    "id": "homebrew",
+    "name": "Homebrew",
+    "description": "The missing package manager for macOS and Linux",
+    "icon": "🍺",
+    "color": "#FBB040",
+    "group": "Package Managers"
+  },
+  {
+    "id": "github-cli",
+    "name": "GitHub CLI",
+    "description": "Work with pull requests, issues, releases and Actions from the terminal with gh",
+    "icon": "🐙",
+    "color": "#181717",
+    "group": "Version Control"
+  },
+  {
+    "id": "mysql",
+    "name": "MySQL",
+    "description": "MySQL client, server administration and backup commands",
+    "icon": "🐬",
+    "color": "#4479A1",
+    "group": "Databases"
+  },
+  {
+    "id": "mongodb",
+    "name": "MongoDB",
+    "description": "mongosh shell and MongoDB database tools",
+    "icon": "🍃",
+    "color": "#47A248",
+    "group": "Databases"
+  },
+  {
+    "id": "terraform",
+    "name": "Terraform",
+    "description": "Infrastructure as code: plan, apply and manage cloud resources",
+    "icon": "🏗️",
+    "color": "#7B42BC",
+    "group": "DevOps & Cloud"
+  },
+  {
+    "id": "aws",
+    "name": "AWS CLI",
+    "description": "Amazon Web Services command line interface for S3, EC2, IAM, Lambda and more",
+    "icon": "☁️",
+    "color": "#FF9900",
+    "group": "DevOps & Cloud"
+  },
+  {
+    "id": "nginx",
+    "name": "Nginx",
+    "description": "Nginx web server and reverse proxy management commands",
+    "icon": "🌐",
+    "color": "#009639",
+    "group": "DevOps & Cloud"
+  },
+  {
+    "id": "ssh",
+    "name": "SSH",
+    "description": "Secure shell: remote login, keys, tunnels and file transfer",
+    "icon": "🔐",
+    "color": "#231F20",
+    "group": "Shell & System"
+  },
+  {
+    "id": "tmux",
+    "name": "tmux",
+    "description": "Terminal multiplexer for sessions, windows and panes",
+    "icon": "🪟",
+    "color": "#1BB91F",
+    "group": "Shell & System"
+  },
+  {
+    "id": "vim",
+    "name": "Vim",
+    "description": "Modal text editor commands, motions and Ex commands",
+    "icon": "📝",
+    "color": "#019733",
+    "group": "Shell & System"
+  }
+]

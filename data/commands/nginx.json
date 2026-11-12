@@ -1,0 +1,586 @@
+[
+  {
+    "id": "nginx-test",
+    "name": "nginx -t",
+    "description": "Test the configuration files for syntax errors without (re)starting nginx.",
+    "category": "Configuration",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo nginx -t",
+        "description": "Check the config and report the file and line of any error",
+        "output": "nginx: the configuration file /etc/nginx/nginx.conf syntax is ok\nnginx: configuration file /etc/nginx/nginx.conf test is successful"
+      },
+      {
+        "command": "sudo nginx -t && sudo systemctl reload nginx",
+        "description": "Only reload if the config is valid"
+      },
+      {
+        "command": "sudo nginx -t -c /etc/nginx/nginx.staging.conf",
+        "description": "Test an alternative config file"
+      }
+    ],
+    "notes": [
+      "Always run nginx -t before reloading; a broken config makes restart fail and takes the site down.",
+      "Use sudo so nginx can read certificates and write its pid/log files during the test."
+    ],
+    "relatedCommands": [
+      "nginx-dump-config",
+      "nginx-reload"
+    ]
+  },
+  {
+    "id": "nginx-dump-config",
+    "name": "nginx -T",
+    "description": "Test the configuration and print the full, merged config including all included files.",
+    "category": "Configuration",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo nginx -T",
+        "description": "Print every loaded config file"
+      },
+      {
+        "command": "sudo nginx -T | grep -n server_name",
+        "description": "Find which server blocks define which hostnames"
+      },
+      {
+        "command": "sudo nginx -T 2>/dev/null | less",
+        "description": "Page through the effective configuration"
+      }
+    ],
+    "notes": [
+      "Great for debugging which include actually contains a directive. Output can contain sensitive values, so don't paste it publicly."
+    ],
+    "relatedCommands": [
+      "nginx-test"
+    ]
+  },
+  {
+    "id": "nginx-version",
+    "name": "nginx -v",
+    "description": "Show the nginx version, or -V for build options and compiled-in modules.",
+    "category": "Configuration",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "nginx -v",
+        "description": "Print the version",
+        "output": "nginx version: nginx/1.28.0"
+      },
+      {
+        "command": "nginx -V 2>&1 | tr ' ' '\\n' | grep module",
+        "description": "List compiled-in modules"
+      },
+      {
+        "command": "nginx -V 2>&1 | grep -o -- '--conf-path=[^ ]*'",
+        "description": "Find the default config file path"
+      }
+    ],
+    "notes": [
+      "nginx prints version info to stderr, so redirect 2>&1 before piping."
+    ],
+    "relatedCommands": [
+      "nginx-test"
+    ]
+  },
+  {
+    "id": "nginx-config-file",
+    "name": "nginx -c",
+    "description": "Start nginx using a specific configuration file.",
+    "category": "Configuration",
+    "technologyId": "nginx",
+    "flags": [
+      {
+        "flag": "-c",
+        "description": "Path to the configuration file"
+      },
+      {
+        "flag": "-p",
+        "description": "Set the prefix path for relative paths"
+      },
+      {
+        "flag": "-g",
+        "description": "Set global directives from the command line"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo nginx -c /etc/nginx/nginx.conf",
+        "description": "Start with an explicit config path"
+      },
+      {
+        "command": "nginx -p ./ -c nginx.conf",
+        "description": "Run from a project directory with a local prefix (useful for dev/testing)"
+      },
+      {
+        "command": "nginx -g 'daemon off;'",
+        "description": "Run in the foreground (common in Docker containers)"
+      }
+    ],
+    "relatedCommands": [
+      "nginx-test"
+    ]
+  },
+  {
+    "id": "nginx-reload",
+    "name": "nginx -s reload",
+    "description": "Gracefully reload the configuration without dropping connections.",
+    "category": "Service Control",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo nginx -s reload",
+        "description": "Start new workers with the new config; old workers finish their requests"
+      },
+      {
+        "command": "sudo systemctl reload nginx",
+        "description": "Same via systemd (preferred on systemd hosts)"
+      }
+    ],
+    "notes": [
+      "If the new config is invalid, nginx keeps running with the old config and logs the error. Run nginx -t first to see the problem."
+    ],
+    "relatedCommands": [
+      "nginx-test",
+      "nginx-signals",
+      "nginx-systemctl"
+    ]
+  },
+  {
+    "id": "nginx-signals",
+    "name": "nginx -s",
+    "description": "Send a stop, quit or reopen signal to the running nginx master process.",
+    "category": "Service Control",
+    "technologyId": "nginx",
+    "flags": [
+      {
+        "flag": "stop",
+        "description": "Fast shutdown"
+      },
+      {
+        "flag": "quit",
+        "description": "Graceful shutdown"
+      },
+      {
+        "flag": "reload",
+        "description": "Reload configuration"
+      },
+      {
+        "flag": "reopen",
+        "description": "Reopen log files"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo nginx -s quit",
+        "description": "Graceful shutdown: wait for workers to finish current requests"
+      },
+      {
+        "command": "sudo nginx -s stop",
+        "description": "Fast shutdown: terminate immediately"
+      },
+      {
+        "command": "sudo nginx -s reopen",
+        "description": "Reopen log files (used after log rotation)"
+      }
+    ],
+    "notes": [
+      "stop drops in-flight requests; prefer quit in production."
+    ],
+    "relatedCommands": [
+      "nginx-reload",
+      "nginx-systemctl"
+    ]
+  },
+  {
+    "id": "nginx-systemctl",
+    "name": "systemctl nginx",
+    "description": "Manage the nginx service with systemd.",
+    "category": "Service Control",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo systemctl status nginx",
+        "description": "Check whether nginx is running and see recent log lines"
+      },
+      {
+        "command": "sudo systemctl reload nginx",
+        "description": "Reload config gracefully"
+      },
+      {
+        "command": "sudo systemctl restart nginx",
+        "description": "Full stop and start (e.g. after upgrading the nginx package)"
+      },
+      {
+        "command": "sudo systemctl enable --now nginx",
+        "description": "Start now and on every boot"
+      },
+      {
+        "command": "sudo systemctl stop nginx",
+        "description": "Stop the service"
+      },
+      {
+        "command": "brew services restart nginx",
+        "description": "Restart nginx installed with Homebrew on macOS"
+      }
+    ],
+    "notes": [
+      "Prefer reload over restart: restart briefly drops all connections.",
+      "If you start nginx manually with the nginx binary, systemd won't know about it; stick to one method."
+    ],
+    "relatedCommands": [
+      "nginx-reload",
+      "nginx-test",
+      "nginx-error-log"
+    ]
+  },
+  {
+    "id": "nginx-enable-site",
+    "name": "ln -s sites-available sites-enabled",
+    "description": "Enable or disable a site using the Debian/Ubuntu sites-available/sites-enabled layout.",
+    "category": "Sites & Logs",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo nano /etc/nginx/sites-available/example.com",
+        "description": "Create the site's server block"
+      },
+      {
+        "command": "sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/",
+        "description": "Enable the site"
+      },
+      {
+        "command": "sudo rm /etc/nginx/sites-enabled/default",
+        "description": "Disable the default site (removes only the symlink)"
+      },
+      {
+        "command": "sudo nginx -t && sudo systemctl reload nginx",
+        "description": "Validate and apply"
+      }
+    ],
+    "notes": [
+      "Use an absolute path for the symlink source; relative targets break silently.",
+      "RHEL/Fedora and the official nginx.org packages use /etc/nginx/conf.d/*.conf instead; just add or remove .conf files there."
+    ],
+    "relatedCommands": [
+      "nginx-test",
+      "nginx-reload",
+      "nginx-server-block"
+    ]
+  },
+  {
+    "id": "nginx-access-log",
+    "name": "tail access.log",
+    "description": "Follow and analyze the access log.",
+    "category": "Sites & Logs",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo tail -f /var/log/nginx/access.log",
+        "description": "Stream requests as they arrive"
+      },
+      {
+        "command": "sudo awk '{print $9}' /var/log/nginx/access.log | sort | uniq -c | sort -rn",
+        "description": "Count responses by status code (default combined format)"
+      },
+      {
+        "command": "sudo awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head",
+        "description": "Top client IPs"
+      }
+    ],
+    "notes": [
+      "The awk column numbers assume the default \"combined\" log_format."
+    ],
+    "relatedCommands": [
+      "nginx-error-log"
+    ]
+  },
+  {
+    "id": "nginx-error-log",
+    "name": "tail error.log",
+    "description": "Follow the error log to debug failed requests, upstream errors and config problems.",
+    "category": "Sites & Logs",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo tail -f /var/log/nginx/error.log",
+        "description": "Stream errors as they happen"
+      },
+      {
+        "command": "sudo grep -i 'upstream' /var/log/nginx/error.log | tail -20",
+        "description": "Find recent upstream/proxy errors (e.g. 502s)"
+      },
+      {
+        "command": "sudo journalctl -u nginx -f",
+        "description": "Follow startup/shutdown messages from systemd"
+      }
+    ],
+    "notes": [
+      "Raise verbosity temporarily with error_log /var/log/nginx/error.log debug; (requires a build with --with-debug) or info/notice."
+    ],
+    "relatedCommands": [
+      "nginx-access-log",
+      "nginx-systemctl"
+    ]
+  },
+  {
+    "id": "nginx-server-block",
+    "name": "server { }",
+    "description": "Define a virtual host that serves static files for a domain.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "server {\n    listen 80;\n    listen [::]:80;\n    server_name example.com www.example.com;\n\n    root /var/www/example.com/public;\n    index index.html;\n\n    location / {\n        try_files $uri $uri/ =404;\n    }\n}",
+        "description": "Basic static site on port 80"
+      },
+      {
+        "command": "location / {\n    try_files $uri $uri/ /index.html;\n}",
+        "description": "SPA fallback: serve index.html for client-side routes"
+      }
+    ],
+    "notes": [
+      "Place in /etc/nginx/sites-available/<site> or /etc/nginx/conf.d/<site>.conf.",
+      "The first server block for a port (or the one marked default_server) handles requests with no matching server_name."
+    ],
+    "relatedCommands": [
+      "nginx-enable-site",
+      "nginx-https-redirect",
+      "nginx-php-fpm"
+    ]
+  },
+  {
+    "id": "nginx-reverse-proxy",
+    "name": "proxy_pass",
+    "description": "Forward requests to a backend application such as Node, Python or Go.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "location / {\n    proxy_pass http://127.0.0.1:3000;\n    proxy_set_header Host $host;\n    proxy_set_header X-Real-IP $remote_addr;\n    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n    proxy_set_header X-Forwarded-Proto $scheme;\n}",
+        "description": "Proxy all requests to an app on port 3000 with standard forwarded headers"
+      },
+      {
+        "command": "location /api/ {\n    proxy_pass http://127.0.0.1:8000/;\n}",
+        "description": "Trailing slash on proxy_pass strips the /api/ prefix before forwarding"
+      },
+      {
+        "command": "upstream app_servers {\n    server 10.0.0.11:3000;\n    server 10.0.0.12:3000;\n}\n\nserver {\n    location / {\n        proxy_pass http://app_servers;\n    }\n}",
+        "description": "Load balance across several backends (round robin)"
+      }
+    ],
+    "notes": [
+      "proxy_pass with a URI (e.g. trailing /) replaces the matched location prefix; without one the original path is passed unchanged.",
+      "502 Bad Gateway usually means the backend is down or the address/port is wrong; check the error log."
+    ],
+    "relatedCommands": [
+      "nginx-websocket-proxy",
+      "nginx-error-log"
+    ]
+  },
+  {
+    "id": "nginx-websocket-proxy",
+    "name": "proxy_set_header Upgrade",
+    "description": "Proxy WebSocket connections to a backend.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "location /ws/ {\n    proxy_pass http://127.0.0.1:3000;\n    proxy_http_version 1.1;\n    proxy_set_header Upgrade $http_upgrade;\n    proxy_set_header Connection \"upgrade\";\n    proxy_read_timeout 3600s;\n}",
+        "description": "Pass WebSocket upgrade headers and keep idle connections open for an hour"
+      }
+    ],
+    "notes": [
+      "Without proxy_http_version 1.1 and the Upgrade/Connection headers, WebSocket handshakes fail."
+    ],
+    "relatedCommands": [
+      "nginx-reverse-proxy"
+    ]
+  },
+  {
+    "id": "nginx-https-redirect",
+    "name": "return 301",
+    "description": "Redirect HTTP to HTTPS or one domain to another.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "server {\n    listen 80;\n    listen [::]:80;\n    server_name example.com www.example.com;\n    return 301 https://$host$request_uri;\n}",
+        "description": "Redirect all HTTP traffic to HTTPS"
+      },
+      {
+        "command": "server {\n    listen 443 ssl;\n    server_name www.example.com;\n    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n    return 301 https://example.com$request_uri;\n}",
+        "description": "Redirect www to the apex domain"
+      },
+      {
+        "command": "location = /old-page {\n    return 301 /new-page;\n}",
+        "description": "Redirect a single path"
+      }
+    ],
+    "notes": [
+      "Prefer return over rewrite for simple redirects; it is faster and clearer.",
+      "Use 302 while testing; browsers cache 301 aggressively."
+    ],
+    "relatedCommands": [
+      "nginx-ssl",
+      "nginx-server-block"
+    ]
+  },
+  {
+    "id": "nginx-ssl",
+    "name": "listen 443 ssl",
+    "description": "Serve a site over HTTPS with TLS certificates.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "server {\n    listen 443 ssl;\n    listen [::]:443 ssl;\n    http2 on;\n    server_name example.com;\n\n    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n    ssl_protocols TLSv1.2 TLSv1.3;\n\n    add_header Strict-Transport-Security \"max-age=31536000\" always;\n}",
+        "description": "HTTPS server with HTTP/2 and HSTS"
+      },
+      {
+        "command": "sudo certbot --nginx -d example.com -d www.example.com",
+        "description": "Obtain a Let's Encrypt certificate and configure nginx automatically"
+      }
+    ],
+    "notes": [
+      "The standalone http2 directive requires nginx 1.25.1+; older versions use listen 443 ssl http2;.",
+      "Use fullchain.pem, not cert.pem, or some clients will fail to verify the chain."
+    ],
+    "relatedCommands": [
+      "nginx-https-redirect"
+    ]
+  },
+  {
+    "id": "nginx-client-max-body-size",
+    "name": "client_max_body_size",
+    "description": "Raise the maximum allowed request body size (fixes 413 Request Entity Too Large).",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "client_max_body_size 50M;",
+        "description": "Allow uploads up to 50 MB (in http, server or location)"
+      },
+      {
+        "command": "location /upload {\n    client_max_body_size 0;\n}",
+        "description": "Disable the size check for one location"
+      }
+    ],
+    "notes": [
+      "The default is 1M.",
+      "Your backend (PHP upload_max_filesize, app framework limits) may also need raising."
+    ],
+    "relatedCommands": [
+      "nginx-reverse-proxy"
+    ]
+  },
+  {
+    "id": "nginx-gzip",
+    "name": "gzip on",
+    "description": "Enable gzip compression for text-based responses.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "gzip on;\ngzip_vary on;\ngzip_proxied any;\ngzip_comp_level 5;\ngzip_min_length 256;\ngzip_types text/plain text/css application/json application/javascript text/xml application/xml image/svg+xml;",
+        "description": "Typical gzip settings for the http block"
+      }
+    ],
+    "notes": [
+      "text/html is always compressed when gzip is on; don't list it in gzip_types (it triggers a duplicate warning).",
+      "Don't gzip already-compressed formats like JPEG, PNG or ZIP."
+    ],
+    "relatedCommands": [
+      "nginx-static-caching"
+    ]
+  },
+  {
+    "id": "nginx-static-caching",
+    "name": "expires",
+    "description": "Set long cache headers for static assets.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "location ~* \\.(css|js|png|jpg|jpeg|gif|svg|webp|woff2)$ {\n    expires 30d;\n    add_header Cache-Control \"public\";\n    access_log off;\n}",
+        "description": "Cache static assets for 30 days and skip access logging"
+      },
+      {
+        "command": "location /_next/static/ {\n    expires 1y;\n    add_header Cache-Control \"public, immutable\";\n}",
+        "description": "Immutable caching for fingerprinted build assets"
+      }
+    ],
+    "notes": [
+      "Only use long or immutable caching for files with content hashes in their names.",
+      "add_header in a location replaces all add_header directives inherited from the server block."
+    ],
+    "relatedCommands": [
+      "nginx-gzip"
+    ]
+  },
+  {
+    "id": "nginx-php-fpm",
+    "name": "fastcgi_pass",
+    "description": "Pass PHP requests to PHP-FPM (e.g. Laravel or WordPress).",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "location / {\n    try_files $uri $uri/ /index.php?$query_string;\n}\n\nlocation ~ \\.php$ {\n    include snippets/fastcgi-php.conf;\n    fastcgi_pass unix:/run/php/php8.3-fpm.sock;\n}",
+        "description": "Laravel-style front controller with PHP-FPM over a Unix socket (Debian/Ubuntu)"
+      }
+    ],
+    "notes": [
+      "The socket path depends on your PHP version and distro; check ls /run/php/.",
+      "snippets/fastcgi-php.conf ships with Debian/Ubuntu; elsewhere use include fastcgi_params; and set SCRIPT_FILENAME yourself."
+    ],
+    "relatedCommands": [
+      "nginx-server-block"
+    ]
+  },
+  {
+    "id": "nginx-basic-auth",
+    "name": "auth_basic",
+    "description": "Password-protect a location with HTTP basic authentication.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "sudo htpasswd -c /etc/nginx/.htpasswd admin",
+        "description": "Create the password file with user admin (htpasswd is in apache2-utils / httpd-tools)"
+      },
+      {
+        "command": "location /admin {\n    auth_basic \"Restricted\";\n    auth_basic_user_file /etc/nginx/.htpasswd;\n}",
+        "description": "Require a login for /admin"
+      }
+    ],
+    "notes": [
+      "htpasswd -c overwrites an existing file; omit -c when adding more users.",
+      "Only use basic auth over HTTPS; credentials are sent base64-encoded, not encrypted."
+    ],
+    "relatedCommands": [
+      "nginx-ssl"
+    ]
+  },
+  {
+    "id": "nginx-rate-limit",
+    "name": "limit_req",
+    "description": "Rate-limit requests per client IP to protect login pages and APIs.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "# in the http block\nlimit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;\n\n# in a server block\nlocation /api/ {\n    limit_req zone=api burst=20 nodelay;\n    limit_req_status 429;\n    proxy_pass http://127.0.0.1:3000;\n}",
+        "description": "Allow 10 req/s per IP with a burst of 20, returning 429 when exceeded"
+      }
+    ],
+    "notes": [
+      "limit_req_zone must be declared in the http context; limit_req goes in server or location.",
+      "Behind a load balancer, $binary_remote_addr is the balancer's IP unless you configure the realip module."
+    ],
+    "relatedCommands": [
+      "nginx-reverse-proxy"
+    ]
+  }
+]

@@ -1,0 +1,1338 @@
+[
+  {
+    "id": "docker-run",
+    "name": "docker run",
+    "description": "Create and start a new container from an image",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-d",
+        "description": "Run container in detached mode (background)"
+      },
+      {
+        "flag": "-p host:container",
+        "description": "Map port(s) from host to container"
+      },
+      {
+        "flag": "--name NAME",
+        "description": "Assign a name to the container"
+      },
+      {
+        "flag": "-v host:container",
+        "description": "Mount volume"
+      },
+      {
+        "flag": "-e KEY=VALUE",
+        "description": "Set environment variable"
+      },
+      {
+        "flag": "--rm",
+        "description": "Automatically remove container when it exits"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker run -d -p 80:80 nginx",
+        "description": "Run nginx in background, map port 80"
+      },
+      {
+        "command": "docker run --name myapp -d myimage",
+        "description": "Run container with custom name"
+      },
+      {
+        "command": "docker run -it ubuntu bash",
+        "description": "Run Ubuntu interactively with bash"
+      }
+    ],
+    "relatedCommands": [
+      "docker-start",
+      "docker-stop"
+    ]
+  },
+  {
+    "id": "docker-ps",
+    "name": "docker ps",
+    "description": "List running containers",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Show all containers (including stopped)"
+      },
+      {
+        "flag": "-q",
+        "description": "Only show container IDs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker ps",
+        "description": "List running containers"
+      },
+      {
+        "command": "docker ps -a",
+        "description": "List all containers"
+      }
+    ],
+    "relatedCommands": [
+      "docker-run",
+      "docker-stop"
+    ]
+  },
+  {
+    "id": "docker-stop",
+    "name": "docker stop",
+    "description": "Stop one or more running containers",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker stop mycontainer",
+        "description": "Stop a container by name"
+      },
+      {
+        "command": "docker stop $(docker ps -q)",
+        "description": "Stop all running containers"
+      }
+    ],
+    "relatedCommands": [
+      "docker-start",
+      "docker-rm"
+    ]
+  },
+  {
+    "id": "docker-start",
+    "name": "docker start",
+    "description": "Start one or more stopped containers",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker start mycontainer",
+        "description": "Start a stopped container"
+      }
+    ],
+    "relatedCommands": [
+      "docker-stop",
+      "docker-restart"
+    ]
+  },
+  {
+    "id": "docker-restart",
+    "name": "docker restart",
+    "description": "Restart one or more containers",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker restart mycontainer",
+        "description": "Restart a container"
+      }
+    ],
+    "relatedCommands": [
+      "docker-stop",
+      "docker-start"
+    ]
+  },
+  {
+    "id": "docker-rm",
+    "name": "docker rm",
+    "description": "Remove one or more containers",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Force remove running container"
+      },
+      {
+        "flag": "-v",
+        "description": "Remove associated volumes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker rm mycontainer",
+        "description": "Remove a stopped container"
+      },
+      {
+        "command": "docker rm -f mycontainer",
+        "description": "Force remove a running container"
+      },
+      {
+        "command": "docker rm $(docker ps -aq)",
+        "description": "Remove all containers"
+      }
+    ],
+    "notes": [
+      "WARNING: removing a container deletes any data written inside it that isn't in a volume"
+    ],
+    "relatedCommands": [
+      "docker-stop",
+      "docker-rmi"
+    ]
+  },
+  {
+    "id": "docker-images",
+    "name": "docker images",
+    "description": "List Docker images",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Show all images"
+      },
+      {
+        "flag": "-q",
+        "description": "Only show image IDs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker images",
+        "description": "List all images"
+      },
+      {
+        "command": "docker images -f dangling=true",
+        "description": "List untagged (dangling) images"
+      },
+      {
+        "command": "docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}'",
+        "description": "Custom output format"
+      }
+    ],
+    "notes": [
+      "'docker image ls' is the equivalent long form"
+    ],
+    "relatedCommands": [
+      "docker-pull",
+      "docker-rmi"
+    ]
+  },
+  {
+    "id": "docker-pull",
+    "name": "docker pull",
+    "description": "Pull an image from a registry",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker pull nginx",
+        "description": "Pull nginx image from Docker Hub"
+      },
+      {
+        "command": "docker pull nginx:alpine",
+        "description": "Pull specific tag"
+      }
+    ],
+    "relatedCommands": [
+      "docker-push",
+      "docker-images"
+    ]
+  },
+  {
+    "id": "docker-build",
+    "name": "docker build",
+    "description": "Build an image from a Dockerfile",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-t NAME:TAG",
+        "description": "Tag the image"
+      },
+      {
+        "flag": "-f DOCKERFILE",
+        "description": "Specify Dockerfile path"
+      },
+      {
+        "flag": "--no-cache",
+        "description": "Build without using cache"
+      },
+      {
+        "flag": "--build-arg KEY=VALUE",
+        "description": "Set a build-time ARG"
+      },
+      {
+        "flag": "--target STAGE",
+        "description": "Build up to a specific stage of a multi-stage Dockerfile"
+      },
+      {
+        "flag": "--platform",
+        "description": "Target platform, e.g. linux/amd64"
+      },
+      {
+        "flag": "--progress=plain",
+        "description": "Show full build output (useful for debugging RUN steps)"
+      },
+      {
+        "flag": "--pull",
+        "description": "Always pull a newer base image"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker build -t myapp:1.0 .",
+        "description": "Build image from current directory"
+      },
+      {
+        "command": "docker build -t myapp --no-cache .",
+        "description": "Build without cache"
+      },
+      {
+        "command": "docker build -t myapp:1.0 -f docker/Dockerfile.prod .",
+        "description": "Use a Dockerfile at a custom path"
+      },
+      {
+        "command": "docker build --target dev -t myapp:dev .",
+        "description": "Build only the 'dev' stage"
+      },
+      {
+        "command": "docker build --build-arg NODE_VERSION=22 -t myapp .",
+        "description": "Pass a build argument"
+      }
+    ],
+    "notes": [
+      "BuildKit is the default builder; 'docker build' is an alias for 'docker buildx build'",
+      "Add a .dockerignore to keep node_modules, .git and secrets out of the build context"
+    ],
+    "relatedCommands": [
+      "docker-run",
+      "docker-push",
+      "docker-buildx-build"
+    ]
+  },
+  {
+    "id": "docker-rmi",
+    "name": "docker rmi",
+    "description": "Remove one or more images",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Force remove image"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker rmi nginx",
+        "description": "Remove nginx image"
+      },
+      {
+        "command": "docker rmi $(docker images -q)",
+        "description": "Remove all images"
+      }
+    ],
+    "relatedCommands": [
+      "docker-images",
+      "docker-rm"
+    ]
+  },
+  {
+    "id": "docker-exec",
+    "name": "docker exec",
+    "description": "Execute a command in a running container",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-it",
+        "description": "Interactive terminal"
+      },
+      {
+        "flag": "-d",
+        "description": "Detached mode"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker exec -it mycontainer bash",
+        "description": "Open bash shell in container"
+      },
+      {
+        "command": "docker exec mycontainer ls /app",
+        "description": "Run ls command in container"
+      }
+    ],
+    "notes": [
+      "Container must be running"
+    ],
+    "relatedCommands": [
+      "docker-run"
+    ]
+  },
+  {
+    "id": "docker-logs",
+    "name": "docker logs",
+    "description": "Fetch logs from a container",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Follow log output"
+      },
+      {
+        "flag": "--tail N",
+        "description": "Show last N lines"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker logs mycontainer",
+        "description": "Show container logs"
+      },
+      {
+        "command": "docker logs -f mycontainer",
+        "description": "Follow logs in real-time"
+      },
+      {
+        "command": "docker logs --tail 100 mycontainer",
+        "description": "Show last 100 lines"
+      }
+    ],
+    "relatedCommands": [
+      "docker-ps"
+    ]
+  },
+  {
+    "id": "docker-compose-up",
+    "name": "docker compose up",
+    "description": "Create and start the services defined in compose.yaml",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-d",
+        "description": "Detached mode: run in the background"
+      },
+      {
+        "flag": "--build",
+        "description": "Build images before starting"
+      },
+      {
+        "flag": "--force-recreate",
+        "description": "Recreate containers even if config and image haven't changed"
+      },
+      {
+        "flag": "--remove-orphans",
+        "description": "Remove containers for services no longer in the compose file"
+      },
+      {
+        "flag": "--wait",
+        "description": "Wait until services are running/healthy (implies -d)"
+      },
+      {
+        "flag": "--watch",
+        "description": "Watch source files and sync/rebuild per the 'develop.watch' config"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose up -d",
+        "description": "Start all services in the background"
+      },
+      {
+        "command": "docker compose up -d --build",
+        "description": "Rebuild images and start"
+      },
+      {
+        "command": "docker compose up -d web",
+        "description": "Start one service (and its dependencies)"
+      },
+      {
+        "command": "docker compose -f compose.yaml -f compose.prod.yaml up -d",
+        "description": "Merge multiple compose files"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin",
+      "Compose looks for compose.yaml (preferred) or docker-compose.yml in the current directory",
+      "Use -p <name> to set the project name"
+    ],
+    "relatedCommands": [
+      "docker-compose-down",
+      "docker-compose-ps",
+      "docker-compose-logs",
+      "docker-compose-build"
+    ]
+  },
+  {
+    "id": "docker-compose-down",
+    "name": "docker compose down",
+    "description": "Stop and remove a Compose project's containers and networks",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-v",
+        "description": "Also remove named volumes declared in the compose file and anonymous volumes"
+      },
+      {
+        "flag": "--rmi all",
+        "description": "Also remove images used by the services"
+      },
+      {
+        "flag": "--remove-orphans",
+        "description": "Remove containers for services no longer in the compose file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose down",
+        "description": "Stop and remove containers and networks (volumes kept)"
+      },
+      {
+        "command": "docker compose down -v",
+        "description": "Also delete volumes (database data is lost)"
+      },
+      {
+        "command": "docker compose down --rmi all -v --remove-orphans",
+        "description": "Remove everything the project created"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin",
+      "WARNING: -v deletes volume data such as local databases. It can't be undone",
+      "Use 'docker compose stop' to stop containers without removing them"
+    ],
+    "relatedCommands": [
+      "docker-compose-up",
+      "docker-compose-ps"
+    ]
+  },
+  {
+    "id": "docker-compose-ps",
+    "name": "docker compose ps",
+    "description": "List the containers of a Compose project",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Include stopped containers"
+      },
+      {
+        "flag": "--services",
+        "description": "Print only service names"
+      },
+      {
+        "flag": "-q",
+        "description": "Print only container IDs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose ps",
+        "description": "Show running services with status and ports"
+      },
+      {
+        "command": "docker compose ps -a",
+        "description": "Include exited containers"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin"
+    ],
+    "relatedCommands": [
+      "docker-compose-up",
+      "docker-compose-logs"
+    ]
+  },
+  {
+    "id": "docker-compose-logs",
+    "name": "docker compose logs",
+    "description": "Show logs from a Compose project's services",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Follow log output"
+      },
+      {
+        "flag": "--tail N",
+        "description": "Number of lines from the end of each log"
+      },
+      {
+        "flag": "-t",
+        "description": "Show timestamps"
+      },
+      {
+        "flag": "--since",
+        "description": "Logs since a timestamp or duration, e.g. 10m"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose logs -f",
+        "description": "Follow logs from all services"
+      },
+      {
+        "command": "docker compose logs -f --tail 100 web",
+        "description": "Follow the last 100 lines of one service"
+      },
+      {
+        "command": "docker compose logs --since 10m worker",
+        "description": "Logs from the last 10 minutes"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin"
+    ],
+    "relatedCommands": [
+      "docker-compose-ps",
+      "docker-logs"
+    ]
+  },
+  {
+    "id": "docker-compose-exec",
+    "name": "docker compose exec",
+    "description": "Run a command inside a running service container",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-T",
+        "description": "Disable TTY allocation (for scripts/CI and piping)"
+      },
+      {
+        "flag": "-u USER",
+        "description": "Run as a specific user"
+      },
+      {
+        "flag": "-w DIR",
+        "description": "Working directory"
+      },
+      {
+        "flag": "-e KEY=VALUE",
+        "description": "Set an environment variable"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose exec web sh",
+        "description": "Open a shell in the web service"
+      },
+      {
+        "command": "docker compose exec db psql -U postgres",
+        "description": "Open psql in a database service"
+      },
+      {
+        "command": "docker compose exec -T db pg_dump -U postgres mydb > backup.sql",
+        "description": "Pipe output to the host without TTY artifacts"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin",
+      "The service must already be running; use 'docker compose run' for one-off containers"
+    ],
+    "relatedCommands": [
+      "docker-compose-run",
+      "docker-exec"
+    ]
+  },
+  {
+    "id": "docker-compose-run",
+    "name": "docker compose run",
+    "description": "Run a one-off command in a new container for a service",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "--rm",
+        "description": "Remove the container when it exits"
+      },
+      {
+        "flag": "--service-ports",
+        "description": "Publish the service's ports (off by default)"
+      },
+      {
+        "flag": "--no-deps",
+        "description": "Don't start linked services"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose run --rm web npm test",
+        "description": "Run tests in a throwaway container"
+      },
+      {
+        "command": "docker compose run --rm app php artisan migrate",
+        "description": "Run a one-off management command"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin"
+    ],
+    "relatedCommands": [
+      "docker-compose-exec",
+      "docker-compose-up"
+    ]
+  },
+  {
+    "id": "docker-compose-build",
+    "name": "docker compose build",
+    "description": "Build or rebuild the images for Compose services",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "--no-cache",
+        "description": "Build without cache"
+      },
+      {
+        "flag": "--pull",
+        "description": "Always pull newer base images"
+      },
+      {
+        "flag": "--build-arg KEY=VALUE",
+        "description": "Set a build-time variable"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose build",
+        "description": "Build all services that have a build section"
+      },
+      {
+        "command": "docker compose build --no-cache web",
+        "description": "Rebuild one service from scratch"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin"
+    ],
+    "relatedCommands": [
+      "docker-compose-up",
+      "docker-build"
+    ]
+  },
+  {
+    "id": "docker-compose-pull",
+    "name": "docker compose pull",
+    "description": "Pull the latest images for Compose services",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-q",
+        "description": "Pull without printing progress"
+      },
+      {
+        "flag": "--ignore-pull-failures",
+        "description": "Continue if some images fail to pull"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose pull",
+        "description": "Pull images for all services"
+      },
+      {
+        "command": "docker compose pull && docker compose up -d",
+        "description": "Update images and recreate changed containers"
+      }
+    ],
+    "notes": [
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin"
+    ],
+    "relatedCommands": [
+      "docker-compose-up",
+      "docker-pull"
+    ]
+  },
+  {
+    "id": "docker-inspect",
+    "name": "docker inspect",
+    "description": "Return detailed information about Docker objects",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker inspect mycontainer",
+        "description": "Inspect container details"
+      }
+    ],
+    "notes": [
+      "Returns JSON with full configuration"
+    ],
+    "relatedCommands": [
+      "docker-ps"
+    ]
+  },
+  {
+    "id": "docker-network-ls",
+    "name": "docker network ls",
+    "description": "List Docker networks",
+    "category": "Networking",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker network ls",
+        "description": "List all networks"
+      }
+    ],
+    "relatedCommands": [
+      "docker-network-create"
+    ]
+  },
+  {
+    "id": "docker-network-create",
+    "name": "docker network create",
+    "description": "Create a Docker network",
+    "category": "Networking",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker network create mynetwork",
+        "description": "Create a network"
+      },
+      {
+        "command": "docker network create --driver bridge mynetwork",
+        "description": "Create bridge network"
+      }
+    ],
+    "relatedCommands": [
+      "docker-network-ls"
+    ]
+  },
+  {
+    "id": "docker-volume-ls",
+    "name": "docker volume ls",
+    "description": "List Docker volumes",
+    "category": "Volume Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker volume ls",
+        "description": "List all volumes"
+      }
+    ],
+    "relatedCommands": [
+      "docker-volume-create"
+    ]
+  },
+  {
+    "id": "docker-volume-create",
+    "name": "docker volume create",
+    "description": "Create a Docker volume",
+    "category": "Volume Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker volume create myvolume",
+        "description": "Create a volume"
+      }
+    ],
+    "relatedCommands": [
+      "docker-volume-ls"
+    ]
+  },
+  {
+    "id": "docker-volume-rm",
+    "name": "docker volume rm",
+    "description": "Remove Docker volumes",
+    "category": "Volume Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker volume rm myvolume",
+        "description": "Remove a volume"
+      },
+      {
+        "command": "docker volume rm $(docker volume ls -q)",
+        "description": "Remove all volumes"
+      }
+    ],
+    "notes": [
+      "WARNING: deletes the volume's data permanently"
+    ],
+    "relatedCommands": [
+      "docker-volume-ls",
+      "docker-volume-prune"
+    ]
+  },
+  {
+    "id": "docker-system-prune",
+    "name": "docker system prune",
+    "description": "Remove unused Docker data",
+    "category": "Maintenance",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Remove all unused images"
+      },
+      {
+        "flag": "--volumes",
+        "description": "Prune volumes"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker system prune",
+        "description": "Remove unused data"
+      },
+      {
+        "command": "docker system prune -a --volumes",
+        "description": "Remove all unused data including volumes"
+      },
+      {
+        "command": "docker system df",
+        "description": "Show disk usage by images, containers, volumes and build cache"
+      }
+    ],
+    "notes": [
+      "Frees up disk space",
+      "Use with caution",
+      "WARNING: -a removes every image not used by a container, and --volumes deletes unused volume data",
+      "Run 'docker system df' first to see what is using space"
+    ],
+    "relatedCommands": [
+      "docker-image-prune",
+      "docker-container-prune",
+      "docker-volume-prune"
+    ]
+  },
+  {
+    "id": "docker-image-prune",
+    "name": "docker image prune",
+    "description": "Remove unused images",
+    "category": "Maintenance",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Remove all images not used by any container, not just dangling ones"
+      },
+      {
+        "flag": "-f",
+        "description": "Don't prompt for confirmation"
+      },
+      {
+        "flag": "--filter",
+        "description": "e.g. until=24h"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker image prune",
+        "description": "Remove dangling (untagged) images"
+      },
+      {
+        "command": "docker image prune -a --filter until=168h",
+        "description": "Remove unused images older than a week"
+      }
+    ],
+    "notes": [
+      "WARNING: -a also removes tagged images you may want to keep; they'll need re-pulling or rebuilding"
+    ],
+    "relatedCommands": [
+      "docker-system-prune",
+      "docker-images"
+    ]
+  },
+  {
+    "id": "docker-container-prune",
+    "name": "docker container prune",
+    "description": "Remove all stopped containers",
+    "category": "Maintenance",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Don't prompt for confirmation"
+      },
+      {
+        "flag": "--filter",
+        "description": "e.g. until=24h"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker container prune",
+        "description": "Remove all stopped containers"
+      },
+      {
+        "command": "docker container prune -f --filter until=24h",
+        "description": "Remove containers stopped more than 24h ago"
+      }
+    ],
+    "notes": [
+      "WARNING: data written inside removed containers (outside volumes) is lost"
+    ],
+    "relatedCommands": [
+      "docker-system-prune",
+      "docker-ps"
+    ]
+  },
+  {
+    "id": "docker-volume-prune",
+    "name": "docker volume prune",
+    "description": "Remove unused volumes",
+    "category": "Maintenance",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-a",
+        "description": "Remove all unused volumes, not just anonymous ones"
+      },
+      {
+        "flag": "-f",
+        "description": "Don't prompt for confirmation"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker volume prune",
+        "description": "Remove unused anonymous volumes"
+      },
+      {
+        "command": "docker volume prune -a",
+        "description": "Remove all unused volumes, including named ones"
+      }
+    ],
+    "notes": [
+      "WARNING: permanently deletes volume data (e.g. local databases) for volumes not attached to a container"
+    ],
+    "relatedCommands": [
+      "docker-volume-ls",
+      "docker-volume-rm"
+    ]
+  },
+  {
+    "id": "docker-stats",
+    "name": "docker stats",
+    "description": "Display container resource usage statistics",
+    "category": "Monitoring",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "--no-stream",
+        "description": "Disable streaming stats"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker stats",
+        "description": "Show stats for all running containers"
+      },
+      {
+        "command": "docker stats mycontainer",
+        "description": "Show stats for specific container"
+      }
+    ],
+    "relatedCommands": [
+      "docker-ps",
+      "docker-top"
+    ]
+  },
+  {
+    "id": "docker-top",
+    "name": "docker top",
+    "description": "Display running processes in a container",
+    "category": "Monitoring",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker top mycontainer",
+        "description": "Show processes in container"
+      }
+    ],
+    "relatedCommands": [
+      "docker-stats"
+    ]
+  },
+  {
+    "id": "docker-cp",
+    "name": "docker cp",
+    "description": "Copy files between container and host",
+    "category": "File Operations",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker cp mycontainer:/app/file.txt ./",
+        "description": "Copy file from container to host"
+      },
+      {
+        "command": "docker cp ./file.txt mycontainer:/app/",
+        "description": "Copy file from host to container"
+      }
+    ],
+    "relatedCommands": [
+      "docker-exec"
+    ]
+  },
+  {
+    "id": "docker-commit",
+    "name": "docker commit",
+    "description": "Create image from container's changes",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker commit mycontainer myimage:tag",
+        "description": "Create image from container"
+      }
+    ],
+    "notes": [
+      "Better to use Dockerfile for reproducibility"
+    ],
+    "relatedCommands": [
+      "docker-build"
+    ]
+  },
+  {
+    "id": "docker-tag",
+    "name": "docker tag",
+    "description": "Create a tag for an image",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker tag myimage:latest myimage:v1.0",
+        "description": "Tag an image"
+      }
+    ],
+    "relatedCommands": [
+      "docker-images",
+      "docker-push"
+    ]
+  },
+  {
+    "id": "docker-push",
+    "name": "docker push",
+    "description": "Push an image to a registry",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker push username/myimage:tag",
+        "description": "Push image to Docker Hub"
+      }
+    ],
+    "notes": [
+      "Requires docker login first"
+    ],
+    "relatedCommands": [
+      "docker-pull",
+      "docker-build"
+    ]
+  },
+  {
+    "id": "docker-buildx-build",
+    "name": "docker buildx build",
+    "description": "Build images with BuildKit, including multi-platform images",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "--platform",
+        "description": "Comma-separated target platforms, e.g. linux/amd64,linux/arm64"
+      },
+      {
+        "flag": "--push",
+        "description": "Push the result to a registry"
+      },
+      {
+        "flag": "--load",
+        "description": "Load the result into the local image store"
+      },
+      {
+        "flag": "--cache-from / --cache-to",
+        "description": "Import/export build cache, e.g. type=registry or type=gha"
+      },
+      {
+        "flag": "-t NAME:TAG",
+        "description": "Tag the image"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker buildx build --platform linux/amd64,linux/arm64 -t <user>/myapp:1.0 --push .",
+        "description": "Build and push a multi-platform image"
+      },
+      {
+        "command": "docker buildx create --name multi --driver docker-container --use",
+        "description": "Create a builder that supports multi-platform builds"
+      },
+      {
+        "command": "docker buildx build --platform linux/amd64 -t myapp:amd64 --load .",
+        "description": "Build an amd64 image on an Apple Silicon Mac"
+      },
+      {
+        "command": "docker buildx ls",
+        "description": "List builders and their supported platforms"
+      }
+    ],
+    "notes": [
+      "Multi-platform builds need the containerd image store (Docker Desktop setting) or a docker-container builder",
+      "Non-native platforms are emulated with QEMU, which is slow; native builders or cross-compilation are faster"
+    ],
+    "relatedCommands": [
+      "docker-build",
+      "docker-push"
+    ]
+  },
+  {
+    "id": "docker-login",
+    "name": "docker login",
+    "description": "Log in to a container registry",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-u",
+        "description": "Username"
+      },
+      {
+        "flag": "--password-stdin",
+        "description": "Read the password or token from stdin"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker login",
+        "description": "Log in to Docker Hub interactively"
+      },
+      {
+        "command": "echo \"$GITHUB_TOKEN\" | docker login ghcr.io -u <username> --password-stdin",
+        "description": "Log in to GitHub Container Registry with a token (CI)"
+      },
+      {
+        "command": "docker logout ghcr.io",
+        "description": "Log out of a registry"
+      }
+    ],
+    "notes": [
+      "Never pass the password with -p; it ends up in shell history and process lists",
+      "Credentials are stored in ~/.docker/config.json unless a credential helper (credsStore) is configured"
+    ],
+    "relatedCommands": [
+      "docker-push",
+      "docker-pull"
+    ]
+  },
+  {
+    "id": "docker-save",
+    "name": "docker save",
+    "description": "Export one or more images to a tar archive",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-o FILE",
+        "description": "Write to a file instead of stdout"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker save -o myapp.tar myapp:1.0",
+        "description": "Save an image to a tar file"
+      },
+      {
+        "command": "docker save myapp:1.0 | gzip > myapp.tar.gz",
+        "description": "Save and compress"
+      },
+      {
+        "command": "docker save myapp:1.0 | ssh user@server docker load",
+        "description": "Copy an image to another host without a registry"
+      }
+    ],
+    "notes": [
+      "Keeps layers, tags and history; use docker export for a container's flattened filesystem instead"
+    ],
+    "relatedCommands": [
+      "docker-load",
+      "docker-images"
+    ]
+  },
+  {
+    "id": "docker-load",
+    "name": "docker load",
+    "description": "Load images from a tar archive created by docker save",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-i FILE",
+        "description": "Read from a file instead of stdin"
+      },
+      {
+        "flag": "-q",
+        "description": "Suppress progress output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker load -i myapp.tar",
+        "description": "Load images from a tar file"
+      },
+      {
+        "command": "docker load < myapp.tar.gz",
+        "description": "Load a compressed archive (gzip, bzip2, xz, zstd are detected)"
+      }
+    ],
+    "relatedCommands": [
+      "docker-save",
+      "docker-images"
+    ]
+  },
+  {
+    "id": "docker-context",
+    "name": "docker context",
+    "description": "Switch the Docker CLI between engines (local, remote over SSH, etc.)",
+    "category": "Configuration",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker context ls",
+        "description": "List contexts; the active one is marked with *"
+      },
+      {
+        "command": "docker context create prod --docker \"host=ssh://user@prod.example.com\"",
+        "description": "Create a context for a remote engine over SSH"
+      },
+      {
+        "command": "docker context use prod",
+        "description": "Make all docker commands target that engine"
+      },
+      {
+        "command": "docker --context prod ps",
+        "description": "Use a context for a single command"
+      }
+    ],
+    "notes": [
+      "DOCKER_HOST, if set, overrides the selected context"
+    ],
+    "relatedCommands": [
+      "docker-ps"
+    ]
+  },
+  {
+    "id": "docker-init",
+    "name": "docker init",
+    "description": "Generate a Dockerfile, compose.yaml and .dockerignore for a project",
+    "category": "Configuration",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker init",
+        "description": "Answer prompts to scaffold Docker files for the detected language (Node, Python, Go, PHP, etc.)"
+      }
+    ],
+    "notes": [
+      "Ships with Docker Desktop",
+      "Review the generated files; it asks before overwriting existing ones"
+    ],
+    "relatedCommands": [
+      "docker-build",
+      "docker-compose-up"
+    ]
+  }
+]

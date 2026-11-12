@@ -1,0 +1,589 @@
+[
+  {
+    "id": "tmux-new-session",
+    "name": "tmux new -s",
+    "description": "Start a new named session.",
+    "category": "Sessions",
+    "technologyId": "tmux",
+    "flags": [
+      {
+        "flag": "-s",
+        "description": "Session name"
+      },
+      {
+        "flag": "-d",
+        "description": "Create detached (do not attach)"
+      },
+      {
+        "flag": "-c",
+        "description": "Start directory",
+        "example": "tmux new -s api -c ~/code/api"
+      },
+      {
+        "flag": "-A",
+        "description": "Attach if the session already exists, otherwise create it"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tmux new -s work",
+        "description": "Create and attach to a session named work"
+      },
+      {
+        "command": "tmux new -A -s work",
+        "description": "Attach to work, or create it if missing"
+      },
+      {
+        "command": "tmux new -d -s build 'npm run build'",
+        "description": "Run a command in a detached session"
+      }
+    ],
+    "notes": [
+      "`tmux new` is short for `tmux new-session`."
+    ],
+    "relatedCommands": [
+      "tmux-ls",
+      "tmux-attach",
+      "tmux-detach"
+    ]
+  },
+  {
+    "id": "tmux-ls",
+    "name": "tmux ls",
+    "description": "List running sessions.",
+    "category": "Sessions",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux ls",
+        "description": "List sessions",
+        "output": "work: 3 windows (created Tue Nov 11 09:12:01 2026) (attached)"
+      }
+    ],
+    "notes": [
+      "Short for `tmux list-sessions`. Inside tmux, Ctrl-b s shows an interactive session tree."
+    ],
+    "relatedCommands": [
+      "tmux-attach",
+      "tmux-kill-session"
+    ]
+  },
+  {
+    "id": "tmux-attach",
+    "name": "tmux attach -t",
+    "description": "Attach to an existing session.",
+    "category": "Sessions",
+    "technologyId": "tmux",
+    "flags": [
+      {
+        "flag": "-t",
+        "description": "Target session name"
+      },
+      {
+        "flag": "-d",
+        "description": "Detach other clients attached to the session"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tmux attach -t work",
+        "description": "Attach to the work session"
+      },
+      {
+        "command": "tmux a",
+        "description": "Attach to the most recent session"
+      },
+      {
+        "command": "tmux attach -d -t work",
+        "description": "Attach and kick other clients (fixes size issues)"
+      }
+    ],
+    "relatedCommands": [
+      "tmux-ls",
+      "tmux-detach",
+      "tmux-new-session"
+    ]
+  },
+  {
+    "id": "tmux-detach",
+    "name": "Ctrl-b d",
+    "description": "Detach from the current session, leaving it running in the background.",
+    "category": "Sessions",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux detach",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux detach -a",
+        "description": "Detach all other clients from this session"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "Processes keep running after detaching, which makes tmux ideal for long jobs over SSH."
+    ],
+    "relatedCommands": [
+      "tmux-attach",
+      "tmux-ls"
+    ]
+  },
+  {
+    "id": "tmux-rename-session",
+    "name": "Ctrl-b $",
+    "description": "Rename the current session.",
+    "category": "Sessions",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux rename-session -t old-name new-name",
+        "description": "Rename a session from the shell"
+      },
+      {
+        "command": "tmux rename-session api",
+        "description": "Rename the current session from inside tmux"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key."
+    ],
+    "relatedCommands": [
+      "tmux-ls"
+    ]
+  },
+  {
+    "id": "tmux-kill-session",
+    "name": "tmux kill-session -t",
+    "description": "Terminate a session and all its windows and processes.",
+    "category": "Sessions",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux kill-session -t work",
+        "description": "Kill one session"
+      },
+      {
+        "command": "tmux kill-session -a",
+        "description": "Kill every session except the current one"
+      },
+      {
+        "command": "tmux kill-server",
+        "description": "Kill all sessions and the tmux server"
+      }
+    ],
+    "notes": [
+      "WARNING: All programs running in the session are killed and unsaved work is lost."
+    ],
+    "relatedCommands": [
+      "tmux-ls"
+    ]
+  },
+  {
+    "id": "tmux-switch-session",
+    "name": "Ctrl-b s",
+    "description": "Interactively choose a session (and window) to switch to.",
+    "category": "Sessions",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux choose-tree -s",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux switch-client -t work",
+        "description": "Switch the current client to another session"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "Ctrl-b ( and Ctrl-b ) cycle to the previous/next session."
+    ],
+    "relatedCommands": [
+      "tmux-ls",
+      "tmux-attach"
+    ]
+  },
+  {
+    "id": "tmux-new-window",
+    "name": "Ctrl-b c",
+    "description": "Create a new window in the current session.",
+    "category": "Windows",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux new-window",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux new-window -n logs 'tail -f /var/log/syslog'",
+        "description": "Named window running a command"
+      },
+      {
+        "command": "tmux new-window -c '#{pane_current_path}'",
+        "description": "Open in the current pane's directory"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key."
+    ],
+    "relatedCommands": [
+      "tmux-select-window",
+      "tmux-rename-window"
+    ]
+  },
+  {
+    "id": "tmux-select-window",
+    "name": "Ctrl-b 0..9 / n / p / w",
+    "description": "Switch windows by number, next/previous, or from a list.",
+    "category": "Windows",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux select-window -t 2",
+        "description": "Go to window 2 (Ctrl-b 2)"
+      },
+      {
+        "command": "tmux next-window",
+        "description": "Next window (Ctrl-b n)"
+      },
+      {
+        "command": "tmux previous-window",
+        "description": "Previous window (Ctrl-b p)"
+      },
+      {
+        "command": "tmux choose-tree -w",
+        "description": "Pick from a window list (Ctrl-b w)"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "Ctrl-b l jumps to the last active window."
+    ],
+    "relatedCommands": [
+      "tmux-new-window",
+      "tmux-rename-window"
+    ]
+  },
+  {
+    "id": "tmux-rename-window",
+    "name": "Ctrl-b ,",
+    "description": "Rename the current window.",
+    "category": "Windows",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux rename-window server",
+        "description": "Equivalent command"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "Ctrl-b & kills the current window (asks for confirmation); `tmux kill-window -t 2` from the shell."
+    ],
+    "relatedCommands": [
+      "tmux-new-window"
+    ]
+  },
+  {
+    "id": "tmux-split-horizontal",
+    "name": "Ctrl-b %",
+    "description": "Split the current pane into left and right panes.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux split-window -h",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux split-window -h -c '#{pane_current_path}'",
+        "description": "Split, keeping the current directory"
+      },
+      {
+        "command": "tmux split-window -h -l 30%",
+        "description": "Right pane takes 30% of the width"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "tmux's -h means a horizontal layout (panes side by side), i.e. a vertical divider."
+    ],
+    "relatedCommands": [
+      "tmux-split-vertical",
+      "tmux-select-pane",
+      "tmux-resize-pane"
+    ]
+  },
+  {
+    "id": "tmux-split-vertical",
+    "name": "Ctrl-b \"",
+    "description": "Split the current pane into top and bottom panes.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux split-window -v",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux split-window -v -l 10 'htop'",
+        "description": "10-line bottom pane running htop"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key."
+    ],
+    "relatedCommands": [
+      "tmux-split-horizontal",
+      "tmux-select-pane"
+    ]
+  },
+  {
+    "id": "tmux-select-pane",
+    "name": "Ctrl-b arrow / o / q",
+    "description": "Move between panes.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux select-pane -L",
+        "description": "Move to the pane on the left (Ctrl-b Left); -R, -U, -D for other directions"
+      },
+      {
+        "command": "tmux select-pane -t :.+",
+        "description": "Next pane (Ctrl-b o)"
+      },
+      {
+        "command": "tmux display-panes",
+        "description": "Show pane numbers, then press a number to jump (Ctrl-b q)"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "Ctrl-b ; toggles to the last active pane. Ctrl-b x kills the current pane; Ctrl-b { / } swaps panes."
+    ],
+    "relatedCommands": [
+      "tmux-split-horizontal",
+      "tmux-zoom-pane",
+      "tmux-resize-pane"
+    ]
+  },
+  {
+    "id": "tmux-resize-pane",
+    "name": "Ctrl-b Ctrl-arrow",
+    "description": "Resize the current pane.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "flags": [
+      {
+        "flag": "-L / -R / -U / -D",
+        "description": "Direction to resize"
+      },
+      {
+        "flag": "-x / -y",
+        "description": "Set an absolute width/height"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tmux resize-pane -R 10",
+        "description": "Grow right by 10 cells"
+      },
+      {
+        "command": "tmux resize-pane -D 5",
+        "description": "Grow down by 5 lines"
+      },
+      {
+        "command": "tmux select-layout even-horizontal",
+        "description": "Even out pane sizes (Ctrl-b Alt-1)"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "Ctrl-b Space cycles through preset layouts. Hold Ctrl after the prefix and tap the arrow repeatedly to keep resizing."
+    ],
+    "relatedCommands": [
+      "tmux-zoom-pane",
+      "tmux-select-pane"
+    ]
+  },
+  {
+    "id": "tmux-zoom-pane",
+    "name": "Ctrl-b z",
+    "description": "Toggle the current pane to fill the whole window, and back.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux resize-pane -Z",
+        "description": "Equivalent command"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "A Z flag appears in the status bar window name while zoomed."
+    ],
+    "relatedCommands": [
+      "tmux-resize-pane",
+      "tmux-select-pane"
+    ]
+  },
+  {
+    "id": "tmux-synchronize-panes",
+    "name": "setw synchronize-panes",
+    "description": "Send keyboard input to every pane in the window at once.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux setw synchronize-panes on",
+        "description": "Turn on (from inside tmux: Ctrl-b : then `setw synchronize-panes on`)"
+      },
+      {
+        "command": "tmux setw synchronize-panes off",
+        "description": "Turn off"
+      },
+      {
+        "command": "tmux setw synchronize-panes",
+        "description": "Toggle"
+      }
+    ],
+    "notes": [
+      "WARNING: Every keystroke goes to all panes; be careful with destructive commands on multiple servers."
+    ],
+    "relatedCommands": [
+      "tmux-send-keys"
+    ]
+  },
+  {
+    "id": "tmux-copy-mode",
+    "name": "Ctrl-b [",
+    "description": "Enter copy mode to scroll back, search, and copy text.",
+    "category": "Copy Mode",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux copy-mode",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux paste-buffer",
+        "description": "Paste the most recent buffer (Ctrl-b ])"
+      },
+      {
+        "command": "tmux show-buffer",
+        "description": "Print the most recent buffer"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "In emacs mode (default) start selection with Ctrl-Space and copy with Alt-w; with `setw -g mode-keys vi` use Space/v and Enter/y. Search with / or ? (vi) or Ctrl-s/Ctrl-r (emacs). q exits.",
+      "Ctrl-b PgUp enters copy mode and scrolls up immediately. `set -g mouse on` enables wheel scrolling."
+    ],
+    "relatedCommands": [
+      "tmux-source-file"
+    ]
+  },
+  {
+    "id": "tmux-send-keys",
+    "name": "tmux send-keys",
+    "description": "Send keystrokes to a pane, useful for scripting layouts.",
+    "category": "Scripting & Config",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux send-keys -t work:1.0 'npm run dev' Enter",
+        "description": "Run a command in pane 0 of window 1 of session work"
+      },
+      {
+        "command": "tmux send-keys -t build C-c",
+        "description": "Send Ctrl-C to a session's active pane"
+      }
+    ],
+    "notes": [
+      "Targets use session:window.pane syntax. Key names like Enter, C-c, Escape are sent as keys, not literal text."
+    ],
+    "relatedCommands": [
+      "tmux-new-session",
+      "tmux-synchronize-panes"
+    ]
+  },
+  {
+    "id": "tmux-command-prompt",
+    "name": "Ctrl-b :",
+    "description": "Open the tmux command prompt to run any tmux command.",
+    "category": "Scripting & Config",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "set -g mouse on",
+        "description": "Type at the prompt to enable mouse support for this server"
+      },
+      {
+        "command": "kill-session -t old",
+        "description": "Commands at the prompt omit the leading `tmux`"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key."
+    ],
+    "relatedCommands": [
+      "tmux-source-file",
+      "tmux-list-keys"
+    ]
+  },
+  {
+    "id": "tmux-source-file",
+    "name": "tmux source-file ~/.tmux.conf",
+    "description": "Reload the tmux configuration without restarting.",
+    "category": "Scripting & Config",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux source-file ~/.tmux.conf",
+        "description": "Reload config"
+      },
+      {
+        "command": "bind r source-file ~/.tmux.conf \\; display 'Reloaded'",
+        "description": "Add to ~/.tmux.conf to reload with Ctrl-b r"
+      }
+    ],
+    "notes": [
+      "tmux 3.1+ also reads ~/.config/tmux/tmux.conf.",
+      "Common config lines: `set -g mouse on`, `set -g base-index 1`, `setw -g mode-keys vi`, `set -g prefix C-a`.",
+      "Removed settings are not unset by reloading; restart the server (`tmux kill-server`) for a clean state."
+    ],
+    "relatedCommands": [
+      "tmux-list-keys",
+      "tmux-command-prompt"
+    ]
+  },
+  {
+    "id": "tmux-list-keys",
+    "name": "Ctrl-b ?",
+    "description": "List all key bindings.",
+    "category": "Scripting & Config",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux list-keys",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux list-keys -T prefix | grep split",
+        "description": "Find prefix bindings for splitting"
+      },
+      {
+        "command": "tmux list-keys -T copy-mode-vi",
+        "description": "Show vi copy-mode bindings"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key."
+    ],
+    "relatedCommands": [
+      "tmux-source-file"
+    ]
+  }
+]

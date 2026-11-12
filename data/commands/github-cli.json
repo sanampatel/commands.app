@@ -1,0 +1,1386 @@
+[
+  {
+    "id": "gh-auth-login",
+    "name": "gh auth login",
+    "description": "Authenticate gh with a GitHub host.",
+    "category": "Auth & Setup",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-h, --hostname <host>",
+        "description": "GitHub host, e.g. github.example.com for Enterprise"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Authenticate via the browser"
+      },
+      {
+        "flag": "--with-token",
+        "description": "Read a token from stdin"
+      },
+      {
+        "flag": "-s, --scopes <scopes>",
+        "description": "Request additional OAuth scopes"
+      },
+      {
+        "flag": "-p, --git-protocol <https|ssh>",
+        "description": "Protocol for git operations"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh auth login",
+        "description": "Interactive login"
+      },
+      {
+        "command": "gh auth login --web --git-protocol ssh",
+        "description": "Browser login using SSH for git"
+      },
+      {
+        "command": "gh auth login --with-token < token.txt",
+        "description": "Login with a token from a file"
+      },
+      {
+        "command": "gh auth refresh -s read:project",
+        "description": "Add a missing scope to an existing login"
+      }
+    ],
+    "notes": [
+      "In CI, set GH_TOKEN instead of logging in"
+    ],
+    "relatedCommands": [
+      "gh-auth-status"
+    ]
+  },
+  {
+    "id": "gh-auth-status",
+    "name": "gh auth status",
+    "description": "Show authentication status for all configured hosts.",
+    "category": "Auth & Setup",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-t, --show-token",
+        "description": "Display the auth token"
+      },
+      {
+        "flag": "-a, --active",
+        "description": "Only show the active account"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh auth status",
+        "description": "See which accounts are logged in"
+      },
+      {
+        "command": "gh auth switch",
+        "description": "Switch the active account"
+      },
+      {
+        "command": "gh auth token",
+        "description": "Print the token (e.g. to pipe into another tool)"
+      }
+    ],
+    "notes": [
+      "Avoid --show-token and gh auth token output in shared logs"
+    ],
+    "relatedCommands": [
+      "gh-auth-login"
+    ]
+  },
+  {
+    "id": "gh-repo-clone",
+    "name": "gh repo clone",
+    "description": "Clone a GitHub repository locally.",
+    "category": "Repositories",
+    "technologyId": "github-cli",
+    "examples": [
+      {
+        "command": "gh repo clone owner/repo",
+        "description": "Clone by owner/name"
+      },
+      {
+        "command": "gh repo clone owner/repo my-dir -- --depth=1",
+        "description": "Shallow clone into a custom directory"
+      },
+      {
+        "command": "gh repo clone repo",
+        "description": "Clone one of your own repos without the owner prefix"
+      }
+    ],
+    "notes": [
+      "Cloning a fork automatically adds the parent repo as the upstream remote"
+    ],
+    "relatedCommands": [
+      "gh-repo-fork",
+      "gh-repo-create"
+    ]
+  },
+  {
+    "id": "gh-repo-create",
+    "name": "gh repo create",
+    "description": "Create a new GitHub repository.",
+    "category": "Repositories",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--public / --private / --internal",
+        "description": "Repository visibility"
+      },
+      {
+        "flag": "-s, --source <path>",
+        "description": "Create from an existing local directory"
+      },
+      {
+        "flag": "--push",
+        "description": "Push local commits to the new repo"
+      },
+      {
+        "flag": "-c, --clone",
+        "description": "Clone the new repo locally"
+      },
+      {
+        "flag": "-p, --template <repo>",
+        "description": "Create from a template repository"
+      },
+      {
+        "flag": "-d, --description <text>",
+        "description": "Repository description"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh repo create my-app --private --clone",
+        "description": "Create and clone a new private repo"
+      },
+      {
+        "command": "gh repo create --source=. --private --push",
+        "description": "Publish the current local project"
+      },
+      {
+        "command": "gh repo create my-org/api --public --template my-org/api-template",
+        "description": "Create from a template in an org"
+      }
+    ],
+    "relatedCommands": [
+      "gh-repo-clone",
+      "gh-repo-view"
+    ]
+  },
+  {
+    "id": "gh-repo-fork",
+    "name": "gh repo fork",
+    "description": "Fork a repository, optionally cloning it.",
+    "category": "Repositories",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--clone",
+        "description": "Clone the fork after creating it"
+      },
+      {
+        "flag": "--remote",
+        "description": "Add a remote for the fork in the current repo"
+      },
+      {
+        "flag": "--org <org>",
+        "description": "Fork into an organization"
+      },
+      {
+        "flag": "--fork-name <name>",
+        "description": "Rename the fork"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh repo fork owner/repo --clone",
+        "description": "Fork and clone"
+      },
+      {
+        "command": "gh repo fork --remote",
+        "description": "Fork the current repo and add it as a remote"
+      },
+      {
+        "command": "gh repo sync",
+        "description": "Sync your fork's default branch with upstream"
+      }
+    ],
+    "relatedCommands": [
+      "gh-repo-clone",
+      "gh-pr-create"
+    ]
+  },
+  {
+    "id": "gh-repo-view",
+    "name": "gh repo view",
+    "description": "Display a repository's description and README.",
+    "category": "Repositories",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-w, --web",
+        "description": "Open in the browser"
+      },
+      {
+        "flag": "--json <fields>",
+        "description": "Output selected fields as JSON"
+      },
+      {
+        "flag": "-b, --branch <branch>",
+        "description": "View a specific branch"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh repo view",
+        "description": "View the current repo"
+      },
+      {
+        "command": "gh repo view cli/cli --web",
+        "description": "Open a repo in the browser"
+      },
+      {
+        "command": "gh repo view --json name,defaultBranchRef,stargazerCount",
+        "description": "Script-friendly repo info"
+      }
+    ],
+    "relatedCommands": [
+      "gh-browse"
+    ]
+  },
+  {
+    "id": "gh-browse",
+    "name": "gh browse",
+    "description": "Open the repository, a file, an issue, or a PR in the web browser.",
+    "category": "Repositories",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-s, --settings",
+        "description": "Open repository settings"
+      },
+      {
+        "flag": "-b, --branch <branch>",
+        "description": "Open a specific branch"
+      },
+      {
+        "flag": "-n, --no-browser",
+        "description": "Print the URL instead of opening it"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh browse",
+        "description": "Open the current repo"
+      },
+      {
+        "command": "gh browse 123",
+        "description": "Open issue or PR #123"
+      },
+      {
+        "command": "gh browse src/index.ts:42",
+        "description": "Open a file at a line"
+      },
+      {
+        "command": "gh browse --settings",
+        "description": "Open repo settings"
+      }
+    ],
+    "relatedCommands": [
+      "gh-repo-view"
+    ]
+  },
+  {
+    "id": "gh-pr-create",
+    "name": "gh pr create",
+    "description": "Create a pull request from the current branch.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-t, --title <title>",
+        "description": "PR title"
+      },
+      {
+        "flag": "-b, --body <text>",
+        "description": "PR body"
+      },
+      {
+        "flag": "-f, --fill",
+        "description": "Use commit messages for title and body"
+      },
+      {
+        "flag": "-B, --base <branch>",
+        "description": "Base branch to merge into"
+      },
+      {
+        "flag": "-d, --draft",
+        "description": "Create as a draft"
+      },
+      {
+        "flag": "-r, --reviewer <handle>",
+        "description": "Request reviewers (users or org/team)"
+      },
+      {
+        "flag": "-a, --assignee <login>",
+        "description": "Assign people; use @me for yourself"
+      },
+      {
+        "flag": "-l, --label <name>",
+        "description": "Add labels"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Open the web form to finish creating the PR"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr create --fill",
+        "description": "Create a PR using commit info"
+      },
+      {
+        "command": "gh pr create -t \"Add login\" -b \"Closes #42\" -r my-org/backend",
+        "description": "Create with title, body, and team reviewer"
+      },
+      {
+        "command": "gh pr create --draft --base develop",
+        "description": "Open a draft PR against develop"
+      },
+      {
+        "command": "gh pr create --web",
+        "description": "Finish in the browser"
+      }
+    ],
+    "notes": [
+      "gh prompts to push the branch if it is not on the remote yet"
+    ],
+    "relatedCommands": [
+      "gh-pr-list",
+      "gh-pr-view",
+      "gh-pr-checks"
+    ]
+  },
+  {
+    "id": "gh-pr-list",
+    "name": "gh pr list",
+    "description": "List pull requests in the repository.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-s, --state <open|closed|merged|all>",
+        "description": "Filter by state"
+      },
+      {
+        "flag": "-A, --author <login>",
+        "description": "Filter by author (@me for yourself)"
+      },
+      {
+        "flag": "-l, --label <name>",
+        "description": "Filter by label"
+      },
+      {
+        "flag": "-S, --search <query>",
+        "description": "Filter with GitHub search syntax"
+      },
+      {
+        "flag": "--json <fields>",
+        "description": "Output JSON with the given fields"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr list",
+        "description": "List open PRs"
+      },
+      {
+        "command": "gh pr list --author @me",
+        "description": "Your open PRs"
+      },
+      {
+        "command": "gh pr list --search \"review-requested:@me\"",
+        "description": "PRs waiting on your review"
+      },
+      {
+        "command": "gh pr status",
+        "description": "Summary of PRs relevant to you"
+      }
+    ],
+    "relatedCommands": [
+      "gh-pr-view",
+      "gh-pr-checkout"
+    ]
+  },
+  {
+    "id": "gh-pr-view",
+    "name": "gh pr view",
+    "description": "Show the details of a pull request.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-w, --web",
+        "description": "Open in the browser"
+      },
+      {
+        "flag": "-c, --comments",
+        "description": "Include comments"
+      },
+      {
+        "flag": "--json <fields>",
+        "description": "Output JSON with the given fields"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr view",
+        "description": "View the PR for the current branch"
+      },
+      {
+        "command": "gh pr view 123 --comments",
+        "description": "View PR #123 with comments"
+      },
+      {
+        "command": "gh pr view 123 --json state,mergeable,reviewDecision",
+        "description": "Check merge readiness in a script"
+      }
+    ],
+    "relatedCommands": [
+      "gh-pr-diff",
+      "gh-pr-checks"
+    ]
+  },
+  {
+    "id": "gh-pr-checkout",
+    "name": "gh pr checkout",
+    "description": "Check out a pull request branch locally.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-b, --branch <name>",
+        "description": "Local branch name to use"
+      },
+      {
+        "flag": "-f, --force",
+        "description": "Reset the local branch to the latest PR state"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr checkout 123",
+        "description": "Check out PR #123 (works for forks too)"
+      },
+      {
+        "command": "gh pr checkout 123 --force",
+        "description": "Discard local branch changes and sync to the PR"
+      }
+    ],
+    "notes": [
+      "Alias: gh co (if configured); --force overwrites local commits on that branch"
+    ],
+    "relatedCommands": [
+      "gh-pr-review",
+      "gh-pr-diff"
+    ]
+  },
+  {
+    "id": "gh-pr-diff",
+    "name": "gh pr diff",
+    "description": "Show the changes in a pull request.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--name-only",
+        "description": "Only show changed file names"
+      },
+      {
+        "flag": "--patch",
+        "description": "Output in patch format"
+      },
+      {
+        "flag": "--color <always|never|auto>",
+        "description": "Color output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr diff 123",
+        "description": "Show the diff for PR #123"
+      },
+      {
+        "command": "gh pr diff --name-only",
+        "description": "List files changed in the current branch's PR"
+      }
+    ],
+    "relatedCommands": [
+      "gh-pr-view",
+      "gh-pr-review"
+    ]
+  },
+  {
+    "id": "gh-pr-review",
+    "name": "gh pr review",
+    "description": "Add a review to a pull request.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-a, --approve",
+        "description": "Approve the PR"
+      },
+      {
+        "flag": "-r, --request-changes",
+        "description": "Request changes"
+      },
+      {
+        "flag": "-c, --comment",
+        "description": "Leave a review comment"
+      },
+      {
+        "flag": "-b, --body <text>",
+        "description": "Review body"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr review 123 --approve",
+        "description": "Approve PR #123"
+      },
+      {
+        "command": "gh pr review 123 -r -b \"Please add tests\"",
+        "description": "Request changes with a message"
+      },
+      {
+        "command": "gh pr comment 123 -b \"LGTM after CI\"",
+        "description": "Leave a plain comment"
+      }
+    ],
+    "relatedCommands": [
+      "gh-pr-merge",
+      "gh-pr-diff"
+    ]
+  },
+  {
+    "id": "gh-pr-checks",
+    "name": "gh pr checks",
+    "description": "Show CI status checks for a pull request.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--watch",
+        "description": "Watch checks until they finish"
+      },
+      {
+        "flag": "--fail-fast",
+        "description": "With --watch, exit on the first failure"
+      },
+      {
+        "flag": "--required",
+        "description": "Only show required checks"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr checks",
+        "description": "Show checks for the current branch's PR"
+      },
+      {
+        "command": "gh pr checks 123 --watch",
+        "description": "Wait for CI to finish"
+      }
+    ],
+    "relatedCommands": [
+      "gh-pr-merge",
+      "gh-run-view"
+    ]
+  },
+  {
+    "id": "gh-pr-merge",
+    "name": "gh pr merge",
+    "description": "Merge a pull request.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-m, --merge / -s, --squash / -r, --rebase",
+        "description": "Merge strategy"
+      },
+      {
+        "flag": "-d, --delete-branch",
+        "description": "Delete local and remote branch after merge"
+      },
+      {
+        "flag": "--auto",
+        "description": "Merge automatically once requirements are met"
+      },
+      {
+        "flag": "--admin",
+        "description": "Bypass branch protection requirements"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr merge 123 --squash --delete-branch",
+        "description": "Squash-merge and clean up the branch"
+      },
+      {
+        "command": "gh pr merge --auto --squash",
+        "description": "Enable auto-merge for the current PR"
+      }
+    ],
+    "notes": [
+      "--admin bypasses required reviews and checks; use only when your team allows it"
+    ],
+    "relatedCommands": [
+      "gh-pr-checks",
+      "gh-pr-review"
+    ]
+  },
+  {
+    "id": "gh-issue-create",
+    "name": "gh issue create",
+    "description": "Create a new issue.",
+    "category": "Issues",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-t, --title <title>",
+        "description": "Issue title"
+      },
+      {
+        "flag": "-b, --body <text>",
+        "description": "Issue body"
+      },
+      {
+        "flag": "-l, --label <name>",
+        "description": "Add labels"
+      },
+      {
+        "flag": "-a, --assignee <login>",
+        "description": "Assign (@me for yourself)"
+      },
+      {
+        "flag": "-T, --template <name>",
+        "description": "Use an issue template"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Open the web form"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh issue create",
+        "description": "Interactive issue creation"
+      },
+      {
+        "command": "gh issue create -t \"Login fails on Safari\" -b \"Steps to reproduce...\" -l bug",
+        "description": "Create with title, body, and label"
+      },
+      {
+        "command": "gh issue create -a @me -l task -t \"Update docs\"",
+        "description": "Create and self-assign"
+      }
+    ],
+    "relatedCommands": [
+      "gh-issue-list",
+      "gh-issue-view"
+    ]
+  },
+  {
+    "id": "gh-issue-list",
+    "name": "gh issue list",
+    "description": "List issues in the repository.",
+    "category": "Issues",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-s, --state <open|closed|all>",
+        "description": "Filter by state"
+      },
+      {
+        "flag": "-a, --assignee <login>",
+        "description": "Filter by assignee"
+      },
+      {
+        "flag": "-l, --label <name>",
+        "description": "Filter by label"
+      },
+      {
+        "flag": "-S, --search <query>",
+        "description": "Filter with GitHub search syntax"
+      },
+      {
+        "flag": "-L, --limit <n>",
+        "description": "Maximum number to fetch (default 30)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh issue list",
+        "description": "List open issues"
+      },
+      {
+        "command": "gh issue list -a @me",
+        "description": "Issues assigned to you"
+      },
+      {
+        "command": "gh issue list -l bug -s all -L 100",
+        "description": "Up to 100 bugs in any state"
+      }
+    ],
+    "relatedCommands": [
+      "gh-issue-view",
+      "gh-issue-create"
+    ]
+  },
+  {
+    "id": "gh-issue-view",
+    "name": "gh issue view",
+    "description": "Show the details of an issue.",
+    "category": "Issues",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-c, --comments",
+        "description": "Include comments"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Open in the browser"
+      },
+      {
+        "flag": "--json <fields>",
+        "description": "Output JSON with the given fields"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh issue view 42",
+        "description": "View issue #42"
+      },
+      {
+        "command": "gh issue view 42 --comments",
+        "description": "Include the discussion"
+      },
+      {
+        "command": "gh issue develop 42 --checkout",
+        "description": "Create and check out a branch linked to the issue"
+      }
+    ],
+    "relatedCommands": [
+      "gh-issue-close",
+      "gh-issue-list"
+    ]
+  },
+  {
+    "id": "gh-issue-close",
+    "name": "gh issue close",
+    "description": "Close an issue.",
+    "category": "Issues",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-c, --comment <text>",
+        "description": "Leave a closing comment"
+      },
+      {
+        "flag": "-r, --reason <completed|not planned>",
+        "description": "Reason for closing"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh issue close 42",
+        "description": "Close issue #42"
+      },
+      {
+        "command": "gh issue close 42 -r \"not planned\" -c \"Duplicate of #40\"",
+        "description": "Close as not planned with a comment"
+      },
+      {
+        "command": "gh issue reopen 42",
+        "description": "Reopen it"
+      }
+    ],
+    "relatedCommands": [
+      "gh-issue-view"
+    ]
+  },
+  {
+    "id": "gh-run-list",
+    "name": "gh run list",
+    "description": "List recent GitHub Actions workflow runs.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-w, --workflow <name>",
+        "description": "Filter by workflow"
+      },
+      {
+        "flag": "-b, --branch <branch>",
+        "description": "Filter by branch"
+      },
+      {
+        "flag": "-s, --status <status>",
+        "description": "Filter by status, e.g. failure, in_progress"
+      },
+      {
+        "flag": "-L, --limit <n>",
+        "description": "Maximum runs to fetch"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh run list",
+        "description": "Recent runs for the repo"
+      },
+      {
+        "command": "gh run list -w ci.yml -b main",
+        "description": "Runs of one workflow on main"
+      },
+      {
+        "command": "gh run list -s failure -L 5",
+        "description": "Last five failed runs"
+      }
+    ],
+    "relatedCommands": [
+      "gh-run-view",
+      "gh-run-watch"
+    ]
+  },
+  {
+    "id": "gh-run-view",
+    "name": "gh run view",
+    "description": "Show a summary or logs of a workflow run.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--log",
+        "description": "Print full logs"
+      },
+      {
+        "flag": "--log-failed",
+        "description": "Print logs only for failed steps"
+      },
+      {
+        "flag": "-j, --job <id>",
+        "description": "View a specific job"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Open in the browser"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh run view",
+        "description": "Pick a recent run interactively"
+      },
+      {
+        "command": "gh run view 1234567890 --log-failed",
+        "description": "See why a run failed"
+      }
+    ],
+    "relatedCommands": [
+      "gh-run-list",
+      "gh-run-rerun"
+    ]
+  },
+  {
+    "id": "gh-run-watch",
+    "name": "gh run watch",
+    "description": "Watch a workflow run until it completes.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--exit-status",
+        "description": "Exit non-zero if the run fails"
+      },
+      {
+        "flag": "-i, --interval <seconds>",
+        "description": "Refresh interval"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh run watch",
+        "description": "Pick an in-progress run and watch it"
+      },
+      {
+        "command": "gh run watch 1234567890 --exit-status && echo deployed",
+        "description": "Chain a command on success"
+      }
+    ],
+    "relatedCommands": [
+      "gh-run-view",
+      "gh-workflow-run"
+    ]
+  },
+  {
+    "id": "gh-run-rerun",
+    "name": "gh run rerun",
+    "description": "Rerun a workflow run, all jobs or only the failed ones.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--failed",
+        "description": "Rerun only failed jobs"
+      },
+      {
+        "flag": "-j, --job <id>",
+        "description": "Rerun a specific job"
+      },
+      {
+        "flag": "-d, --debug",
+        "description": "Enable debug logging"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh run rerun 1234567890 --failed",
+        "description": "Retry only failed jobs"
+      },
+      {
+        "command": "gh run rerun 1234567890 --debug",
+        "description": "Rerun with debug logs"
+      },
+      {
+        "command": "gh run cancel 1234567890",
+        "description": "Cancel a running workflow"
+      }
+    ],
+    "relatedCommands": [
+      "gh-run-view",
+      "gh-run-list"
+    ]
+  },
+  {
+    "id": "gh-workflow-run",
+    "name": "gh workflow run",
+    "description": "Trigger a workflow that has a workflow_dispatch event.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-r, --ref <branch>",
+        "description": "Branch or tag to run on"
+      },
+      {
+        "flag": "-f, --raw-field <key=value>",
+        "description": "Add a string input"
+      },
+      {
+        "flag": "-F, --field <key=value>",
+        "description": "Add a typed input"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh workflow run deploy.yml",
+        "description": "Trigger on the default branch"
+      },
+      {
+        "command": "gh workflow run deploy.yml -r main -f environment=staging",
+        "description": "Trigger with inputs"
+      }
+    ],
+    "notes": [
+      "The workflow must declare on: workflow_dispatch"
+    ],
+    "relatedCommands": [
+      "gh-workflow-list",
+      "gh-run-watch"
+    ]
+  },
+  {
+    "id": "gh-workflow-list",
+    "name": "gh workflow list",
+    "description": "List the workflows in the repository.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-a, --all",
+        "description": "Include disabled workflows"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh workflow list",
+        "description": "List active workflows"
+      },
+      {
+        "command": "gh workflow disable nightly.yml",
+        "description": "Disable a workflow"
+      },
+      {
+        "command": "gh workflow enable nightly.yml",
+        "description": "Re-enable it"
+      }
+    ],
+    "relatedCommands": [
+      "gh-workflow-run"
+    ]
+  },
+  {
+    "id": "gh-secret-set",
+    "name": "gh secret set",
+    "description": "Create or update a GitHub Actions secret.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-b, --body <value>",
+        "description": "Secret value (otherwise prompted or read from stdin)"
+      },
+      {
+        "flag": "-e, --env <name>",
+        "description": "Set for a deployment environment"
+      },
+      {
+        "flag": "-o, --org <org>",
+        "description": "Set an organization secret"
+      },
+      {
+        "flag": "-f, --env-file <file>",
+        "description": "Load multiple secrets from a dotenv file"
+      },
+      {
+        "flag": "-a, --app <actions|codespaces|dependabot>",
+        "description": "Which secret store to use"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh secret set API_KEY",
+        "description": "Prompt for the value securely"
+      },
+      {
+        "command": "gh secret set API_KEY < api-key.txt",
+        "description": "Read the value from a file"
+      },
+      {
+        "command": "gh secret set -f .env.production",
+        "description": "Import all secrets from a dotenv file"
+      },
+      {
+        "command": "gh secret list",
+        "description": "List secret names (values are never shown)"
+      }
+    ],
+    "notes": [
+      "Passing --body on the command line can leave the secret in shell history; prefer the prompt or stdin"
+    ],
+    "relatedCommands": [
+      "gh-workflow-run"
+    ]
+  },
+  {
+    "id": "gh-release-create",
+    "name": "gh release create",
+    "description": "Create a GitHub release, optionally uploading assets.",
+    "category": "Releases",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--generate-notes",
+        "description": "Auto-generate release notes"
+      },
+      {
+        "flag": "-t, --title <title>",
+        "description": "Release title"
+      },
+      {
+        "flag": "-n, --notes <text>",
+        "description": "Release notes"
+      },
+      {
+        "flag": "-d, --draft",
+        "description": "Save as a draft"
+      },
+      {
+        "flag": "-p, --prerelease",
+        "description": "Mark as a prerelease"
+      },
+      {
+        "flag": "--target <branch>",
+        "description": "Branch or commit for a new tag"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh release create v1.2.0 --generate-notes",
+        "description": "Tag and release with generated notes"
+      },
+      {
+        "command": "gh release create v1.2.0 ./dist/*.tar.gz -t \"v1.2.0\"",
+        "description": "Upload build artifacts"
+      },
+      {
+        "command": "gh release create v2.0.0-rc.1 --prerelease --draft",
+        "description": "Draft a prerelease"
+      }
+    ],
+    "relatedCommands": [
+      "gh-release-list",
+      "gh-release-download"
+    ]
+  },
+  {
+    "id": "gh-release-list",
+    "name": "gh release list",
+    "description": "List releases in the repository.",
+    "category": "Releases",
+    "technologyId": "github-cli",
+    "examples": [
+      {
+        "command": "gh release list",
+        "description": "List releases"
+      },
+      {
+        "command": "gh release view v1.2.0",
+        "description": "View a specific release"
+      }
+    ],
+    "relatedCommands": [
+      "gh-release-create",
+      "gh-release-download"
+    ]
+  },
+  {
+    "id": "gh-release-download",
+    "name": "gh release download",
+    "description": "Download assets from a release.",
+    "category": "Releases",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-p, --pattern <glob>",
+        "description": "Only download matching assets"
+      },
+      {
+        "flag": "-D, --dir <dir>",
+        "description": "Download directory"
+      },
+      {
+        "flag": "-A, --archive <zip|tar.gz>",
+        "description": "Download the source code archive"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh release download v1.2.0",
+        "description": "Download all assets"
+      },
+      {
+        "command": "gh release download -R cli/cli -p \"*macOS*\"",
+        "description": "Download matching assets from the latest release"
+      }
+    ],
+    "relatedCommands": [
+      "gh-release-list"
+    ]
+  },
+  {
+    "id": "gh-api",
+    "name": "gh api",
+    "description": "Make an authenticated request to the GitHub REST or GraphQL API.",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-X, --method <method>",
+        "description": "HTTP method"
+      },
+      {
+        "flag": "-f, --raw-field <key=value>",
+        "description": "Add a string parameter"
+      },
+      {
+        "flag": "-F, --field <key=value>",
+        "description": "Add a typed parameter (@file reads a file)"
+      },
+      {
+        "flag": "--paginate",
+        "description": "Fetch all pages"
+      },
+      {
+        "flag": "-q, --jq <expr>",
+        "description": "Filter output with jq syntax"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh api repos/{owner}/{repo}/pulls --jq '.[].title'",
+        "description": "List PR titles for the current repo"
+      },
+      {
+        "command": "gh api user/repos --paginate --jq '.[].full_name'",
+        "description": "List all your repos"
+      },
+      {
+        "command": "gh api -X POST repos/{owner}/{repo}/issues -f title=\"Bug\" -f body=\"Details\"",
+        "description": "Create an issue via REST"
+      },
+      {
+        "command": "gh api graphql -f query='query { viewer { login } }'",
+        "description": "Run a GraphQL query"
+      }
+    ],
+    "notes": [
+      "{owner} and {repo} placeholders are filled from the current repository"
+    ],
+    "relatedCommands": [
+      "gh-search"
+    ]
+  },
+  {
+    "id": "gh-search",
+    "name": "gh search",
+    "description": "Search GitHub for repos, issues, PRs, code, or commits.",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--owner <owner>",
+        "description": "Limit to an owner"
+      },
+      {
+        "flag": "--language <lang>",
+        "description": "Filter by language"
+      },
+      {
+        "flag": "-L, --limit <n>",
+        "description": "Maximum results"
+      },
+      {
+        "flag": "--json <fields>",
+        "description": "Output JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh search repos \"cli tool\" --language go --sort stars",
+        "description": "Find popular Go CLI repos"
+      },
+      {
+        "command": "gh search prs --author @me --state open",
+        "description": "Your open PRs across GitHub"
+      },
+      {
+        "command": "gh search code \"useEffect\" --owner my-org --extension tsx",
+        "description": "Search code in an organization"
+      }
+    ],
+    "relatedCommands": [
+      "gh-api"
+    ]
+  },
+  {
+    "id": "gh-gist-create",
+    "name": "gh gist create",
+    "description": "Create a gist from files or stdin.",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-p, --public",
+        "description": "Make the gist public (secret by default)"
+      },
+      {
+        "flag": "-d, --desc <text>",
+        "description": "Gist description"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Open the gist after creating"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh gist create script.sh",
+        "description": "Create a secret gist"
+      },
+      {
+        "command": "gh gist create --public -d \"Nginx config\" nginx.conf",
+        "description": "Create a public gist"
+      },
+      {
+        "command": "pbpaste | gh gist create -",
+        "description": "Create a gist from the clipboard"
+      }
+    ],
+    "relatedCommands": [
+      "gh-api"
+    ]
+  },
+  {
+    "id": "gh-codespace",
+    "name": "gh codespace",
+    "description": "Create, connect to, and manage GitHub Codespaces.",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "examples": [
+      {
+        "command": "gh codespace create -R owner/repo",
+        "description": "Create a codespace"
+      },
+      {
+        "command": "gh codespace list",
+        "description": "List your codespaces"
+      },
+      {
+        "command": "gh codespace ssh",
+        "description": "SSH into a codespace"
+      },
+      {
+        "command": "gh codespace code",
+        "description": "Open a codespace in VS Code"
+      }
+    ],
+    "notes": [
+      "Alias: gh cs",
+      "gh codespace delete removes the codespace and any unpushed work in it"
+    ],
+    "relatedCommands": [
+      "gh-repo-clone"
+    ]
+  },
+  {
+    "id": "gh-extension-install",
+    "name": "gh extension install",
+    "description": "Install a gh CLI extension from a repository.",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "examples": [
+      {
+        "command": "gh extension install dlvhdr/gh-dash",
+        "description": "Install the gh-dash dashboard"
+      },
+      {
+        "command": "gh extension list",
+        "description": "List installed extensions"
+      },
+      {
+        "command": "gh extension upgrade --all",
+        "description": "Upgrade all extensions"
+      }
+    ],
+    "notes": [
+      "Extensions run arbitrary code with your gh credentials; only install from sources you trust"
+    ],
+    "relatedCommands": [
+      "gh-api"
+    ]
+  }
+]

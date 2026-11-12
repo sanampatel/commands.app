@@ -1,0 +1,1808 @@
+[
+  {
+    "id": "redis-cli",
+    "name": "redis-cli",
+    "description": "Redis command line interface",
+    "category": "Connection",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "-h",
+        "description": "Server hostname (default 127.0.0.1)"
+      },
+      {
+        "flag": "-p",
+        "description": "Server port (default 6379)"
+      },
+      {
+        "flag": "-a",
+        "description": "Password for authentication (visible in process list and history; prefer REDISCLI_AUTH)"
+      },
+      {
+        "flag": "--user",
+        "description": "ACL username (Redis 6+), used together with -a or REDISCLI_AUTH"
+      },
+      {
+        "flag": "-u",
+        "description": "Connect using a URI, e.g. redis://user:pass@host:6379/0"
+      },
+      {
+        "flag": "-n",
+        "description": "Database number"
+      },
+      {
+        "flag": "--tls",
+        "description": "Connect using TLS"
+      },
+      {
+        "flag": "--scan",
+        "description": "List keys using SCAN (combine with --pattern)"
+      },
+      {
+        "flag": "--pipe",
+        "description": "Transfer raw Redis protocol for mass insertion"
+      },
+      {
+        "flag": "-r / -i",
+        "description": "Repeat a command N times with an interval of i seconds"
+      }
+    ],
+    "examples": [
+      {
+        "command": "redis-cli",
+        "description": "Connect to local Redis"
+      },
+      {
+        "command": "redis-cli -h redis.example.com -p 6379",
+        "description": "Connect to remote Redis"
+      },
+      {
+        "command": "REDISCLI_AUTH='<password>' redis-cli -h redis.example.com",
+        "description": "Authenticate without exposing the password in the process list"
+      },
+      {
+        "command": "redis-cli -u rediss://default:<password>@redis.example.com:6380",
+        "description": "Connect with a URI over TLS (rediss://)"
+      },
+      {
+        "command": "redis-cli -n 1",
+        "description": "Connect to database 1"
+      },
+      {
+        "command": "redis-cli --scan --pattern 'session:*' | head",
+        "description": "List matching keys without blocking the server"
+      },
+      {
+        "command": "redis-cli -r -1 -i 1 INFO clients | grep connected_clients",
+        "description": "Print connected clients every second"
+      }
+    ],
+    "notes": [
+      "Default port is 6379",
+      "Use QUIT or exit to disconnect",
+      "Passing -a on the command line prints a warning because the password is visible to other users; use REDISCLI_AUTH instead"
+    ],
+    "relatedCommands": [
+      "redis-ping",
+      "redis-info",
+      "redis-cli-bigkeys",
+      "redis-cli-latency"
+    ]
+  },
+  {
+    "id": "redis-ping",
+    "name": "PING",
+    "description": "Test Redis server connection",
+    "category": "Connection",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "PING",
+        "description": "Returns PONG if connected"
+      },
+      {
+        "command": "redis-cli PING",
+        "description": "Quick connection test from shell"
+      }
+    ],
+    "notes": [
+      "Returns PONG on success"
+    ],
+    "relatedCommands": [
+      "redis-cli",
+      "redis-info"
+    ]
+  },
+  {
+    "id": "redis-set",
+    "name": "SET",
+    "description": "Set string value for a key",
+    "category": "Strings",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "EX",
+        "description": "Set expiry in seconds"
+      },
+      {
+        "flag": "PX",
+        "description": "Set expiry in milliseconds"
+      },
+      {
+        "flag": "NX",
+        "description": "Only set if key doesn't exist"
+      },
+      {
+        "flag": "XX",
+        "description": "Only set if key exists"
+      },
+      {
+        "flag": "EXAT / PXAT",
+        "description": "Expire at a Unix timestamp in seconds / milliseconds (Redis 6.2+)"
+      },
+      {
+        "flag": "KEEPTTL",
+        "description": "Keep the existing TTL when overwriting (Redis 6.0+)"
+      },
+      {
+        "flag": "GET",
+        "description": "Return the old value stored at key (Redis 6.2+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "SET mykey \"Hello\"",
+        "description": "Set simple string value"
+      },
+      {
+        "command": "SET session:123 \"data\" EX 3600",
+        "description": "Set with 1 hour expiry"
+      },
+      {
+        "command": "SET lock:resource \"1\" NX EX 30",
+        "description": "Create lock with 30s expiry"
+      }
+    ],
+    "notes": [
+      "Overwrites existing value and clears any TTL by default (use KEEPTTL to keep it)",
+      "SET ... NX EX is the preferred way to acquire a simple lock instead of SETNX + EXPIRE"
+    ],
+    "relatedCommands": [
+      "redis-get",
+      "redis-mset",
+      "redis-setnx"
+    ]
+  },
+  {
+    "id": "redis-get",
+    "name": "GET",
+    "description": "Get value of a key",
+    "category": "Strings",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "GET mykey",
+        "description": "Get value of mykey"
+      }
+    ],
+    "notes": [
+      "Returns nil if key doesn't exist"
+    ],
+    "relatedCommands": [
+      "redis-set",
+      "redis-mget"
+    ]
+  },
+  {
+    "id": "redis-setnx",
+    "name": "SETNX",
+    "description": "Set a key only if it does not already exist",
+    "category": "Strings",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SETNX config:initialized \"1\"",
+        "description": "Set only if missing; returns 1 if set, 0 if the key existed"
+      },
+      {
+        "command": "SET lock:order:42 \"worker-1\" NX EX 30",
+        "description": "Preferred modern equivalent with an expiry in a single atomic command"
+      }
+    ],
+    "notes": [
+      "Deprecated since Redis 2.6.12 in favour of SET key value NX",
+      "SETNX cannot set a TTL atomically; a crash between SETNX and EXPIRE leaves a lock forever"
+    ],
+    "relatedCommands": [
+      "redis-set",
+      "redis-expire"
+    ]
+  },
+  {
+    "id": "redis-mset",
+    "name": "MSET",
+    "description": "Set multiple keys to multiple values",
+    "category": "Strings",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "MSET key1 \"val1\" key2 \"val2\" key3 \"val3\"",
+        "description": "Set multiple key-value pairs"
+      }
+    ],
+    "notes": [
+      "Atomic operation - all keys set at once"
+    ],
+    "relatedCommands": [
+      "redis-mget",
+      "redis-set"
+    ]
+  },
+  {
+    "id": "redis-mget",
+    "name": "MGET",
+    "description": "Get values of multiple keys",
+    "category": "Strings",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "MGET key1 key2 key3",
+        "description": "Get multiple values at once"
+      }
+    ],
+    "notes": [
+      "Returns nil for non-existent keys"
+    ],
+    "relatedCommands": [
+      "redis-mset",
+      "redis-get"
+    ]
+  },
+  {
+    "id": "redis-incr",
+    "name": "INCR",
+    "description": "Increment integer value of a key",
+    "category": "Strings",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "INCR counter",
+        "description": "Increment counter by 1"
+      },
+      {
+        "command": "INCRBY counter 5",
+        "description": "Increment counter by 5"
+      },
+      {
+        "command": "INCRBYFLOAT price 0.5",
+        "description": "Increment float value"
+      }
+    ],
+    "notes": [
+      "Creates key with value 0 if doesn't exist",
+      "Atomic operation"
+    ],
+    "relatedCommands": [
+      "redis-decr",
+      "redis-set"
+    ]
+  },
+  {
+    "id": "redis-decr",
+    "name": "DECR",
+    "description": "Decrement integer value of a key",
+    "category": "Strings",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "DECR counter",
+        "description": "Decrement counter by 1"
+      },
+      {
+        "command": "DECRBY counter 5",
+        "description": "Decrement counter by 5"
+      }
+    ],
+    "notes": [
+      "Atomic operation"
+    ],
+    "relatedCommands": [
+      "redis-incr",
+      "redis-set"
+    ]
+  },
+  {
+    "id": "redis-del",
+    "name": "DEL",
+    "description": "Delete one or more keys",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "DEL mykey",
+        "description": "Delete single key"
+      },
+      {
+        "command": "DEL key1 key2 key3",
+        "description": "Delete multiple keys"
+      }
+    ],
+    "notes": [
+      "Returns number of keys deleted",
+      "Deleting a very large key blocks the server; use UNLINK to reclaim memory in the background"
+    ],
+    "relatedCommands": [
+      "redis-unlink",
+      "redis-exists",
+      "redis-keys"
+    ]
+  },
+  {
+    "id": "redis-unlink",
+    "name": "UNLINK",
+    "description": "Delete keys and reclaim their memory asynchronously",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "UNLINK big:hash",
+        "description": "Remove a large key without blocking the server"
+      },
+      {
+        "command": "UNLINK cache:1 cache:2 cache:3",
+        "description": "Remove multiple keys"
+      }
+    ],
+    "notes": [
+      "Removes the key immediately from the keyspace; memory is freed in a background thread",
+      "Prefer over DEL for large keys (Redis 4.0+)",
+      "Set lazyfree-lazy-user-del yes to make DEL behave like UNLINK"
+    ],
+    "relatedCommands": [
+      "redis-del",
+      "redis-memory-usage"
+    ]
+  },
+  {
+    "id": "redis-exists",
+    "name": "EXISTS",
+    "description": "Check if key exists",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "EXISTS mykey",
+        "description": "Check single key"
+      },
+      {
+        "command": "EXISTS key1 key2 key3",
+        "description": "Count how many keys exist"
+      }
+    ],
+    "notes": [
+      "Returns count of existing keys"
+    ],
+    "relatedCommands": [
+      "redis-del",
+      "redis-keys"
+    ]
+  },
+  {
+    "id": "redis-type",
+    "name": "TYPE",
+    "description": "Get the data type stored at a key",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "TYPE user:1",
+        "description": "Returns string, list, set, zset, hash, stream, or none",
+        "output": "hash"
+      }
+    ],
+    "notes": [
+      "Returns 'none' when the key does not exist"
+    ],
+    "relatedCommands": [
+      "redis-exists",
+      "redis-object",
+      "redis-scan"
+    ]
+  },
+  {
+    "id": "redis-expire",
+    "name": "EXPIRE",
+    "description": "Set key expiration time",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "EXPIRE mykey 60",
+        "description": "Expire in 60 seconds"
+      },
+      {
+        "command": "EXPIREAT mykey 1735689600",
+        "description": "Expire at Unix timestamp"
+      },
+      {
+        "command": "PEXPIRE mykey 5000",
+        "description": "Expire in 5000 milliseconds"
+      }
+    ],
+    "notes": [
+      "Use TTL to check remaining time"
+    ],
+    "relatedCommands": [
+      "redis-ttl",
+      "redis-persist"
+    ]
+  },
+  {
+    "id": "redis-ttl",
+    "name": "TTL",
+    "description": "Get time to live for a key",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "TTL mykey",
+        "description": "Get TTL in seconds"
+      },
+      {
+        "command": "PTTL mykey",
+        "description": "Get TTL in milliseconds"
+      }
+    ],
+    "notes": [
+      "-1 means no expiry, -2 means key doesn't exist"
+    ],
+    "relatedCommands": [
+      "redis-expire",
+      "redis-persist"
+    ]
+  },
+  {
+    "id": "redis-persist",
+    "name": "PERSIST",
+    "description": "Remove expiration from key",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "PERSIST mykey",
+        "description": "Make key permanent"
+      }
+    ],
+    "notes": [
+      "Key will no longer expire"
+    ],
+    "relatedCommands": [
+      "redis-expire",
+      "redis-ttl"
+    ]
+  },
+  {
+    "id": "redis-scan",
+    "name": "SCAN",
+    "description": "Incrementally iterate keys",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SCAN 0",
+        "description": "Start scanning from cursor 0"
+      },
+      {
+        "command": "SCAN 0 MATCH user:* COUNT 1000",
+        "description": "Scan keys matching a pattern, examining ~1000 keys per call"
+      },
+      {
+        "command": "SCAN 0 TYPE hash",
+        "description": "Only return keys of a given type (Redis 6.0+)"
+      },
+      {
+        "command": "redis-cli --scan --pattern 'cache:*' | xargs -L 100 redis-cli UNLINK",
+        "description": "Delete keys matching a pattern in batches from the shell"
+      }
+    ],
+    "notes": [
+      "Production-safe alternative to KEYS",
+      "Keep calling with the returned cursor until it returns 0",
+      "MATCH is applied after keys are fetched, so a call can return few or zero keys while the cursor is not finished",
+      "A key may be returned more than once; de-duplicate in your application if needed",
+      "Use HSCAN, SSCAN and ZSCAN to iterate large hashes, sets and sorted sets"
+    ],
+    "relatedCommands": [
+      "redis-keys",
+      "redis-unlink",
+      "redis-type"
+    ]
+  },
+  {
+    "id": "redis-keys",
+    "name": "KEYS",
+    "description": "Find keys matching pattern",
+    "category": "Keys",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "KEYS *",
+        "description": "List all keys (use cautiously)"
+      },
+      {
+        "command": "KEYS user:*",
+        "description": "List keys starting with user:"
+      },
+      {
+        "command": "KEYS *session*",
+        "description": "List keys containing session"
+      }
+    ],
+    "notes": [
+      "AVOID in production - blocks server",
+      "Use SCAN for production workloads"
+    ],
+    "relatedCommands": [
+      "redis-scan",
+      "redis-del",
+      "redis-cli-bigkeys"
+    ]
+  },
+  {
+    "id": "redis-hset",
+    "name": "HSET",
+    "description": "Set hash field value",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HSET user:1 name \"John\"",
+        "description": "Set single field"
+      },
+      {
+        "command": "HSET user:1 name \"John\" email \"john@example.com\" age 30",
+        "description": "Set multiple fields"
+      }
+    ],
+    "notes": [
+      "Creates hash if doesn't exist",
+      "Accepts multiple field/value pairs since Redis 4.0; HMSET is deprecated"
+    ],
+    "relatedCommands": [
+      "redis-hget",
+      "redis-hgetall",
+      "redis-hdel"
+    ]
+  },
+  {
+    "id": "redis-hget",
+    "name": "HGET",
+    "description": "Get hash field value",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HGET user:1 name",
+        "description": "Get name field from user:1"
+      },
+      {
+        "command": "HMGET user:1 name email",
+        "description": "Get multiple fields"
+      }
+    ],
+    "notes": [
+      "Returns nil if field doesn't exist"
+    ],
+    "relatedCommands": [
+      "redis-hset",
+      "redis-hgetall"
+    ]
+  },
+  {
+    "id": "redis-hgetall",
+    "name": "HGETALL",
+    "description": "Get all fields and values in hash",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HGETALL user:1",
+        "description": "Get all user:1 hash data"
+      }
+    ],
+    "notes": [
+      "Returns empty list if key doesn't exist"
+    ],
+    "relatedCommands": [
+      "redis-hset",
+      "redis-hget",
+      "redis-hkeys"
+    ]
+  },
+  {
+    "id": "redis-hkeys",
+    "name": "HKEYS",
+    "description": "Get all field names in a hash",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HKEYS user:1",
+        "description": "List field names of a hash"
+      },
+      {
+        "command": "HVALS user:1",
+        "description": "List only the values"
+      },
+      {
+        "command": "HLEN user:1",
+        "description": "Count fields in a hash"
+      }
+    ],
+    "notes": [
+      "O(N): for very large hashes use HSCAN instead"
+    ],
+    "relatedCommands": [
+      "redis-hgetall",
+      "redis-hget",
+      "redis-hset"
+    ]
+  },
+  {
+    "id": "redis-hdel",
+    "name": "HDEL",
+    "description": "Delete hash fields",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HDEL user:1 email",
+        "description": "Delete email field"
+      },
+      {
+        "command": "HDEL user:1 field1 field2 field3",
+        "description": "Delete multiple fields"
+      }
+    ],
+    "notes": [
+      "Returns number of fields deleted"
+    ],
+    "relatedCommands": [
+      "redis-hset",
+      "redis-hget"
+    ]
+  },
+  {
+    "id": "redis-hincrby",
+    "name": "HINCRBY",
+    "description": "Increment the integer value of a hash field",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HINCRBY user:1 login_count 1",
+        "description": "Increment a counter field"
+      },
+      {
+        "command": "HINCRBYFLOAT product:9 price 2.5",
+        "description": "Increment a float field"
+      }
+    ],
+    "notes": [
+      "Creates the hash and field (starting from 0) if they don't exist",
+      "Atomic operation"
+    ],
+    "relatedCommands": [
+      "redis-hset",
+      "redis-incr"
+    ]
+  },
+  {
+    "id": "redis-lpush",
+    "name": "LPUSH",
+    "description": "Prepend values to list",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "LPUSH mylist \"world\"",
+        "description": "Add to beginning of list"
+      },
+      {
+        "command": "LPUSH mylist \"a\" \"b\" \"c\"",
+        "description": "Add multiple values"
+      }
+    ],
+    "notes": [
+      "Creates list if doesn't exist",
+      "RPUSH adds to end instead"
+    ],
+    "relatedCommands": [
+      "redis-rpush",
+      "redis-lpop",
+      "redis-lrange"
+    ]
+  },
+  {
+    "id": "redis-rpush",
+    "name": "RPUSH",
+    "description": "Append values to list",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "RPUSH mylist \"world\"",
+        "description": "Add to end of list"
+      },
+      {
+        "command": "RPUSH queue task1 task2 task3",
+        "description": "Add multiple items to queue"
+      }
+    ],
+    "notes": [
+      "Creates list if doesn't exist"
+    ],
+    "relatedCommands": [
+      "redis-lpush",
+      "redis-rpop",
+      "redis-lrange"
+    ]
+  },
+  {
+    "id": "redis-lpop",
+    "name": "LPOP",
+    "description": "Remove and get first list element",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "LPOP mylist",
+        "description": "Pop first element"
+      },
+      {
+        "command": "LPOP mylist 3",
+        "description": "Pop first 3 elements"
+      }
+    ],
+    "notes": [
+      "Returns nil if list is empty",
+      "The count argument requires Redis 6.2+"
+    ],
+    "relatedCommands": [
+      "redis-rpop",
+      "redis-lpush",
+      "redis-blpop"
+    ]
+  },
+  {
+    "id": "redis-rpop",
+    "name": "RPOP",
+    "description": "Remove and get last list element",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "RPOP mylist",
+        "description": "Pop last element"
+      }
+    ],
+    "notes": [
+      "Returns nil if list is empty"
+    ],
+    "relatedCommands": [
+      "redis-lpop",
+      "redis-rpush",
+      "redis-brpop"
+    ]
+  },
+  {
+    "id": "redis-blpop",
+    "name": "BLPOP",
+    "description": "Pop the first element of a list, blocking until one is available",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "BLPOP queue:jobs 0",
+        "description": "Wait forever for a job"
+      },
+      {
+        "command": "BLPOP queue:high queue:low 5",
+        "description": "Pop from the first non-empty list, waiting up to 5 seconds"
+      }
+    ],
+    "notes": [
+      "Timeout is in seconds (decimals allowed since Redis 6.0); 0 blocks indefinitely",
+      "Returns the list name and the element, or nil on timeout",
+      "For reliable queues use BLMOVE to move items to a processing list"
+    ],
+    "relatedCommands": [
+      "redis-lpop",
+      "redis-brpop",
+      "redis-rpush"
+    ]
+  },
+  {
+    "id": "redis-brpop",
+    "name": "BRPOP",
+    "description": "Pop the last element of a list, blocking until one is available",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "BRPOP queue:jobs 0",
+        "description": "Wait forever for an element at the tail"
+      },
+      {
+        "command": "BRPOP queue:jobs 10",
+        "description": "Wait up to 10 seconds"
+      }
+    ],
+    "notes": [
+      "LPUSH + BRPOP gives FIFO queue semantics",
+      "Returns nil when the timeout expires"
+    ],
+    "relatedCommands": [
+      "redis-rpop",
+      "redis-blpop",
+      "redis-lpush"
+    ]
+  },
+  {
+    "id": "redis-lrange",
+    "name": "LRANGE",
+    "description": "Get range of list elements",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "LRANGE mylist 0 -1",
+        "description": "Get all elements"
+      },
+      {
+        "command": "LRANGE mylist 0 9",
+        "description": "Get first 10 elements"
+      },
+      {
+        "command": "LRANGE mylist -3 -1",
+        "description": "Get last 3 elements"
+      }
+    ],
+    "notes": [
+      "-1 means last element"
+    ],
+    "relatedCommands": [
+      "redis-lpush",
+      "redis-rpush",
+      "redis-llen"
+    ]
+  },
+  {
+    "id": "redis-llen",
+    "name": "LLEN",
+    "description": "Get list length",
+    "category": "Lists",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "LLEN mylist",
+        "description": "Get number of elements"
+      }
+    ],
+    "notes": [
+      "Returns 0 if key doesn't exist"
+    ],
+    "relatedCommands": [
+      "redis-lrange"
+    ]
+  },
+  {
+    "id": "redis-sadd",
+    "name": "SADD",
+    "description": "Add members to set",
+    "category": "Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SADD myset \"hello\"",
+        "description": "Add single member"
+      },
+      {
+        "command": "SADD tags \"redis\" \"database\" \"nosql\"",
+        "description": "Add multiple members"
+      }
+    ],
+    "notes": [
+      "Ignores duplicate members"
+    ],
+    "relatedCommands": [
+      "redis-smembers",
+      "redis-srem",
+      "redis-sismember"
+    ]
+  },
+  {
+    "id": "redis-srem",
+    "name": "SREM",
+    "description": "Remove members from a set",
+    "category": "Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SREM tags \"nosql\"",
+        "description": "Remove one member"
+      },
+      {
+        "command": "SREM online:users 101 102 103",
+        "description": "Remove several members"
+      }
+    ],
+    "notes": [
+      "Returns the number of members actually removed",
+      "The key is deleted when the set becomes empty"
+    ],
+    "relatedCommands": [
+      "redis-sadd",
+      "redis-smembers"
+    ]
+  },
+  {
+    "id": "redis-smembers",
+    "name": "SMEMBERS",
+    "description": "Get all members in set",
+    "category": "Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SMEMBERS myset",
+        "description": "Get all set members"
+      }
+    ],
+    "notes": [
+      "Order is not guaranteed"
+    ],
+    "relatedCommands": [
+      "redis-sadd",
+      "redis-sismember"
+    ]
+  },
+  {
+    "id": "redis-sismember",
+    "name": "SISMEMBER",
+    "description": "Check if value is member of set",
+    "category": "Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SISMEMBER myset \"hello\"",
+        "description": "Check membership"
+      }
+    ],
+    "notes": [
+      "Returns 1 if member, 0 if not"
+    ],
+    "relatedCommands": [
+      "redis-sadd",
+      "redis-smembers"
+    ]
+  },
+  {
+    "id": "redis-sinter",
+    "name": "SINTER",
+    "description": "Intersect multiple sets",
+    "category": "Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SINTER set1 set2",
+        "description": "Get common members"
+      },
+      {
+        "command": "SINTER tags:user1 tags:user2 tags:user3",
+        "description": "Find common tags"
+      }
+    ],
+    "notes": [
+      "Returns members present in all sets"
+    ],
+    "relatedCommands": [
+      "redis-sunion",
+      "redis-sdiff"
+    ]
+  },
+  {
+    "id": "redis-sunion",
+    "name": "SUNION",
+    "description": "Union multiple sets",
+    "category": "Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SUNION set1 set2",
+        "description": "Combine all members"
+      }
+    ],
+    "notes": [
+      "Returns all members from all sets"
+    ],
+    "relatedCommands": [
+      "redis-sinter",
+      "redis-sdiff"
+    ]
+  },
+  {
+    "id": "redis-sdiff",
+    "name": "SDIFF",
+    "description": "Get members of the first set that are not in the other sets",
+    "category": "Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SDIFF all:users active:users",
+        "description": "Find users who are not active"
+      },
+      {
+        "command": "SDIFFSTORE inactive:users all:users active:users",
+        "description": "Store the difference in a new key"
+      }
+    ],
+    "notes": [
+      "Order of keys matters: the result is the first set minus all others"
+    ],
+    "relatedCommands": [
+      "redis-sinter",
+      "redis-sunion"
+    ]
+  },
+  {
+    "id": "redis-zadd",
+    "name": "ZADD",
+    "description": "Add members to sorted set with scores",
+    "category": "Sorted Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "ZADD leaderboard 100 \"player1\"",
+        "description": "Add player with score"
+      },
+      {
+        "command": "ZADD leaderboard 100 \"p1\" 200 \"p2\" 150 \"p3\"",
+        "description": "Add multiple members"
+      },
+      {
+        "command": "ZADD leaderboard GT 300 \"p1\"",
+        "description": "Update score only if the new score is greater (Redis 6.2+)"
+      },
+      {
+        "command": "ZINCRBY leaderboard 10 \"p1\"",
+        "description": "Increment a member's score"
+      }
+    ],
+    "notes": [
+      "Score determines sort order",
+      "Options: NX (only add), XX (only update), GT/LT (only update if greater/less), CH (return number changed)"
+    ],
+    "relatedCommands": [
+      "redis-zrange",
+      "redis-zrank",
+      "redis-zscore"
+    ]
+  },
+  {
+    "id": "redis-zrange",
+    "name": "ZRANGE",
+    "description": "Get range of sorted set members",
+    "category": "Sorted Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "ZRANGE leaderboard 0 -1",
+        "description": "Get all members (lowest to highest score)"
+      },
+      {
+        "command": "ZRANGE leaderboard 0 9 REV WITHSCORES",
+        "description": "Get top 10 (highest scores first) with scores"
+      },
+      {
+        "command": "ZRANGE leaderboard 100 200 BYSCORE",
+        "description": "Get members with scores between 100 and 200"
+      },
+      {
+        "command": "ZRANGE leaderboard (100 +inf BYSCORE LIMIT 0 10",
+        "description": "First 10 members with score greater than 100"
+      }
+    ],
+    "notes": [
+      "REV, BYSCORE, BYLEX and LIMIT require Redis 6.2+ (they replace ZREVRANGE and ZRANGEBYSCORE)",
+      "( makes a score bound exclusive; -inf and +inf are open bounds"
+    ],
+    "relatedCommands": [
+      "redis-zadd",
+      "redis-zrank",
+      "redis-zscore"
+    ]
+  },
+  {
+    "id": "redis-zscore",
+    "name": "ZSCORE",
+    "description": "Get the score of a member in a sorted set",
+    "category": "Sorted Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "ZSCORE leaderboard \"player1\"",
+        "description": "Get a player's score",
+        "output": "\"100\""
+      },
+      {
+        "command": "ZMSCORE leaderboard \"p1\" \"p2\"",
+        "description": "Get several scores at once (Redis 6.2+)"
+      }
+    ],
+    "notes": [
+      "Returns nil if the member or key does not exist"
+    ],
+    "relatedCommands": [
+      "redis-zadd",
+      "redis-zrank",
+      "redis-zrange"
+    ]
+  },
+  {
+    "id": "redis-zrank",
+    "name": "ZRANK",
+    "description": "Get rank of member in sorted set",
+    "category": "Sorted Sets",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "ZRANK leaderboard \"player1\"",
+        "description": "Get rank (0-based)"
+      },
+      {
+        "command": "ZREVRANK leaderboard \"player1\"",
+        "description": "Get rank from highest"
+      }
+    ],
+    "notes": [
+      "Rank is 0-based"
+    ],
+    "relatedCommands": [
+      "redis-zadd",
+      "redis-zscore"
+    ]
+  },
+  {
+    "id": "redis-multi",
+    "name": "MULTI / EXEC",
+    "description": "Run a group of commands atomically as a transaction",
+    "category": "Transactions",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "MULTI\nINCR stock:42\nLPUSH orders:recent 42\nEXEC",
+        "description": "Queue commands and execute them atomically"
+      },
+      {
+        "command": "DISCARD",
+        "description": "Abort a transaction started with MULTI"
+      }
+    ],
+    "notes": [
+      "Commands between MULTI and EXEC are queued and run without interleaving from other clients",
+      "There is no rollback: if one command fails at runtime, the others still run",
+      "Use WATCH for optimistic locking, or a Lua script / FUNCTION for logic that depends on read values"
+    ],
+    "relatedCommands": [
+      "redis-watch"
+    ]
+  },
+  {
+    "id": "redis-watch",
+    "name": "WATCH",
+    "description": "Watch keys so a following transaction aborts if they change",
+    "category": "Transactions",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "WATCH balance:alice\nGET balance:alice\nMULTI\nDECRBY balance:alice 50\nEXEC",
+        "description": "Check-and-set: EXEC returns nil if balance:alice changed after WATCH"
+      },
+      {
+        "command": "UNWATCH",
+        "description": "Stop watching all keys"
+      }
+    ],
+    "notes": [
+      "If EXEC returns nil (null array) the transaction did not run; retry the whole read-modify-write",
+      "WATCH is cleared after EXEC or DISCARD"
+    ],
+    "relatedCommands": [
+      "redis-multi"
+    ]
+  },
+  {
+    "id": "redis-pub",
+    "name": "PUBLISH",
+    "description": "Publish message to channel",
+    "category": "Pub/Sub & Streams",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "PUBLISH news \"Breaking news!\"",
+        "description": "Publish to news channel"
+      }
+    ],
+    "notes": [
+      "Returns number of subscribers that received message",
+      "Messages are fire-and-forget: subscribers that are offline miss them; use Streams for durable messaging"
+    ],
+    "relatedCommands": [
+      "redis-sub",
+      "redis-xadd"
+    ]
+  },
+  {
+    "id": "redis-sub",
+    "name": "SUBSCRIBE",
+    "description": "Subscribe to channels",
+    "category": "Pub/Sub & Streams",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SUBSCRIBE news",
+        "description": "Subscribe to news channel"
+      },
+      {
+        "command": "PSUBSCRIBE news:*",
+        "description": "Subscribe to pattern"
+      }
+    ],
+    "notes": [
+      "Blocks waiting for messages",
+      "Use UNSUBSCRIBE to stop"
+    ],
+    "relatedCommands": [
+      "redis-pub"
+    ]
+  },
+  {
+    "id": "redis-xadd",
+    "name": "XADD",
+    "description": "Append an entry to a stream",
+    "category": "Pub/Sub & Streams",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "*",
+        "description": "Let Redis generate the entry ID"
+      },
+      {
+        "flag": "MAXLEN ~ N",
+        "description": "Approximately cap the stream length"
+      },
+      {
+        "flag": "NOMKSTREAM",
+        "description": "Do not create the stream if it doesn't exist"
+      }
+    ],
+    "examples": [
+      {
+        "command": "XADD events * type \"signup\" user_id 42",
+        "description": "Add an entry with an auto-generated ID",
+        "output": "\"1767225600000-0\""
+      },
+      {
+        "command": "XADD events MAXLEN ~ 10000 * type \"click\"",
+        "description": "Add while trimming to roughly 10,000 entries"
+      },
+      {
+        "command": "XLEN events",
+        "description": "Count entries in a stream"
+      }
+    ],
+    "notes": [
+      "IDs are <milliseconds>-<sequence>",
+      "Without trimming (MAXLEN/MINID or XTRIM) streams grow forever"
+    ],
+    "relatedCommands": [
+      "redis-xread",
+      "redis-pub"
+    ]
+  },
+  {
+    "id": "redis-xread",
+    "name": "XREAD / XREADGROUP",
+    "description": "Read entries from one or more streams, optionally via a consumer group",
+    "category": "Pub/Sub & Streams",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "XREAD COUNT 10 STREAMS events 0",
+        "description": "Read the first 10 entries from the start"
+      },
+      {
+        "command": "XREAD BLOCK 5000 STREAMS events $",
+        "description": "Wait up to 5 seconds for new entries only"
+      },
+      {
+        "command": "XGROUP CREATE events workers $ MKSTREAM",
+        "description": "Create a consumer group"
+      },
+      {
+        "command": "XREADGROUP GROUP workers worker-1 COUNT 10 BLOCK 2000 STREAMS events >",
+        "description": "Read new messages for this consumer"
+      },
+      {
+        "command": "XACK events workers 1767225600000-0",
+        "description": "Acknowledge a processed message"
+      }
+    ],
+    "notes": [
+      "$ means only entries added after the call; > (with groups) means never-delivered messages",
+      "Unacknowledged messages stay in the pending list; inspect with XPENDING and reclaim with XAUTOCLAIM"
+    ],
+    "relatedCommands": [
+      "redis-xadd",
+      "redis-sub"
+    ]
+  },
+  {
+    "id": "redis-info",
+    "name": "INFO",
+    "description": "Get Redis server information",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "INFO",
+        "description": "Get all server info"
+      },
+      {
+        "command": "INFO server",
+        "description": "Get server section only"
+      },
+      {
+        "command": "INFO memory",
+        "description": "Get memory statistics"
+      },
+      {
+        "command": "INFO replication",
+        "description": "Get replication info"
+      }
+    ],
+    "notes": [
+      "Sections: server, clients, memory, persistence, stats, replication, cpu, cluster, keyspace"
+    ],
+    "relatedCommands": [
+      "redis-cli",
+      "redis-dbsize",
+      "redis-config-get",
+      "redis-slowlog"
+    ]
+  },
+  {
+    "id": "redis-dbsize",
+    "name": "DBSIZE",
+    "description": "Get number of keys in current database",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "DBSIZE",
+        "description": "Count keys"
+      }
+    ],
+    "notes": [
+      "Fast O(1) operation"
+    ],
+    "relatedCommands": [
+      "redis-info",
+      "redis-keys"
+    ]
+  },
+  {
+    "id": "redis-config-get",
+    "name": "CONFIG GET",
+    "description": "Read server configuration parameters",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "CONFIG GET maxmemory",
+        "description": "Get the memory limit"
+      },
+      {
+        "command": "CONFIG GET maxmemory*",
+        "description": "Get all parameters matching a pattern"
+      },
+      {
+        "command": "CONFIG GET save",
+        "description": "Show RDB snapshot rules"
+      }
+    ],
+    "notes": [
+      "Managed services (ElastiCache, Memorystore, etc.) often disable or restrict CONFIG"
+    ],
+    "relatedCommands": [
+      "redis-config-set",
+      "redis-info"
+    ]
+  },
+  {
+    "id": "redis-config-set",
+    "name": "CONFIG SET",
+    "description": "Change server configuration at runtime",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "CONFIG SET maxmemory 2gb",
+        "description": "Set the memory limit"
+      },
+      {
+        "command": "CONFIG SET maxmemory-policy allkeys-lru",
+        "description": "Evict least recently used keys when full"
+      },
+      {
+        "command": "CONFIG SET slowlog-log-slower-than 10000",
+        "description": "Log commands slower than 10 ms"
+      },
+      {
+        "command": "CONFIG REWRITE",
+        "description": "Persist runtime changes to redis.conf"
+      }
+    ],
+    "notes": [
+      "Changes are lost on restart unless you run CONFIG REWRITE or edit redis.conf",
+      "Be careful on production servers: some settings (e.g. maxmemory) take effect immediately"
+    ],
+    "relatedCommands": [
+      "redis-config-get",
+      "redis-slowlog"
+    ]
+  },
+  {
+    "id": "redis-client-list",
+    "name": "CLIENT LIST",
+    "description": "List connected clients and their state",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "CLIENT LIST",
+        "description": "Show all connections with address, age, idle time and last command"
+      },
+      {
+        "command": "CLIENT LIST TYPE pubsub",
+        "description": "List only Pub/Sub clients"
+      },
+      {
+        "command": "CLIENT KILL ADDR 10.0.0.5:52344",
+        "description": "Disconnect a specific client"
+      },
+      {
+        "command": "CLIENT SETNAME worker-1",
+        "description": "Name the current connection so it is easy to identify"
+      }
+    ],
+    "notes": [
+      "Useful for spotting connection leaks: check 'age' and 'idle' columns",
+      "INFO clients gives aggregate counts"
+    ],
+    "relatedCommands": [
+      "redis-info",
+      "redis-slowlog"
+    ]
+  },
+  {
+    "id": "redis-slowlog",
+    "name": "SLOWLOG GET",
+    "description": "Show recent commands that exceeded the slow-log threshold",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SLOWLOG GET 10",
+        "description": "Show the 10 most recent slow commands"
+      },
+      {
+        "command": "SLOWLOG LEN",
+        "description": "Count entries in the slow log"
+      },
+      {
+        "command": "SLOWLOG RESET",
+        "description": "Clear the slow log"
+      }
+    ],
+    "notes": [
+      "Threshold is slowlog-log-slower-than in microseconds (default 10000 = 10 ms)",
+      "Execution time excludes network I/O, so slow clients won't show up here"
+    ],
+    "relatedCommands": [
+      "redis-config-set",
+      "redis-cli-latency",
+      "redis-client-list"
+    ]
+  },
+  {
+    "id": "redis-memory-usage",
+    "name": "MEMORY USAGE",
+    "description": "Estimate how many bytes a key and its value use",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "MEMORY USAGE user:1",
+        "description": "Show memory used by a key in bytes",
+        "output": "(integer) 72"
+      },
+      {
+        "command": "MEMORY USAGE big:zset SAMPLES 0",
+        "description": "Measure all elements of a nested type exactly (slower)"
+      },
+      {
+        "command": "MEMORY STATS",
+        "description": "Detailed server memory breakdown"
+      },
+      {
+        "command": "MEMORY DOCTOR",
+        "description": "Get human-readable memory advice"
+      }
+    ],
+    "notes": [
+      "For aggregates it samples 5 elements by default; SAMPLES 0 checks all of them"
+    ],
+    "relatedCommands": [
+      "redis-object",
+      "redis-cli-bigkeys",
+      "redis-unlink"
+    ]
+  },
+  {
+    "id": "redis-object",
+    "name": "OBJECT",
+    "description": "Inspect the internal encoding and access stats of a key",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "OBJECT ENCODING user:1",
+        "description": "Show internal encoding, e.g. listpack, hashtable, int, embstr",
+        "output": "\"listpack\""
+      },
+      {
+        "command": "OBJECT IDLETIME session:abc",
+        "description": "Seconds since the key was last accessed (LRU policies)"
+      },
+      {
+        "command": "OBJECT FREQ session:abc",
+        "description": "Access frequency counter (only with an LFU maxmemory-policy)"
+      }
+    ],
+    "relatedCommands": [
+      "redis-memory-usage",
+      "redis-type"
+    ]
+  },
+  {
+    "id": "redis-cli-bigkeys",
+    "name": "redis-cli --bigkeys",
+    "description": "Scan the keyspace to find the largest key of each type",
+    "category": "Server",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "--bigkeys",
+        "description": "Report the biggest key per type by element count"
+      },
+      {
+        "flag": "--memkeys",
+        "description": "Report the biggest keys by memory usage (newer redis-cli versions)"
+      },
+      {
+        "flag": "-i secs",
+        "description": "Sleep between SCAN batches to reduce load"
+      }
+    ],
+    "examples": [
+      {
+        "command": "redis-cli --bigkeys",
+        "description": "Find the largest key of each type"
+      },
+      {
+        "command": "redis-cli --memkeys",
+        "description": "Find keys using the most memory"
+      },
+      {
+        "command": "redis-cli --bigkeys -i 0.1",
+        "description": "Throttle the scan on a busy server"
+      }
+    ],
+    "notes": [
+      "Uses SCAN, so it is safe to run on production but adds load; run against a replica if possible"
+    ],
+    "relatedCommands": [
+      "redis-cli",
+      "redis-memory-usage",
+      "redis-scan"
+    ]
+  },
+  {
+    "id": "redis-cli-latency",
+    "name": "redis-cli --latency",
+    "description": "Measure round-trip latency to the Redis server",
+    "category": "Server",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "--latency",
+        "description": "Continuously sample latency (min/max/avg in ms)"
+      },
+      {
+        "flag": "--latency-history",
+        "description": "Print a new sample line every 15 seconds (change with -i)"
+      },
+      {
+        "flag": "--latency-dist",
+        "description": "Show a latency distribution spectrum"
+      },
+      {
+        "flag": "--intrinsic-latency secs",
+        "description": "Measure the host's own latency (run on the Redis server)"
+      },
+      {
+        "flag": "--stat",
+        "description": "Rolling stats: keys, memory, clients, requests"
+      }
+    ],
+    "examples": [
+      {
+        "command": "redis-cli -h redis.example.com --latency",
+        "description": "Measure latency to a remote server"
+      },
+      {
+        "command": "redis-cli --latency-history -i 5",
+        "description": "Print latency stats every 5 seconds"
+      },
+      {
+        "command": "redis-cli --intrinsic-latency 30",
+        "description": "Check host/VM baseline latency for 30 seconds"
+      },
+      {
+        "command": "redis-cli --stat",
+        "description": "Watch live server stats"
+      }
+    ],
+    "notes": [
+      "Press Ctrl+C to stop",
+      "Use LATENCY DOCTOR inside redis-cli for server-side latency analysis (requires latency-monitor-threshold)"
+    ],
+    "relatedCommands": [
+      "redis-cli",
+      "redis-slowlog",
+      "redis-ping"
+    ]
+  },
+  {
+    "id": "redis-flushdb",
+    "name": "FLUSHDB",
+    "description": "Delete all keys in current database",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "FLUSHDB",
+        "description": "Clear current database"
+      },
+      {
+        "command": "FLUSHDB ASYNC",
+        "description": "Clear asynchronously"
+      }
+    ],
+    "notes": [
+      "WARNING: irreversible - deletes every key in the selected database",
+      "Often disabled or renamed in production via ACLs"
+    ],
+    "relatedCommands": [
+      "redis-flushall",
+      "redis-dbsize"
+    ]
+  },
+  {
+    "id": "redis-flushall",
+    "name": "FLUSHALL",
+    "description": "Delete all keys in all databases",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "FLUSHALL",
+        "description": "Clear all databases"
+      },
+      {
+        "command": "FLUSHALL ASYNC",
+        "description": "Clear all databases in the background"
+      }
+    ],
+    "notes": [
+      "WARNING: irreversible - clears ALL data in ALL databases",
+      "Restrict it with ACLs (e.g. -@dangerous) in production"
+    ],
+    "relatedCommands": [
+      "redis-flushdb"
+    ]
+  },
+  {
+    "id": "redis-save",
+    "name": "SAVE",
+    "description": "Synchronously save dataset to disk",
+    "category": "Persistence",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "SAVE",
+        "description": "Blocking save"
+      },
+      {
+        "command": "BGSAVE",
+        "description": "Background save"
+      }
+    ],
+    "notes": [
+      "SAVE blocks all clients until the snapshot is written",
+      "Use BGSAVE in production"
+    ],
+    "relatedCommands": [
+      "redis-bgsave",
+      "redis-lastsave"
+    ]
+  },
+  {
+    "id": "redis-bgsave",
+    "name": "BGSAVE",
+    "description": "Asynchronously save dataset to disk",
+    "category": "Persistence",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "BGSAVE",
+        "description": "Start background save"
+      }
+    ],
+    "notes": [
+      "Non-blocking operation: forks a child process to write the RDB snapshot",
+      "Forking a large dataset can briefly use extra memory",
+      "Check completion with LASTSAVE or INFO persistence"
+    ],
+    "relatedCommands": [
+      "redis-save",
+      "redis-lastsave"
+    ]
+  },
+  {
+    "id": "redis-lastsave",
+    "name": "LASTSAVE",
+    "description": "Get the Unix time of the last successful RDB save",
+    "category": "Persistence",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "LASTSAVE",
+        "description": "Get the timestamp of the last successful save",
+        "output": "(integer) 1767225600"
+      },
+      {
+        "command": "INFO persistence",
+        "description": "See rdb_last_bgsave_status and AOF status in more detail"
+      }
+    ],
+    "notes": [
+      "Poll LASTSAVE after BGSAVE to see when the snapshot has finished"
+    ],
+    "relatedCommands": [
+      "redis-bgsave",
+      "redis-save"
+    ]
+  }
+]

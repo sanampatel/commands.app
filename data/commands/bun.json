@@ -1,0 +1,702 @@
+[
+  {
+    "id": "bun-init",
+    "name": "bun init",
+    "description": "Scaffold a new Bun project in the current directory",
+    "category": "Project Setup",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "-y, --yes",
+        "description": "Accept all defaults without prompting"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun init",
+        "description": "Interactively create package.json, tsconfig.json, and an entry file"
+      },
+      {
+        "command": "bun init -y",
+        "description": "Create a project with defaults"
+      }
+    ],
+    "relatedCommands": [
+      "bun-create",
+      "bun-install"
+    ]
+  },
+  {
+    "id": "bun-create",
+    "name": "bun create",
+    "description": "Create a new project from a template or create-* package",
+    "category": "Project Setup",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun create vite my-app",
+        "description": "Scaffold with create-vite"
+      },
+      {
+        "command": "bun create next-app my-app",
+        "description": "Scaffold a Next.js app via create-next-app"
+      },
+      {
+        "command": "bun create <github-user>/<repo> my-app",
+        "description": "Create a project from a GitHub repository template"
+      }
+    ],
+    "notes": [
+      "bun create <name> runs the create-<name> package from npm, like npm create"
+    ],
+    "relatedCommands": [
+      "bun-init",
+      "bunx"
+    ]
+  },
+  {
+    "id": "bun-install",
+    "name": "bun install",
+    "description": "Install all dependencies from package.json",
+    "category": "Packages",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--frozen-lockfile",
+        "description": "Fail if the lockfile needs changes (CI)"
+      },
+      {
+        "flag": "-p, --production",
+        "description": "Skip devDependencies"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Show what would be installed"
+      },
+      {
+        "flag": "-f, --force",
+        "description": "Re-fetch and reinstall all dependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun install",
+        "description": "Install dependencies"
+      },
+      {
+        "command": "bun install --frozen-lockfile",
+        "description": "Reproducible install in CI"
+      },
+      {
+        "command": "bun install --production",
+        "description": "Install only production dependencies"
+      }
+    ],
+    "notes": [
+      "Bun 1.2+ writes a text lockfile, bun.lock; older projects may have the binary bun.lockb",
+      "Dependency lifecycle scripts are not run unless the package is listed in trustedDependencies"
+    ],
+    "relatedCommands": [
+      "bun-add",
+      "bun-pm"
+    ]
+  },
+  {
+    "id": "bun-add",
+    "name": "bun add",
+    "description": "Add a dependency to package.json and install it",
+    "category": "Packages",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "-d, --dev",
+        "description": "Add as a devDependency"
+      },
+      {
+        "flag": "-E, --exact",
+        "description": "Pin the exact version"
+      },
+      {
+        "flag": "--optional",
+        "description": "Add as an optionalDependency"
+      },
+      {
+        "flag": "--peer",
+        "description": "Add as a peerDependency"
+      },
+      {
+        "flag": "-g, --global",
+        "description": "Install globally"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun add zod",
+        "description": "Add a dependency"
+      },
+      {
+        "command": "bun add -d typescript @types/bun",
+        "description": "Add dev dependencies"
+      },
+      {
+        "command": "bun add react@19 --exact",
+        "description": "Add a specific version, pinned"
+      },
+      {
+        "command": "bun add -g serve",
+        "description": "Install a CLI globally"
+      }
+    ],
+    "relatedCommands": [
+      "bun-remove",
+      "bun-install",
+      "bun-update"
+    ]
+  },
+  {
+    "id": "bun-remove",
+    "name": "bun remove",
+    "description": "Remove a dependency from package.json",
+    "category": "Packages",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun remove lodash",
+        "description": "Remove a dependency"
+      },
+      {
+        "command": "bun remove -g serve",
+        "description": "Remove a global package"
+      }
+    ],
+    "relatedCommands": [
+      "bun-add"
+    ]
+  },
+  {
+    "id": "bun-update",
+    "name": "bun update",
+    "description": "Update dependencies to newer versions",
+    "category": "Packages",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--latest",
+        "description": "Ignore semver ranges and update to the latest versions"
+      },
+      {
+        "flag": "-i, --interactive",
+        "description": "Pick which packages to update interactively"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun update",
+        "description": "Update all dependencies within their semver ranges"
+      },
+      {
+        "command": "bun update react",
+        "description": "Update a single package"
+      },
+      {
+        "command": "bun update --latest",
+        "description": "Update everything to the latest version, rewriting ranges"
+      },
+      {
+        "command": "bun update -i",
+        "description": "Choose packages to update interactively"
+      }
+    ],
+    "notes": [
+      "--latest can pull in breaking major versions; run your tests afterwards"
+    ],
+    "relatedCommands": [
+      "bun-outdated",
+      "bun-add"
+    ]
+  },
+  {
+    "id": "bun-outdated",
+    "name": "bun outdated",
+    "description": "List dependencies that have newer versions available",
+    "category": "Packages",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun outdated",
+        "description": "Show current, update, and latest versions"
+      },
+      {
+        "command": "bun outdated react",
+        "description": "Check a specific package"
+      }
+    ],
+    "relatedCommands": [
+      "bun-update"
+    ]
+  },
+  {
+    "id": "bun-audit",
+    "name": "bun audit",
+    "description": "Check installed packages for known security vulnerabilities",
+    "category": "Packages",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun audit",
+        "description": "Report vulnerable dependencies"
+      },
+      {
+        "command": "bun audit --json",
+        "description": "Output the report as JSON"
+      }
+    ],
+    "relatedCommands": [
+      "bun-outdated",
+      "bun-update"
+    ]
+  },
+  {
+    "id": "bun-pm",
+    "name": "bun pm",
+    "description": "Package manager utilities for inspecting and maintaining installs",
+    "category": "Packages",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun pm ls",
+        "description": "List installed top-level dependencies"
+      },
+      {
+        "command": "bun pm ls --all",
+        "description": "List the full dependency tree"
+      },
+      {
+        "command": "bun pm cache rm",
+        "description": "Clear the global package cache"
+      },
+      {
+        "command": "bun pm untrusted",
+        "description": "List packages whose lifecycle scripts were blocked"
+      },
+      {
+        "command": "bun pm trust <package>",
+        "description": "Allow a package's postinstall scripts and run them"
+      },
+      {
+        "command": "bun pm pack",
+        "description": "Create a tarball of the current package"
+      }
+    ],
+    "relatedCommands": [
+      "bun-install"
+    ]
+  },
+  {
+    "id": "bun-link",
+    "name": "bun link",
+    "description": "Link a local package for development",
+    "category": "Packages",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun link",
+        "description": "Register the current package as linkable (run in the library folder)"
+      },
+      {
+        "command": "bun link my-lib",
+        "description": "Use the linked local copy of my-lib in this project"
+      },
+      {
+        "command": "bun unlink",
+        "description": "Unregister the current package"
+      }
+    ],
+    "relatedCommands": [
+      "bun-add"
+    ]
+  },
+  {
+    "id": "bun-publish",
+    "name": "bun publish",
+    "description": "Publish the package to the npm registry",
+    "category": "Packages",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--dry-run",
+        "description": "Do everything except upload"
+      },
+      {
+        "flag": "--access",
+        "description": "Set public or restricted access"
+      },
+      {
+        "flag": "--tag",
+        "description": "Publish under a dist-tag"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun publish --dry-run",
+        "description": "Preview what would be published"
+      },
+      {
+        "command": "bun publish --access public",
+        "description": "Publish a scoped package publicly"
+      }
+    ],
+    "notes": [
+      "Published versions cannot be overwritten on npm; bump the version first"
+    ],
+    "relatedCommands": [
+      "bun-pm"
+    ]
+  },
+  {
+    "id": "bun-patch",
+    "name": "bun patch",
+    "description": "Persistently patch a package in node_modules",
+    "category": "Packages",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun patch lodash",
+        "description": "Prepare lodash in node_modules for editing"
+      },
+      {
+        "command": "bun patch --commit node_modules/lodash",
+        "description": "Generate a .patch file in patches/ and register it in package.json"
+      }
+    ],
+    "notes": [
+      "The patch is re-applied on every bun install via patchedDependencies"
+    ],
+    "relatedCommands": [
+      "bun-install"
+    ]
+  },
+  {
+    "id": "bun-run",
+    "name": "bun run",
+    "description": "Run a package.json script or a JavaScript/TypeScript file",
+    "category": "Running Code",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--watch",
+        "description": "Restart the process when files change"
+      },
+      {
+        "flag": "--hot",
+        "description": "Hot-reload code in place without restarting the process"
+      },
+      {
+        "flag": "--bun",
+        "description": "Force scripts with a node shebang to run with Bun"
+      },
+      {
+        "flag": "--env-file",
+        "description": "Load environment variables from a specific file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun run dev",
+        "description": "Run the dev script from package.json"
+      },
+      {
+        "command": "bun index.ts",
+        "description": "Run a TypeScript file directly (run is optional)"
+      },
+      {
+        "command": "bun --watch index.ts",
+        "description": "Restart on file changes"
+      },
+      {
+        "command": "bun --hot server.ts",
+        "description": "Hot reload a server while keeping state"
+      },
+      {
+        "command": "bun --env-file=.env.staging run start",
+        "description": "Run with a specific env file"
+      }
+    ],
+    "notes": [
+      "Bun loads .env, .env.local and .env.<NODE_ENV> automatically",
+      "Place runtime flags like --watch right after bun, before the file or script name"
+    ],
+    "relatedCommands": [
+      "bunx",
+      "bun-test"
+    ]
+  },
+  {
+    "id": "bunx",
+    "name": "bunx",
+    "description": "Run a package's binary without installing it (bun x)",
+    "category": "Running Code",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--bun",
+        "description": "Force the binary to run with Bun instead of Node"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bunx prisma migrate dev",
+        "description": "Run a CLI from a package"
+      },
+      {
+        "command": "bunx --bun vite",
+        "description": "Run Vite with the Bun runtime"
+      },
+      {
+        "command": "bun x cowsay hello",
+        "description": "Same as bunx"
+      }
+    ],
+    "notes": [
+      "bunx is an alias for bun x; uses the local node_modules/.bin version if present"
+    ],
+    "relatedCommands": [
+      "bun-run",
+      "bun-create"
+    ]
+  },
+  {
+    "id": "bun-filter",
+    "name": "bun run --filter",
+    "description": "Run a script across matching workspace packages in a monorepo",
+    "category": "Running Code",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun run --filter '*' build",
+        "description": "Run the build script in every workspace package"
+      },
+      {
+        "command": "bun run --filter 'api' dev",
+        "description": "Run dev in the package named api"
+      },
+      {
+        "command": "bun run --filter './packages/*' test",
+        "description": "Filter packages by path"
+      },
+      {
+        "command": "bun install --filter 'api'",
+        "description": "Install dependencies for one workspace package only"
+      }
+    ],
+    "notes": [
+      "Workspaces are declared in the root package.json \"workspaces\" field"
+    ],
+    "relatedCommands": [
+      "bun-run",
+      "bun-install"
+    ]
+  },
+  {
+    "id": "bun-inspect",
+    "name": "bun --inspect",
+    "description": "Run code with the debugger enabled",
+    "category": "Running Code",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--inspect",
+        "description": "Enable the debugger"
+      },
+      {
+        "flag": "--inspect-brk",
+        "description": "Enable the debugger and break on the first line"
+      },
+      {
+        "flag": "--inspect-wait",
+        "description": "Enable the debugger and wait for a client to attach before running"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun --inspect server.ts",
+        "description": "Start with the debugger; open the printed debug.bun.sh URL"
+      },
+      {
+        "command": "bun --inspect-brk index.ts",
+        "description": "Pause on the first line until a debugger attaches"
+      }
+    ],
+    "relatedCommands": [
+      "bun-run"
+    ]
+  },
+  {
+    "id": "bun-repl",
+    "name": "bun repl",
+    "description": "Start an interactive JavaScript/TypeScript REPL",
+    "category": "Running Code",
+    "technologyId": "bun",
+    "examples": [
+      {
+        "command": "bun repl",
+        "description": "Open the REPL"
+      }
+    ],
+    "notes": [
+      "Supports TypeScript and top-level await"
+    ],
+    "relatedCommands": [
+      "bun-run"
+    ]
+  },
+  {
+    "id": "bun-test",
+    "name": "bun test",
+    "description": "Run tests with Bun's built-in Jest-compatible test runner",
+    "category": "Testing",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--watch",
+        "description": "Re-run tests on file changes"
+      },
+      {
+        "flag": "-t, --test-name-pattern",
+        "description": "Run only tests whose name matches",
+        "example": "bun test -t \"login\""
+      },
+      {
+        "flag": "--coverage",
+        "description": "Generate a code coverage report"
+      },
+      {
+        "flag": "--timeout",
+        "description": "Per-test timeout in milliseconds"
+      },
+      {
+        "flag": "--bail",
+        "description": "Stop after the first failure (or after N failures)"
+      },
+      {
+        "flag": "-u, --update-snapshots",
+        "description": "Update snapshot files"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun test",
+        "description": "Run all *.test.* and *.spec.* files"
+      },
+      {
+        "command": "bun test src/auth",
+        "description": "Run tests in files whose path matches"
+      },
+      {
+        "command": "bun test -t \"creates user\"",
+        "description": "Run tests by name"
+      },
+      {
+        "command": "bun test --watch --coverage",
+        "description": "Watch mode with coverage"
+      }
+    ],
+    "notes": [
+      "Import test helpers from \"bun:test\""
+    ],
+    "relatedCommands": [
+      "bun-run"
+    ]
+  },
+  {
+    "id": "bun-build",
+    "name": "bun build",
+    "description": "Bundle JavaScript/TypeScript for the browser, Bun, or Node, or compile a standalone executable",
+    "category": "Build",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--outdir",
+        "description": "Output directory"
+      },
+      {
+        "flag": "--outfile",
+        "description": "Output file (single entry)"
+      },
+      {
+        "flag": "--target",
+        "description": "browser (default), bun, or node"
+      },
+      {
+        "flag": "--minify",
+        "description": "Minify the output"
+      },
+      {
+        "flag": "--sourcemap",
+        "description": "Generate source maps (linked, inline, external)"
+      },
+      {
+        "flag": "--splitting",
+        "description": "Enable code splitting"
+      },
+      {
+        "flag": "--compile",
+        "description": "Produce a standalone executable that embeds the Bun runtime"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun build ./src/index.ts --outdir ./dist",
+        "description": "Bundle for the browser"
+      },
+      {
+        "command": "bun build ./src/server.ts --outdir ./dist --target bun --minify",
+        "description": "Bundle a server for Bun"
+      },
+      {
+        "command": "bun build ./cli.ts --compile --outfile mycli",
+        "description": "Compile a single-file executable"
+      },
+      {
+        "command": "bun build ./cli.ts --compile --target=bun-linux-x64 --outfile mycli-linux",
+        "description": "Cross-compile an executable for Linux"
+      }
+    ],
+    "relatedCommands": [
+      "bun-run"
+    ]
+  },
+  {
+    "id": "bun-upgrade",
+    "name": "bun upgrade",
+    "description": "Upgrade Bun itself to the latest version",
+    "category": "Maintenance",
+    "technologyId": "bun",
+    "flags": [
+      {
+        "flag": "--canary",
+        "description": "Switch to the latest canary build"
+      },
+      {
+        "flag": "--stable",
+        "description": "Switch back to the stable release"
+      }
+    ],
+    "examples": [
+      {
+        "command": "bun upgrade",
+        "description": "Upgrade to the latest stable release"
+      },
+      {
+        "command": "bun --version",
+        "description": "Check the installed version"
+      }
+    ],
+    "notes": [
+      "If Bun was installed via Homebrew or npm, upgrade it through that tool instead"
+    ],
+    "relatedCommands": [
+      "bun-pm"
+    ]
+  }
+]

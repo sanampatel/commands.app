@@ -1,0 +1,835 @@
+[
+  {
+    "id": "tf-init",
+    "name": "terraform init",
+    "description": "Initialize a working directory: download providers and modules and configure the backend.",
+    "category": "Core Workflow",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-upgrade",
+        "description": "Upgrade providers and modules to the newest versions allowed by constraints",
+        "example": "terraform init -upgrade"
+      },
+      {
+        "flag": "-backend-config",
+        "description": "Supply backend settings from a file or key=value pair (partial backend config)",
+        "example": "terraform init -backend-config=backend.hcl"
+      },
+      {
+        "flag": "-reconfigure",
+        "description": "Ignore existing backend config and reinitialize without migrating state"
+      },
+      {
+        "flag": "-migrate-state",
+        "description": "Copy existing state to a newly configured backend"
+      },
+      {
+        "flag": "-backend=false",
+        "description": "Skip backend initialization (useful for validate/lint in CI)"
+      },
+      {
+        "flag": "-input=false",
+        "description": "Disable interactive prompts"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform init",
+        "description": "Initialize the current directory"
+      },
+      {
+        "command": "terraform init -upgrade",
+        "description": "Upgrade providers within version constraints and update .terraform.lock.hcl"
+      },
+      {
+        "command": "terraform init -backend-config=env/prod.s3.tfbackend",
+        "description": "Initialize with environment-specific backend settings"
+      },
+      {
+        "command": "terraform init -migrate-state",
+        "description": "Move state after changing the backend block"
+      }
+    ],
+    "notes": [
+      "Safe to run repeatedly; re-run after adding providers, modules, or changing the backend.",
+      "Commit .terraform.lock.hcl to version control; do not commit the .terraform/ directory.",
+      "OpenTofu: every command in this file works with `tofu` in place of `terraform` (e.g. `tofu init`)."
+    ],
+    "relatedCommands": [
+      "tf-validate",
+      "tf-plan",
+      "tf-providers-lock"
+    ]
+  },
+  {
+    "id": "tf-plan",
+    "name": "terraform plan",
+    "description": "Show the changes Terraform would make to match the configuration, without applying them.",
+    "category": "Core Workflow",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-out",
+        "description": "Save the plan to a file so apply runs exactly that plan",
+        "example": "terraform plan -out=tfplan"
+      },
+      {
+        "flag": "-var",
+        "description": "Set an input variable",
+        "example": "terraform plan -var='instance_type=t3.small'"
+      },
+      {
+        "flag": "-var-file",
+        "description": "Load variables from a .tfvars file",
+        "example": "terraform plan -var-file=prod.tfvars"
+      },
+      {
+        "flag": "-target",
+        "description": "Limit planning to a specific resource or module (escape hatch, not routine use)",
+        "example": "terraform plan -target=module.vpc"
+      },
+      {
+        "flag": "-replace",
+        "description": "Plan to destroy and recreate a specific resource",
+        "example": "terraform plan -replace=aws_instance.web"
+      },
+      {
+        "flag": "-destroy",
+        "description": "Create a plan that destroys all managed resources"
+      },
+      {
+        "flag": "-refresh-only",
+        "description": "Plan only to update state to match real infrastructure (drift detection)"
+      },
+      {
+        "flag": "-refresh=false",
+        "description": "Skip refreshing state from real infrastructure"
+      },
+      {
+        "flag": "-detailed-exitcode",
+        "description": "Exit 0 = no changes, 1 = error, 2 = changes present (useful in CI)"
+      },
+      {
+        "flag": "-lock-timeout",
+        "description": "Wait for a state lock before failing",
+        "example": "terraform plan -lock-timeout=5m"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform plan",
+        "description": "Preview changes"
+      },
+      {
+        "command": "terraform plan -out=tfplan",
+        "description": "Save the plan for a later apply"
+      },
+      {
+        "command": "terraform plan -var-file=prod.tfvars -out=prod.tfplan",
+        "description": "Plan with production variables"
+      },
+      {
+        "command": "terraform plan -refresh-only",
+        "description": "Detect drift between state and real infrastructure"
+      }
+    ],
+    "notes": [
+      "terraform.tfvars and *.auto.tfvars are loaded automatically; other files need -var-file.",
+      "Variables can also be set via TF_VAR_<name> environment variables."
+    ],
+    "relatedCommands": [
+      "tf-apply",
+      "tf-show",
+      "tf-destroy"
+    ]
+  },
+  {
+    "id": "tf-apply",
+    "name": "terraform apply",
+    "description": "Create, update, or delete infrastructure to match the configuration or a saved plan.",
+    "category": "Core Workflow",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-auto-approve",
+        "description": "Skip the interactive approval prompt"
+      },
+      {
+        "flag": "-var / -var-file",
+        "description": "Set input variables (not allowed when applying a saved plan file)"
+      },
+      {
+        "flag": "-target",
+        "description": "Apply only to a specific resource or module",
+        "example": "terraform apply -target=aws_s3_bucket.logs"
+      },
+      {
+        "flag": "-replace",
+        "description": "Force a resource to be destroyed and recreated",
+        "example": "terraform apply -replace=aws_instance.web"
+      },
+      {
+        "flag": "-refresh-only",
+        "description": "Update state to match real infrastructure without changing resources"
+      },
+      {
+        "flag": "-parallelism",
+        "description": "Limit concurrent operations (default 10)",
+        "example": "terraform apply -parallelism=5"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform apply tfplan",
+        "description": "Apply a previously saved plan exactly as reviewed"
+      },
+      {
+        "command": "terraform apply",
+        "description": "Plan and prompt for approval interactively"
+      },
+      {
+        "command": "terraform apply -var-file=staging.tfvars",
+        "description": "Apply with a variable file"
+      },
+      {
+        "command": "terraform apply -replace=aws_instance.web",
+        "description": "Recreate one resource (replacement for the deprecated taint)"
+      }
+    ],
+    "notes": [
+      "Use -auto-approve only in automation where the plan was already reviewed; it can destroy resources without asking.",
+      "Applying a saved plan fails if the state changed since the plan was created."
+    ],
+    "relatedCommands": [
+      "tf-plan",
+      "tf-destroy",
+      "tf-replace"
+    ]
+  },
+  {
+    "id": "tf-destroy",
+    "name": "terraform destroy",
+    "description": "Destroy all resources managed by the current configuration and workspace.",
+    "category": "Core Workflow",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-auto-approve",
+        "description": "Skip the confirmation prompt"
+      },
+      {
+        "flag": "-target",
+        "description": "Destroy only a specific resource (and its dependents)",
+        "example": "terraform destroy -target=aws_instance.test"
+      },
+      {
+        "flag": "-var-file",
+        "description": "Load variables needed to evaluate the configuration"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform destroy",
+        "description": "Destroy everything after confirmation"
+      },
+      {
+        "command": "terraform plan -destroy -out=destroy.tfplan",
+        "description": "Preview a destroy and save it for review"
+      },
+      {
+        "command": "terraform destroy -target=aws_instance.test",
+        "description": "Destroy a single resource"
+      }
+    ],
+    "notes": [
+      "WARNING: Irreversible. Deletes real infrastructure, including databases and buckets, in the selected workspace. Double-check `terraform workspace show` first.",
+      "Equivalent to `terraform apply -destroy`.",
+      "Add `lifecycle { prevent_destroy = true }` to critical resources as a safeguard."
+    ],
+    "relatedCommands": [
+      "tf-plan",
+      "tf-apply",
+      "tf-workspace-select"
+    ]
+  },
+  {
+    "id": "tf-replace",
+    "name": "terraform apply -replace",
+    "description": "Force a resource to be destroyed and recreated; the replacement for the deprecated terraform taint.",
+    "category": "Core Workflow",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform apply -replace=aws_instance.web",
+        "description": "Recreate a single resource"
+      },
+      {
+        "command": "terraform plan -replace='module.app.aws_instance.web[0]'",
+        "description": "Preview replacing an indexed resource inside a module"
+      }
+    ],
+    "notes": [
+      "`terraform taint` and `terraform untaint` are deprecated; use -replace instead, which shows the effect in a plan before anything changes.",
+      "WARNING: Replacement destroys the existing resource; data on it (disks, local state) may be lost.",
+      "Quote addresses containing brackets to avoid shell globbing."
+    ],
+    "relatedCommands": [
+      "tf-apply",
+      "tf-plan",
+      "tf-state-list"
+    ]
+  },
+  {
+    "id": "tf-fmt",
+    "name": "terraform fmt",
+    "description": "Rewrite Terraform configuration files to the canonical format and style.",
+    "category": "Code Quality",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-recursive",
+        "description": "Also format files in subdirectories"
+      },
+      {
+        "flag": "-check",
+        "description": "Check formatting without writing; exit non-zero if changes are needed"
+      },
+      {
+        "flag": "-diff",
+        "description": "Show formatting differences"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform fmt",
+        "description": "Format files in the current directory"
+      },
+      {
+        "command": "terraform fmt -recursive",
+        "description": "Format the whole repository"
+      },
+      {
+        "command": "terraform fmt -check -recursive",
+        "description": "Fail CI if any file is not formatted"
+      }
+    ],
+    "relatedCommands": [
+      "tf-validate"
+    ]
+  },
+  {
+    "id": "tf-validate",
+    "name": "terraform validate",
+    "description": "Check that the configuration is syntactically valid and internally consistent.",
+    "category": "Code Quality",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-json",
+        "description": "Output results as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform validate",
+        "description": "Validate the configuration"
+      },
+      {
+        "command": "terraform init -backend=false && terraform validate",
+        "description": "Validate in CI without backend credentials"
+      }
+    ],
+    "notes": [
+      "Requires `terraform init` first; it does not contact remote APIs or check credentials."
+    ],
+    "relatedCommands": [
+      "tf-fmt",
+      "tf-init",
+      "tf-test"
+    ]
+  },
+  {
+    "id": "tf-test",
+    "name": "terraform test",
+    "description": "Run Terraform's native tests defined in *.tftest.hcl files.",
+    "category": "Code Quality",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-filter",
+        "description": "Run only the specified test file",
+        "example": "terraform test -filter=tests/vpc.tftest.hcl"
+      },
+      {
+        "flag": "-verbose",
+        "description": "Print plan or state for each run block"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform test",
+        "description": "Run all tests in the tests/ directory and current directory"
+      },
+      {
+        "command": "terraform test -filter=tests/defaults.tftest.hcl",
+        "description": "Run a single test file"
+      }
+    ],
+    "notes": [
+      "Available since Terraform 1.6. Run blocks with `command = apply` create real resources and destroy them afterward, so use a test account.",
+      "OpenTofu also supports `tofu test` with the same file format (and *.tofutest.hcl)."
+    ],
+    "relatedCommands": [
+      "tf-validate"
+    ]
+  },
+  {
+    "id": "tf-show",
+    "name": "terraform show",
+    "description": "Show a human-readable view of the current state or a saved plan file.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-json",
+        "description": "Output machine-readable JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform show",
+        "description": "Show the current state"
+      },
+      {
+        "command": "terraform show tfplan",
+        "description": "Review a saved plan"
+      },
+      {
+        "command": "terraform show -json tfplan | jq '.resource_changes[] | {address, actions: .change.actions}'",
+        "description": "List planned actions per resource"
+      }
+    ],
+    "relatedCommands": [
+      "tf-plan",
+      "tf-state-show",
+      "tf-output"
+    ]
+  },
+  {
+    "id": "tf-output",
+    "name": "terraform output",
+    "description": "Print output values from the root module state.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-raw",
+        "description": "Print a single string value without quotes (good for scripts)"
+      },
+      {
+        "flag": "-json",
+        "description": "Print outputs as JSON (shows sensitive values)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform output",
+        "description": "Show all outputs"
+      },
+      {
+        "command": "terraform output -raw db_endpoint",
+        "description": "Get one value for use in a script"
+      },
+      {
+        "command": "terraform output -json | jq -r '.vpc_id.value'",
+        "description": "Extract a value with jq"
+      }
+    ],
+    "notes": [
+      "Sensitive outputs are hidden in the default view but revealed with -raw or -json."
+    ],
+    "relatedCommands": [
+      "tf-show"
+    ]
+  },
+  {
+    "id": "tf-console",
+    "name": "terraform console",
+    "description": "Open an interactive console for evaluating expressions against the current state.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform console",
+        "description": "Start the console, then try e.g. cidrsubnet(\"10.0.0.0/16\", 8, 1)"
+      },
+      {
+        "command": "echo 'aws_instance.web.private_ip' | terraform console",
+        "description": "Evaluate an expression non-interactively"
+      },
+      {
+        "command": "terraform console -var-file=dev.tfvars",
+        "description": "Evaluate expressions with variables loaded"
+      }
+    ],
+    "notes": [
+      "Great for testing functions, locals, and for expressions before writing them in code. Exit with `exit` or Ctrl-D."
+    ],
+    "relatedCommands": [
+      "tf-output"
+    ]
+  },
+  {
+    "id": "tf-graph",
+    "name": "terraform graph",
+    "description": "Output the dependency graph of resources in DOT format.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-type",
+        "description": "Graph type: plan, plan-refresh-only, plan-destroy, or apply"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform graph | dot -Tsvg > graph.svg",
+        "description": "Render the graph to SVG with Graphviz"
+      },
+      {
+        "command": "terraform graph -type=plan-destroy | dot -Tpng > destroy.png",
+        "description": "Visualize destroy ordering"
+      }
+    ],
+    "relatedCommands": [
+      "tf-providers"
+    ]
+  },
+  {
+    "id": "tf-providers",
+    "name": "terraform providers",
+    "description": "Show the providers required by the configuration and modules.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform providers",
+        "description": "Show the provider requirement tree"
+      }
+    ],
+    "relatedCommands": [
+      "tf-providers-lock",
+      "tf-init"
+    ]
+  },
+  {
+    "id": "tf-providers-lock",
+    "name": "terraform providers lock",
+    "description": "Update .terraform.lock.hcl with provider checksums for multiple platforms.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-platform",
+        "description": "Add checksums for a target platform (repeatable)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform providers lock -platform=linux_amd64 -platform=darwin_arm64 -platform=windows_amd64",
+        "description": "Lock providers for CI and developer machines"
+      }
+    ],
+    "notes": [
+      "Fixes 'provider checksum does not match' errors when the team uses different OS/architectures."
+    ],
+    "relatedCommands": [
+      "tf-init",
+      "tf-providers"
+    ]
+  },
+  {
+    "id": "tf-state-list",
+    "name": "terraform state list",
+    "description": "List resource addresses tracked in the state.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-id",
+        "description": "Filter by resource ID"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform state list",
+        "description": "List all resources"
+      },
+      {
+        "command": "terraform state list module.vpc",
+        "description": "List resources inside a module"
+      },
+      {
+        "command": "terraform state list | grep aws_security_group",
+        "description": "Find resources by type"
+      }
+    ],
+    "relatedCommands": [
+      "tf-state-show",
+      "tf-state-mv",
+      "tf-state-rm"
+    ]
+  },
+  {
+    "id": "tf-state-show",
+    "name": "terraform state show",
+    "description": "Show the attributes of a single resource in the state.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform state show aws_instance.web",
+        "description": "Show one resource"
+      },
+      {
+        "command": "terraform state show 'aws_subnet.private[\"us-east-1a\"]'",
+        "description": "Show a for_each instance (quote the address)"
+      }
+    ],
+    "relatedCommands": [
+      "tf-state-list",
+      "tf-show"
+    ]
+  },
+  {
+    "id": "tf-state-mv",
+    "name": "terraform state mv",
+    "description": "Rename or move a resource address in the state without recreating it.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-dry-run",
+        "description": "Show what would be moved without changing state"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform state mv aws_instance.app aws_instance.web",
+        "description": "Rename a resource"
+      },
+      {
+        "command": "terraform state mv aws_s3_bucket.logs module.storage.aws_s3_bucket.logs",
+        "description": "Move a resource into a module"
+      }
+    ],
+    "notes": [
+      "Prefer declarative `moved { from = ... to = ... }` blocks in code: they are reviewable in plans and work for everyone using the module.",
+      "Back up state first (`terraform state pull > backup.tfstate`); a wrong move causes Terraform to plan destroy/create."
+    ],
+    "relatedCommands": [
+      "tf-state-list",
+      "tf-state-pull"
+    ]
+  },
+  {
+    "id": "tf-state-rm",
+    "name": "terraform state rm",
+    "description": "Stop managing a resource by removing it from state, without destroying the real object.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-dry-run",
+        "description": "Show what would be removed"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform state rm aws_instance.legacy",
+        "description": "Forget a resource"
+      },
+      {
+        "command": "terraform state rm 'module.old'",
+        "description": "Forget every resource in a module"
+      }
+    ],
+    "notes": [
+      "WARNING: The real resource keeps existing but is no longer tracked; if it stays in config, the next apply will try to create a duplicate.",
+      "Terraform 1.7+ supports a declarative `removed { from = ... lifecycle { destroy = false } }` block as an alternative."
+    ],
+    "relatedCommands": [
+      "tf-state-list",
+      "tf-import"
+    ]
+  },
+  {
+    "id": "tf-state-pull",
+    "name": "terraform state pull",
+    "description": "Download and print the current state from the backend as JSON.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform state pull > backup.tfstate",
+        "description": "Back up remote state before risky operations"
+      },
+      {
+        "command": "terraform state pull | jq '.resources | length'",
+        "description": "Count resources in state"
+      }
+    ],
+    "notes": [
+      "State can contain secrets in plain text; handle backups carefully. `terraform state push` restores a file but can overwrite newer state, so use it only as a last resort."
+    ],
+    "relatedCommands": [
+      "tf-state-mv",
+      "tf-force-unlock"
+    ]
+  },
+  {
+    "id": "tf-import",
+    "name": "terraform import",
+    "description": "Bring an existing real-world resource under Terraform management.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform import aws_s3_bucket.assets my-assets-bucket",
+        "description": "Import an existing bucket into a resource block you already wrote"
+      },
+      {
+        "command": "terraform plan -generate-config-out=generated.tf",
+        "description": "With an import block in code, generate matching HCL for the imported resource"
+      }
+    ],
+    "notes": [
+      "Preferred approach (Terraform 1.5+, OpenTofu 1.5+): declare `import { to = aws_s3_bucket.assets  id = \"my-assets-bucket\" }` in code and run plan/apply; the import is reviewed in the plan.",
+      "The resource block must exist (or be generated with -generate-config-out) before importing."
+    ],
+    "relatedCommands": [
+      "tf-state-rm",
+      "tf-plan"
+    ]
+  },
+  {
+    "id": "tf-force-unlock",
+    "name": "terraform force-unlock",
+    "description": "Manually release a stuck state lock.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-force",
+        "description": "Do not ask for confirmation"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform force-unlock 6f4c2a1e-1234-5678-9abc-def012345678",
+        "description": "Unlock using the Lock ID shown in the error message"
+      }
+    ],
+    "notes": [
+      "WARNING: Only use when you are sure no other Terraform process is running; unlocking during an active apply can corrupt state."
+    ],
+    "relatedCommands": [
+      "tf-state-pull"
+    ]
+  },
+  {
+    "id": "tf-workspace-list",
+    "name": "terraform workspace list",
+    "description": "List workspaces; the current one is marked with *.",
+    "category": "Workspaces",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform workspace list",
+        "description": "List workspaces"
+      },
+      {
+        "command": "terraform workspace show",
+        "description": "Print only the current workspace name"
+      }
+    ],
+    "relatedCommands": [
+      "tf-workspace-new",
+      "tf-workspace-select"
+    ]
+  },
+  {
+    "id": "tf-workspace-new",
+    "name": "terraform workspace new",
+    "description": "Create a new workspace with its own separate state and switch to it.",
+    "category": "Workspaces",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform workspace new staging",
+        "description": "Create and switch to a staging workspace"
+      }
+    ],
+    "notes": [
+      "Reference the workspace in code with terraform.workspace. Many teams prefer separate directories/backends per environment over workspaces."
+    ],
+    "relatedCommands": [
+      "tf-workspace-select",
+      "tf-workspace-list"
+    ]
+  },
+  {
+    "id": "tf-workspace-select",
+    "name": "terraform workspace select",
+    "description": "Switch to a different workspace.",
+    "category": "Workspaces",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-or-create",
+        "description": "Create the workspace if it does not exist (Terraform 1.4+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform workspace select prod",
+        "description": "Switch to prod"
+      },
+      {
+        "command": "terraform workspace select -or-create feature-x",
+        "description": "Switch, creating if needed (handy in CI)"
+      }
+    ],
+    "notes": [
+      "`terraform workspace delete <name>` removes a workspace; it refuses if the workspace still tracks resources unless -force is given (which orphans them)."
+    ],
+    "relatedCommands": [
+      "tf-workspace-new",
+      "tf-workspace-list"
+    ]
+  },
+  {
+    "id": "tf-login",
+    "name": "terraform login",
+    "description": "Obtain and save an API token for HCP Terraform (Terraform Cloud) or Terraform Enterprise.",
+    "category": "HCP Terraform",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "terraform login",
+        "description": "Log in to app.terraform.io"
+      },
+      {
+        "command": "terraform login tfe.example.com",
+        "description": "Log in to a Terraform Enterprise host"
+      }
+    ],
+    "notes": [
+      "Token is stored in ~/.terraform.d/credentials.tfrc.json. Remove it with `terraform logout`. In CI, use the TF_TOKEN_<hostname> environment variable instead."
+    ],
+    "relatedCommands": [
+      "tf-init"
+    ]
+  }
+]

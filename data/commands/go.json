@@ -1,0 +1,1024 @@
+[
+  {
+    "id": "go-mod-init",
+    "name": "go mod init",
+    "description": "Initialize a new module by creating a go.mod file in the current directory",
+    "category": "Modules",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go mod init github.com/acme/my-app",
+        "description": "Create a module using its repository path"
+      },
+      {
+        "command": "go mod init my-app",
+        "description": "Create a module with a local-only name"
+      }
+    ],
+    "notes": [
+      "The module path should match where the code will be hosted if others will import it",
+      "The go directive in go.mod is set to the version of the running toolchain"
+    ],
+    "relatedCommands": [
+      "go-mod-tidy",
+      "go-get"
+    ]
+  },
+  {
+    "id": "go-mod-tidy",
+    "name": "go mod tidy",
+    "description": "Add missing and remove unused module requirements, updating go.mod and go.sum",
+    "category": "Modules",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-v",
+        "description": "Print information about removed modules"
+      },
+      {
+        "flag": "-go",
+        "description": "Set the expected Go language version in go.mod",
+        "example": "go mod tidy -go=1.24"
+      },
+      {
+        "flag": "-diff",
+        "description": "Print the changes as a diff instead of modifying files (Go 1.23+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go mod tidy",
+        "description": "Sync go.mod/go.sum with the imports in your code"
+      },
+      {
+        "command": "go mod tidy -diff",
+        "description": "Check in CI whether go.mod/go.sum are tidy without changing them"
+      }
+    ],
+    "notes": [
+      "Run after adding or removing imports; commit both go.mod and go.sum"
+    ],
+    "relatedCommands": [
+      "go-mod-init",
+      "go-mod-download",
+      "go-get"
+    ]
+  },
+  {
+    "id": "go-mod-download",
+    "name": "go mod download",
+    "description": "Download modules listed in go.mod into the module cache",
+    "category": "Modules",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-x",
+        "description": "Print the commands executed"
+      },
+      {
+        "flag": "-json",
+        "description": "Print a JSON description of each downloaded module"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go mod download",
+        "description": "Pre-fetch all dependencies (common in Docker build layers)"
+      },
+      {
+        "command": "go mod download github.com/google/uuid@v1.6.0",
+        "description": "Download a specific module version"
+      }
+    ],
+    "notes": [
+      "In Dockerfiles, COPY go.mod go.sum first and run go mod download to cache the dependency layer"
+    ],
+    "relatedCommands": [
+      "go-mod-tidy",
+      "go-mod-vendor"
+    ]
+  },
+  {
+    "id": "go-mod-vendor",
+    "name": "go mod vendor",
+    "description": "Copy all dependencies into a vendor directory inside the main module",
+    "category": "Modules",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-v",
+        "description": "Print the names of vendored modules and packages"
+      },
+      {
+        "flag": "-o",
+        "description": "Write the vendor tree to a different directory"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go mod vendor",
+        "description": "Create or refresh the vendor/ directory"
+      },
+      {
+        "command": "go build -mod=vendor ./...",
+        "description": "Build explicitly using vendored dependencies"
+      }
+    ],
+    "notes": [
+      "When vendor/ exists and go.mod declares go 1.14+, the go command uses it by default",
+      "Re-run go mod vendor after any dependency change or builds will fail with an inconsistent vendoring error"
+    ],
+    "relatedCommands": [
+      "go-mod-download",
+      "go-mod-tidy"
+    ]
+  },
+  {
+    "id": "go-mod-why",
+    "name": "go mod why",
+    "description": "Explain why a package or module is needed by showing the shortest import path to it",
+    "category": "Modules",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-m",
+        "description": "Treat arguments as modules instead of packages"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go mod why golang.org/x/text/language",
+        "description": "Show why a package is imported"
+      },
+      {
+        "command": "go mod why -m github.com/pkg/errors",
+        "description": "Show why a module is in the build"
+      }
+    ],
+    "relatedCommands": [
+      "go-mod-graph",
+      "go-list"
+    ]
+  },
+  {
+    "id": "go-mod-graph",
+    "name": "go mod graph",
+    "description": "Print the module requirement graph, one edge per line",
+    "category": "Modules",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go mod graph",
+        "description": "Print every module -> requirement edge"
+      },
+      {
+        "command": "go mod graph | grep golang.org/x/net",
+        "description": "Find which modules require golang.org/x/net"
+      }
+    ],
+    "relatedCommands": [
+      "go-mod-why",
+      "go-list"
+    ]
+  },
+  {
+    "id": "go-mod-edit",
+    "name": "go mod edit",
+    "description": "Edit go.mod from scripts or the command line",
+    "category": "Modules",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-replace",
+        "description": "Replace a module with another version or a local path",
+        "example": "go mod edit -replace example.com/lib=../lib"
+      },
+      {
+        "flag": "-dropreplace",
+        "description": "Remove a replace directive"
+      },
+      {
+        "flag": "-go",
+        "description": "Set the go language version",
+        "example": "go mod edit -go=1.24"
+      },
+      {
+        "flag": "-toolchain",
+        "description": "Set the toolchain directive"
+      },
+      {
+        "flag": "-json",
+        "description": "Print go.mod as JSON instead of editing"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go mod edit -replace github.com/acme/lib=../lib",
+        "description": "Point a dependency at a local checkout"
+      },
+      {
+        "command": "go mod edit -dropreplace github.com/acme/lib",
+        "description": "Remove the local replacement"
+      },
+      {
+        "command": "go mod edit -go=1.24",
+        "description": "Bump the minimum Go version"
+      }
+    ],
+    "notes": [
+      "Remove local replace directives before tagging a release; they are ignored by consumers of your module"
+    ],
+    "relatedCommands": [
+      "go-mod-tidy",
+      "go-work"
+    ]
+  },
+  {
+    "id": "go-get",
+    "name": "go get",
+    "description": "Add, upgrade, downgrade, or remove a dependency in the current module",
+    "category": "Dependencies",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-u",
+        "description": "Update the named packages and their dependencies to newer minor/patch versions"
+      },
+      {
+        "flag": "-u=patch",
+        "description": "Update to newer patch releases only"
+      },
+      {
+        "flag": "-t",
+        "description": "Also consider modules needed by tests"
+      },
+      {
+        "flag": "-tool",
+        "description": "Add the package as a tool directive in go.mod (Go 1.24+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go get github.com/gin-gonic/gin@latest",
+        "description": "Add or upgrade a dependency to the latest version"
+      },
+      {
+        "command": "go get github.com/google/uuid@v1.6.0",
+        "description": "Pin a specific version"
+      },
+      {
+        "command": "go get -u ./...",
+        "description": "Upgrade all direct and indirect dependencies"
+      },
+      {
+        "command": "go get github.com/pkg/errors@none",
+        "description": "Remove a dependency"
+      },
+      {
+        "command": "go get go@1.24.0",
+        "description": "Raise the minimum go version for the module"
+      }
+    ],
+    "notes": [
+      "go get no longer builds or installs binaries; use go install pkg@version for that",
+      "Run go mod tidy afterwards to clean up"
+    ],
+    "relatedCommands": [
+      "go-install",
+      "go-mod-tidy",
+      "go-list"
+    ]
+  },
+  {
+    "id": "go-install",
+    "name": "go install",
+    "description": "Compile and install a package's binary into GOBIN (default $GOPATH/bin)",
+    "category": "Dependencies",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go install golang.org/x/tools/gopls@latest",
+        "description": "Install a tool at its latest version"
+      },
+      {
+        "command": "go install github.com/air-verse/air@v1.61.0",
+        "description": "Install a specific version of a CLI"
+      },
+      {
+        "command": "go install ./cmd/server",
+        "description": "Build and install a binary from the current module"
+      }
+    ],
+    "notes": [
+      "With an @version suffix, go install ignores the current module's go.mod",
+      "Make sure $(go env GOPATH)/bin is on your PATH"
+    ],
+    "relatedCommands": [
+      "go-get",
+      "go-build",
+      "go-env"
+    ]
+  },
+  {
+    "id": "go-build",
+    "name": "go build",
+    "description": "Compile packages and dependencies into an executable",
+    "category": "Build & Run",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-o",
+        "description": "Output file or directory",
+        "example": "go build -o bin/server ./cmd/server"
+      },
+      {
+        "flag": "-v",
+        "description": "Print package names as they are compiled"
+      },
+      {
+        "flag": "-race",
+        "description": "Enable the data race detector"
+      },
+      {
+        "flag": "-ldflags",
+        "description": "Pass flags to the linker, e.g. strip symbols or set variables",
+        "example": "go build -ldflags=\"-s -w -X main.version=1.2.3\""
+      },
+      {
+        "flag": "-tags",
+        "description": "Comma-separated build tags",
+        "example": "go build -tags=integration,netgo"
+      },
+      {
+        "flag": "-trimpath",
+        "description": "Remove local file system paths from the binary (reproducible builds)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go build ./...",
+        "description": "Compile every package to check it builds"
+      },
+      {
+        "command": "go build -o bin/server ./cmd/server",
+        "description": "Build a binary to a specific path"
+      },
+      {
+        "command": "GOOS=linux GOARCH=amd64 go build -o bin/server-linux ./cmd/server",
+        "description": "Cross-compile for Linux x86-64"
+      },
+      {
+        "command": "CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags=\"-s -w\" -o app .",
+        "description": "Static, stripped Linux arm64 binary for containers"
+      },
+      {
+        "command": "GOOS=windows GOARCH=amd64 go build -o app.exe .",
+        "description": "Cross-compile for Windows"
+      }
+    ],
+    "notes": [
+      "Run go tool dist list to see all supported GOOS/GOARCH pairs",
+      "Cross-compiling with cgo requires a C cross-compiler; set CGO_ENABLED=0 for pure-Go static binaries"
+    ],
+    "relatedCommands": [
+      "go-run",
+      "go-install",
+      "go-tool-dist-list"
+    ]
+  },
+  {
+    "id": "go-run",
+    "name": "go run",
+    "description": "Compile and run a Go program without keeping the binary",
+    "category": "Build & Run",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-race",
+        "description": "Enable the data race detector"
+      },
+      {
+        "flag": "-tags",
+        "description": "Build tags to apply"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go run .",
+        "description": "Run the main package in the current directory"
+      },
+      {
+        "command": "go run ./cmd/server -port 8080",
+        "description": "Run a specific command with program arguments"
+      },
+      {
+        "command": "go run golang.org/x/tools/cmd/stringer@latest -type=Color",
+        "description": "Run a remote tool at a version without installing it"
+      }
+    ],
+    "relatedCommands": [
+      "go-build",
+      "go-tool"
+    ]
+  },
+  {
+    "id": "go-test",
+    "name": "go test",
+    "description": "Run tests, benchmarks, and fuzz tests for packages",
+    "category": "Testing",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-v",
+        "description": "Verbose output, print each test name and log"
+      },
+      {
+        "flag": "-run",
+        "description": "Run only tests matching the regexp",
+        "example": "go test -run 'TestUser/valid_email' ./..."
+      },
+      {
+        "flag": "-race",
+        "description": "Enable the data race detector"
+      },
+      {
+        "flag": "-cover",
+        "description": "Print coverage percentage"
+      },
+      {
+        "flag": "-coverprofile",
+        "description": "Write a coverage profile to a file",
+        "example": "go test -coverprofile=coverage.out ./..."
+      },
+      {
+        "flag": "-count",
+        "description": "Run each test n times; -count=1 bypasses the test cache"
+      },
+      {
+        "flag": "-bench",
+        "description": "Run benchmarks matching the regexp",
+        "example": "go test -bench=. -benchmem"
+      },
+      {
+        "flag": "-benchmem",
+        "description": "Report memory allocations for benchmarks"
+      },
+      {
+        "flag": "-fuzz",
+        "description": "Run the fuzz test matching the regexp",
+        "example": "go test -fuzz=FuzzParse"
+      },
+      {
+        "flag": "-fuzztime",
+        "description": "How long to fuzz, e.g. 30s or 1000x"
+      },
+      {
+        "flag": "-short",
+        "description": "Tell long-running tests to shorten (checked via testing.Short())"
+      },
+      {
+        "flag": "-timeout",
+        "description": "Panic if tests run longer than this (default 10m)"
+      },
+      {
+        "flag": "-failfast",
+        "description": "Stop after the first failing test"
+      },
+      {
+        "flag": "-json",
+        "description": "Emit test events as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go test ./...",
+        "description": "Run all tests in the module"
+      },
+      {
+        "command": "go test -v -run TestLogin ./internal/auth",
+        "description": "Run matching tests in one package verbosely"
+      },
+      {
+        "command": "go test -race -count=1 ./...",
+        "description": "Run all tests with the race detector, skipping the cache"
+      },
+      {
+        "command": "go test -coverprofile=coverage.out ./... && go tool cover -html=coverage.out",
+        "description": "Generate and view an HTML coverage report"
+      },
+      {
+        "command": "go test -bench=. -benchmem -run=^$ ./...",
+        "description": "Run only benchmarks, with allocation stats"
+      },
+      {
+        "command": "go test -fuzz=FuzzParse -fuzztime=30s ./parser",
+        "description": "Fuzz a single target for 30 seconds"
+      }
+    ],
+    "notes": [
+      "-fuzz accepts only one package and must match exactly one fuzz target",
+      "Failing fuzz inputs are saved to testdata/fuzz/ and replayed on normal go test runs",
+      "Successful test results are cached; use -count=1 to force a re-run"
+    ],
+    "relatedCommands": [
+      "go-tool-cover",
+      "go-vet",
+      "go-tool-pprof"
+    ]
+  },
+  {
+    "id": "go-tool-cover",
+    "name": "go tool cover",
+    "description": "Analyze coverage profiles produced by go test -coverprofile",
+    "category": "Testing",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-html",
+        "description": "Open an HTML view of annotated source"
+      },
+      {
+        "flag": "-func",
+        "description": "Print coverage per function"
+      },
+      {
+        "flag": "-o",
+        "description": "Write output to a file instead of opening a browser"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go tool cover -html=coverage.out",
+        "description": "Open coverage report in the browser"
+      },
+      {
+        "command": "go tool cover -func=coverage.out",
+        "description": "Print per-function coverage and the total"
+      },
+      {
+        "command": "go tool cover -html=coverage.out -o coverage.html",
+        "description": "Save the HTML report to a file"
+      }
+    ],
+    "relatedCommands": [
+      "go-test"
+    ]
+  },
+  {
+    "id": "go-vet",
+    "name": "go vet",
+    "description": "Report likely mistakes in code, such as bad Printf formats or unreachable code",
+    "category": "Code Quality",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go vet ./...",
+        "description": "Vet every package in the module"
+      },
+      {
+        "command": "go vet -printf=false ./...",
+        "description": "Disable a specific analyzer"
+      }
+    ],
+    "notes": [
+      "go test runs a subset of vet checks automatically",
+      "For broader linting use a separate tool such as staticcheck or golangci-lint"
+    ],
+    "relatedCommands": [
+      "go-fmt",
+      "go-test"
+    ]
+  },
+  {
+    "id": "go-fmt",
+    "name": "go fmt",
+    "description": "Reformat package sources with gofmt -l -w",
+    "category": "Code Quality",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go fmt ./...",
+        "description": "Format every package in the module"
+      }
+    ],
+    "notes": [
+      "go fmt is a wrapper around gofmt -l -w; use gofmt directly for more options"
+    ],
+    "relatedCommands": [
+      "gofmt",
+      "go-vet"
+    ]
+  },
+  {
+    "id": "gofmt",
+    "name": "gofmt",
+    "description": "Format Go source files, with options to list, diff, or simplify",
+    "category": "Code Quality",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-l",
+        "description": "List files whose formatting differs"
+      },
+      {
+        "flag": "-w",
+        "description": "Write the result back to the file"
+      },
+      {
+        "flag": "-d",
+        "description": "Print diffs instead of rewriting"
+      },
+      {
+        "flag": "-s",
+        "description": "Simplify code where possible"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gofmt -l .",
+        "description": "List unformatted files (useful in CI)"
+      },
+      {
+        "command": "gofmt -s -w .",
+        "description": "Simplify and format all files in place"
+      },
+      {
+        "command": "test -z \"$(gofmt -l .)\"",
+        "description": "Fail a CI step if any file is unformatted"
+      }
+    ],
+    "relatedCommands": [
+      "go-fmt"
+    ]
+  },
+  {
+    "id": "go-generate",
+    "name": "go generate",
+    "description": "Run commands declared by //go:generate directives in source files",
+    "category": "Code Quality",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-run",
+        "description": "Only run directives matching the regexp"
+      },
+      {
+        "flag": "-x",
+        "description": "Print commands as they are executed"
+      },
+      {
+        "flag": "-n",
+        "description": "Print commands without running them"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go generate ./...",
+        "description": "Run all generators in the module"
+      },
+      {
+        "command": "go generate -run mockgen ./...",
+        "description": "Run only directives that mention mockgen"
+      }
+    ],
+    "notes": [
+      "go build and go test never run go generate automatically; run it explicitly and commit the output"
+    ],
+    "relatedCommands": [
+      "go-tool",
+      "go-build"
+    ]
+  },
+  {
+    "id": "go-work",
+    "name": "go work",
+    "description": "Manage multi-module workspaces with a go.work file",
+    "category": "Workspaces",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go work init ./api ./shared",
+        "description": "Create a workspace including two modules"
+      },
+      {
+        "command": "go work use ./worker",
+        "description": "Add another module to the workspace"
+      },
+      {
+        "command": "go work use -r .",
+        "description": "Add all modules found under the current directory"
+      },
+      {
+        "command": "go work sync",
+        "description": "Sync workspace build list back to each module's go.mod"
+      },
+      {
+        "command": "GOWORK=off go build ./...",
+        "description": "Build while ignoring go.work"
+      }
+    ],
+    "notes": [
+      "go.work is usually for local development; many projects add it to .gitignore",
+      "Workspaces replace the need for temporary replace directives across local modules"
+    ],
+    "relatedCommands": [
+      "go-mod-edit"
+    ]
+  },
+  {
+    "id": "go-env",
+    "name": "go env",
+    "description": "Print or set Go environment variables",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-w",
+        "description": "Persistently set a variable in the user's go env file",
+        "example": "go env -w GOPRIVATE=github.com/acme/*"
+      },
+      {
+        "flag": "-u",
+        "description": "Unset a variable previously set with -w"
+      },
+      {
+        "flag": "-json",
+        "description": "Print as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go env",
+        "description": "Print all Go environment variables"
+      },
+      {
+        "command": "go env GOPATH GOOS GOARCH",
+        "description": "Print specific variables"
+      },
+      {
+        "command": "go env -w GOPRIVATE=github.com/acme/*",
+        "description": "Skip the public proxy and checksum DB for private repos"
+      },
+      {
+        "command": "go env -u GOPRIVATE",
+        "description": "Remove a persisted setting"
+      }
+    ],
+    "notes": [
+      "Settings written with -w are stored in the file shown by go env GOENV; real environment variables still take precedence"
+    ],
+    "relatedCommands": [
+      "go-version"
+    ]
+  },
+  {
+    "id": "go-clean",
+    "name": "go clean",
+    "description": "Remove object files and cached data",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-cache",
+        "description": "Remove the entire build cache"
+      },
+      {
+        "flag": "-testcache",
+        "description": "Expire all cached test results"
+      },
+      {
+        "flag": "-modcache",
+        "description": "Remove the entire module download cache"
+      },
+      {
+        "flag": "-fuzzcache",
+        "description": "Remove cached fuzzing inputs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go clean -testcache",
+        "description": "Force all tests to re-run next time"
+      },
+      {
+        "command": "go clean -cache",
+        "description": "Clear the build cache to reclaim disk space"
+      },
+      {
+        "command": "go clean -modcache",
+        "description": "Delete all downloaded modules"
+      }
+    ],
+    "notes": [
+      "-modcache deletes every downloaded module; the next build will re-download everything (and fail offline)"
+    ],
+    "relatedCommands": [
+      "go-env",
+      "go-mod-download"
+    ]
+  },
+  {
+    "id": "go-list",
+    "name": "go list",
+    "description": "List packages or modules and their metadata",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-m",
+        "description": "List modules instead of packages"
+      },
+      {
+        "flag": "-u",
+        "description": "Show available upgrades (with -m)"
+      },
+      {
+        "flag": "-json",
+        "description": "Print full JSON metadata"
+      },
+      {
+        "flag": "-f",
+        "description": "Format output using a Go template",
+        "example": "go list -f '{{.ImportPath}}' ./..."
+      }
+    ],
+    "examples": [
+      {
+        "command": "go list -m all",
+        "description": "List all modules in the build"
+      },
+      {
+        "command": "go list -m -u all",
+        "description": "Show which dependencies have newer versions"
+      },
+      {
+        "command": "go list -m -versions github.com/gin-gonic/gin",
+        "description": "List available versions of a module"
+      },
+      {
+        "command": "go list ./...",
+        "description": "List all packages in the module"
+      }
+    ],
+    "relatedCommands": [
+      "go-get",
+      "go-mod-graph",
+      "go-mod-why"
+    ]
+  },
+  {
+    "id": "go-doc",
+    "name": "go doc",
+    "description": "Show documentation for a package, symbol, or method",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-all",
+        "description": "Show documentation for the whole package"
+      },
+      {
+        "flag": "-src",
+        "description": "Show the full source code for the symbol"
+      },
+      {
+        "flag": "-u",
+        "description": "Include unexported symbols"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go doc net/http",
+        "description": "Show package documentation"
+      },
+      {
+        "command": "go doc http.Client.Do",
+        "description": "Show docs for a method"
+      },
+      {
+        "command": "go doc -src strings.Builder",
+        "description": "Show the source of a type"
+      }
+    ],
+    "relatedCommands": [
+      "go-list"
+    ]
+  },
+  {
+    "id": "go-version",
+    "name": "go version",
+    "description": "Print the Go version, or the version a binary was built with",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-m",
+        "description": "Also print embedded module/build information of a binary"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go version",
+        "description": "Print the installed toolchain version"
+      },
+      {
+        "command": "go version -m ./bin/server",
+        "description": "Show the Go version and dependency versions baked into a binary"
+      }
+    ],
+    "notes": [
+      "Since Go 1.21 the go command may automatically download a newer toolchain if go.mod's toolchain/go line requires it (controlled by GOTOOLCHAIN)"
+    ],
+    "relatedCommands": [
+      "go-env"
+    ]
+  },
+  {
+    "id": "go-tool",
+    "name": "go tool",
+    "description": "Run a Go-distributed tool or a tool declared in go.mod",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go tool",
+        "description": "List available tools"
+      },
+      {
+        "command": "go get -tool golang.org/x/tools/cmd/stringer",
+        "description": "Track a tool dependency in go.mod (Go 1.24+)"
+      },
+      {
+        "command": "go tool stringer -type=Color",
+        "description": "Run a tool declared with a tool directive"
+      }
+    ],
+    "notes": [
+      "Tool directives (Go 1.24+) replace the old tools.go blank-import pattern"
+    ],
+    "relatedCommands": [
+      "go-tool-pprof",
+      "go-tool-cover",
+      "go-generate"
+    ]
+  },
+  {
+    "id": "go-tool-pprof",
+    "name": "go tool pprof",
+    "description": "Analyze CPU, memory, and other profiles",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-http",
+        "description": "Serve an interactive web UI (flame graphs, call graphs)",
+        "example": "go tool pprof -http=:8080 cpu.prof"
+      },
+      {
+        "flag": "-top",
+        "description": "Print the top entries as text"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go test -cpuprofile=cpu.prof -bench=. ./pkg && go tool pprof -http=:8080 cpu.prof",
+        "description": "Profile benchmarks and open the web UI"
+      },
+      {
+        "command": "go tool pprof -http=:8080 http://localhost:6060/debug/pprof/profile?seconds=30",
+        "description": "Collect a 30s CPU profile from a running service using net/http/pprof"
+      },
+      {
+        "command": "go tool pprof -top http://localhost:6060/debug/pprof/heap",
+        "description": "Print top heap allocations"
+      }
+    ],
+    "notes": [
+      "Live endpoints require importing _ \"net/http/pprof\" and serving it; do not expose it publicly"
+    ],
+    "relatedCommands": [
+      "go-test",
+      "go-tool"
+    ]
+  },
+  {
+    "id": "go-tool-dist-list",
+    "name": "go tool dist list",
+    "description": "List all supported GOOS/GOARCH target platforms",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go tool dist list",
+        "description": "Print every os/arch pair"
+      },
+      {
+        "command": "go tool dist list | grep linux",
+        "description": "Show supported Linux architectures"
+      }
+    ],
+    "relatedCommands": [
+      "go-build"
+    ]
+  }
+]

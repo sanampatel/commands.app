@@ -1,0 +1,820 @@
+[
+  {
+    "id": "brew-install",
+    "name": "brew install",
+    "description": "Install a formula or cask.",
+    "category": "Packages",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--cask",
+        "description": "Treat the name as a cask (GUI app)"
+      },
+      {
+        "flag": "--formula",
+        "description": "Treat the name as a formula"
+      },
+      {
+        "flag": "--HEAD",
+        "description": "Install the development version from the HEAD branch"
+      },
+      {
+        "flag": "-s, --build-from-source",
+        "description": "Compile from source instead of using a bottle"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew install wget",
+        "description": "Install a command-line tool"
+      },
+      {
+        "command": "brew install node@22",
+        "description": "Install a specific versioned formula"
+      },
+      {
+        "command": "brew install --cask visual-studio-code",
+        "description": "Install a GUI application"
+      },
+      {
+        "command": "brew install jq ripgrep fd",
+        "description": "Install several packages at once"
+      }
+    ],
+    "notes": [
+      "Homebrew auto-updates before install; set HOMEBREW_NO_AUTO_UPDATE=1 to skip"
+    ],
+    "relatedCommands": [
+      "brew-uninstall",
+      "brew-search",
+      "brew-info",
+      "brew-cask-install"
+    ]
+  },
+  {
+    "id": "brew-cask-install",
+    "name": "brew install --cask",
+    "description": "Install a macOS application distributed as a cask.",
+    "category": "Packages",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew install --cask google-chrome",
+        "description": "Install Chrome"
+      },
+      {
+        "command": "brew install --cask docker-desktop",
+        "description": "Install Docker Desktop"
+      },
+      {
+        "command": "brew list --cask",
+        "description": "List installed casks"
+      },
+      {
+        "command": "brew upgrade --cask --greedy",
+        "description": "Upgrade casks including those that auto-update"
+      }
+    ],
+    "notes": [
+      "Casks that update themselves are skipped by brew upgrade unless --greedy is passed"
+    ],
+    "relatedCommands": [
+      "brew-install",
+      "brew-upgrade"
+    ]
+  },
+  {
+    "id": "brew-uninstall",
+    "name": "brew uninstall",
+    "description": "Uninstall a formula or cask.",
+    "category": "Packages",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--zap",
+        "description": "Casks only: also remove app support files and preferences"
+      },
+      {
+        "flag": "-f, --force",
+        "description": "Remove all installed versions"
+      },
+      {
+        "flag": "--ignore-dependencies",
+        "description": "Uninstall even if other formulae depend on it"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew uninstall wget",
+        "description": "Remove a formula"
+      },
+      {
+        "command": "brew uninstall --cask slack",
+        "description": "Remove an app"
+      },
+      {
+        "command": "brew uninstall --zap --cask slack",
+        "description": "Remove an app and all of its data"
+      }
+    ],
+    "notes": [
+      "Aliases: brew remove, brew rm",
+      "--zap deletes user data and settings for the app and cannot be undone"
+    ],
+    "relatedCommands": [
+      "brew-autoremove",
+      "brew-install"
+    ]
+  },
+  {
+    "id": "brew-upgrade",
+    "name": "brew upgrade",
+    "description": "Upgrade outdated formulae and casks.",
+    "category": "Updating",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--formula / --cask",
+        "description": "Only upgrade formulae or casks"
+      },
+      {
+        "flag": "--greedy",
+        "description": "Also upgrade casks that auto-update or use version :latest"
+      },
+      {
+        "flag": "-n, --dry-run",
+        "description": "Show what would be upgraded"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew upgrade",
+        "description": "Upgrade everything that is outdated"
+      },
+      {
+        "command": "brew upgrade node",
+        "description": "Upgrade a single formula"
+      },
+      {
+        "command": "brew upgrade --dry-run",
+        "description": "Preview upgrades"
+      }
+    ],
+    "notes": [
+      "Pinned formulae are skipped"
+    ],
+    "relatedCommands": [
+      "brew-update",
+      "brew-outdated",
+      "brew-pin"
+    ]
+  },
+  {
+    "id": "brew-update",
+    "name": "brew update",
+    "description": "Fetch the newest version of Homebrew and all formula/cask definitions.",
+    "category": "Updating",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew update",
+        "description": "Refresh package definitions"
+      },
+      {
+        "command": "brew update && brew upgrade",
+        "description": "Refresh then upgrade everything"
+      }
+    ],
+    "notes": [
+      "update does not upgrade installed packages; use brew upgrade for that"
+    ],
+    "relatedCommands": [
+      "brew-upgrade",
+      "brew-outdated"
+    ]
+  },
+  {
+    "id": "brew-outdated",
+    "name": "brew outdated",
+    "description": "List installed packages that have newer versions available.",
+    "category": "Updating",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--formula / --cask",
+        "description": "Only list formulae or casks"
+      },
+      {
+        "flag": "--greedy",
+        "description": "Include auto-updating casks"
+      },
+      {
+        "flag": "--json",
+        "description": "Output as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew outdated",
+        "description": "List outdated packages"
+      },
+      {
+        "command": "brew outdated --cask --greedy",
+        "description": "Include self-updating apps"
+      }
+    ],
+    "relatedCommands": [
+      "brew-upgrade",
+      "brew-update"
+    ]
+  },
+  {
+    "id": "brew-pin",
+    "name": "brew pin",
+    "description": "Prevent a formula from being upgraded.",
+    "category": "Updating",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew pin postgresql@16",
+        "description": "Keep the current Postgres version"
+      },
+      {
+        "command": "brew unpin postgresql@16",
+        "description": "Allow upgrades again"
+      },
+      {
+        "command": "brew list --pinned",
+        "description": "List pinned formulae"
+      }
+    ],
+    "notes": [
+      "Pinning works for formulae, not casks"
+    ],
+    "relatedCommands": [
+      "brew-upgrade"
+    ]
+  },
+  {
+    "id": "brew-search",
+    "name": "brew search",
+    "description": "Search formulae and casks by name or regex.",
+    "category": "Discovery",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--formula / --cask",
+        "description": "Limit to formulae or casks"
+      },
+      {
+        "flag": "--desc",
+        "description": "Search descriptions as well as names"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew search postgres",
+        "description": "Find matching formulae and casks"
+      },
+      {
+        "command": "brew search /^python@/",
+        "description": "Search with a regex"
+      },
+      {
+        "command": "brew search --desc \"json processor\"",
+        "description": "Search descriptions"
+      }
+    ],
+    "relatedCommands": [
+      "brew-info",
+      "brew-install"
+    ]
+  },
+  {
+    "id": "brew-info",
+    "name": "brew info",
+    "description": "Show information about a formula or cask: versions, dependencies, caveats.",
+    "category": "Discovery",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--json=v2",
+        "description": "Output as JSON"
+      },
+      {
+        "flag": "--installed",
+        "description": "With --json, show all installed packages"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew info node",
+        "description": "Show version, deps, and caveats for node"
+      },
+      {
+        "command": "brew info --cask firefox",
+        "description": "Info about a cask"
+      },
+      {
+        "command": "brew info",
+        "description": "Summary of installed package counts"
+      }
+    ],
+    "notes": [
+      "Re-read the Caveats section after installing: it often contains PATH or service instructions"
+    ],
+    "relatedCommands": [
+      "brew-search",
+      "brew-deps"
+    ]
+  },
+  {
+    "id": "brew-list",
+    "name": "brew list",
+    "description": "List installed formulae and casks, or files of a given package.",
+    "category": "Discovery",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--formula / --cask",
+        "description": "Only list formulae or casks"
+      },
+      {
+        "flag": "--versions",
+        "description": "Show installed versions"
+      },
+      {
+        "flag": "-1",
+        "description": "One entry per line"
+      },
+      {
+        "flag": "--pinned",
+        "description": "Only list pinned formulae"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew list",
+        "description": "List everything installed"
+      },
+      {
+        "command": "brew list --versions",
+        "description": "List with version numbers"
+      },
+      {
+        "command": "brew list openssl@3",
+        "description": "Show files installed by a formula"
+      }
+    ],
+    "notes": [
+      "Alias: brew ls"
+    ],
+    "relatedCommands": [
+      "brew-leaves",
+      "brew-info"
+    ]
+  },
+  {
+    "id": "brew-leaves",
+    "name": "brew leaves",
+    "description": "List installed formulae that are not dependencies of another installed formula.",
+    "category": "Discovery",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "-r, --installed-on-request",
+        "description": "Only show those you installed explicitly"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew leaves",
+        "description": "See your top-level packages"
+      },
+      {
+        "command": "brew leaves -r",
+        "description": "Only manually installed leaves"
+      }
+    ],
+    "relatedCommands": [
+      "brew-list",
+      "brew-autoremove"
+    ]
+  },
+  {
+    "id": "brew-deps",
+    "name": "brew deps",
+    "description": "Show the dependencies of a formula.",
+    "category": "Discovery",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--tree",
+        "description": "Show as a tree"
+      },
+      {
+        "flag": "--installed",
+        "description": "Only for installed formulae"
+      },
+      {
+        "flag": "--include-build",
+        "description": "Include build-time dependencies"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew deps --tree ffmpeg",
+        "description": "Visualize ffmpeg's dependency tree"
+      },
+      {
+        "command": "brew deps --installed --tree",
+        "description": "Tree for everything installed"
+      }
+    ],
+    "relatedCommands": [
+      "brew-uses",
+      "brew-info"
+    ]
+  },
+  {
+    "id": "brew-uses",
+    "name": "brew uses",
+    "description": "Show formulae that depend on a given formula.",
+    "category": "Discovery",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--installed",
+        "description": "Only list installed dependents"
+      },
+      {
+        "flag": "--recursive",
+        "description": "Include indirect dependents"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew uses --installed openssl@3",
+        "description": "What installed packages need openssl@3"
+      }
+    ],
+    "notes": [
+      "Without --installed it lists every formula in the tap that depends on it"
+    ],
+    "relatedCommands": [
+      "brew-deps",
+      "brew-uninstall"
+    ]
+  },
+  {
+    "id": "brew-services-list",
+    "name": "brew services list",
+    "description": "List background services managed by Homebrew and their status.",
+    "category": "Services",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew services list",
+        "description": "Show all services"
+      },
+      {
+        "command": "brew services info postgresql@16",
+        "description": "Detailed status for one service"
+      }
+    ],
+    "relatedCommands": [
+      "brew-services-start",
+      "brew-services-stop"
+    ]
+  },
+  {
+    "id": "brew-services-start",
+    "name": "brew services start",
+    "description": "Start a service now and register it to start at login.",
+    "category": "Services",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew services start postgresql@16",
+        "description": "Start Postgres and enable it on login"
+      },
+      {
+        "command": "brew services run redis",
+        "description": "Start without registering to launch at login"
+      },
+      {
+        "command": "brew services restart nginx",
+        "description": "Restart a service"
+      }
+    ],
+    "notes": [
+      "Using sudo registers the service at boot as root; avoid unless needed"
+    ],
+    "relatedCommands": [
+      "brew-services-stop",
+      "brew-services-list"
+    ]
+  },
+  {
+    "id": "brew-services-stop",
+    "name": "brew services stop",
+    "description": "Stop a service and unregister it from starting at login.",
+    "category": "Services",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew services stop mysql",
+        "description": "Stop MySQL"
+      },
+      {
+        "command": "brew services stop --all",
+        "description": "Stop all services"
+      },
+      {
+        "command": "brew services cleanup",
+        "description": "Remove unused service files"
+      }
+    ],
+    "relatedCommands": [
+      "brew-services-start",
+      "brew-services-list"
+    ]
+  },
+  {
+    "id": "brew-tap",
+    "name": "brew tap",
+    "description": "Add a third-party repository of formulae and casks.",
+    "category": "Taps",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew tap hashicorp/tap",
+        "description": "Add HashiCorp's tap"
+      },
+      {
+        "command": "brew install hashicorp/tap/terraform",
+        "description": "Install from a tap (taps automatically)"
+      },
+      {
+        "command": "brew tap",
+        "description": "List installed taps"
+      }
+    ],
+    "notes": [
+      "Only tap repositories you trust; formulae run arbitrary install code"
+    ],
+    "relatedCommands": [
+      "brew-untap",
+      "brew-install"
+    ]
+  },
+  {
+    "id": "brew-untap",
+    "name": "brew untap",
+    "description": "Remove a tapped repository.",
+    "category": "Taps",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew untap hashicorp/tap",
+        "description": "Remove a tap"
+      }
+    ],
+    "notes": [
+      "Fails if packages from the tap are still installed unless --force is used"
+    ],
+    "relatedCommands": [
+      "brew-tap"
+    ]
+  },
+  {
+    "id": "brew-cleanup",
+    "name": "brew cleanup",
+    "description": "Remove old versions and stale downloads from the cache.",
+    "category": "Maintenance",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "-n, --dry-run",
+        "description": "Show what would be removed"
+      },
+      {
+        "flag": "--prune=<days>",
+        "description": "Remove cache files older than N days (all to remove everything)"
+      },
+      {
+        "flag": "-s",
+        "description": "Scrub the cache, including latest-version downloads"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew cleanup",
+        "description": "Clean up old versions and cache"
+      },
+      {
+        "command": "brew cleanup -n",
+        "description": "Preview what would be deleted"
+      },
+      {
+        "command": "brew cleanup --prune=all",
+        "description": "Wipe the entire download cache"
+      }
+    ],
+    "notes": [
+      "Runs automatically every 30 days after install/upgrade"
+    ],
+    "relatedCommands": [
+      "brew-autoremove",
+      "brew-doctor"
+    ]
+  },
+  {
+    "id": "brew-autoremove",
+    "name": "brew autoremove",
+    "description": "Uninstall formulae that were only installed as dependencies and are no longer needed.",
+    "category": "Maintenance",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "-n, --dry-run",
+        "description": "List what would be removed"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew autoremove -n",
+        "description": "Preview orphaned dependencies"
+      },
+      {
+        "command": "brew autoremove",
+        "description": "Remove them"
+      }
+    ],
+    "relatedCommands": [
+      "brew-cleanup",
+      "brew-leaves"
+    ]
+  },
+  {
+    "id": "brew-doctor",
+    "name": "brew doctor",
+    "description": "Check the system for potential problems with the Homebrew setup.",
+    "category": "Maintenance",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew doctor",
+        "description": "Diagnose common issues"
+      }
+    ],
+    "notes": [
+      "Warnings are not always fatal; fix them if you are seeing install problems"
+    ],
+    "relatedCommands": [
+      "brew-config",
+      "brew-cleanup"
+    ]
+  },
+  {
+    "id": "brew-config",
+    "name": "brew config",
+    "description": "Show Homebrew and system configuration useful for debugging.",
+    "category": "Maintenance",
+    "technologyId": "homebrew",
+    "examples": [
+      {
+        "command": "brew config",
+        "description": "Print version, prefix, CPU, macOS, etc."
+      },
+      {
+        "command": "brew --prefix",
+        "description": "Print the install prefix (/opt/homebrew on Apple Silicon)"
+      },
+      {
+        "command": "brew --prefix openssl@3",
+        "description": "Print a formula's prefix, handy for build flags"
+      }
+    ],
+    "relatedCommands": [
+      "brew-doctor"
+    ]
+  },
+  {
+    "id": "brew-link",
+    "name": "brew link",
+    "description": "Symlink a formula's files into the Homebrew prefix.",
+    "category": "Maintenance",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--overwrite",
+        "description": "Overwrite conflicting files"
+      },
+      {
+        "flag": "--force",
+        "description": "Allow linking keg-only formulae"
+      },
+      {
+        "flag": "-n, --dry-run",
+        "description": "Show what would be linked"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew link --overwrite node@22",
+        "description": "Make node@22 the active node"
+      },
+      {
+        "command": "brew unlink node",
+        "description": "Remove a formula's symlinks"
+      },
+      {
+        "command": "brew unlink node && brew link --overwrite --force node@20",
+        "description": "Switch to another versioned formula"
+      }
+    ],
+    "notes": [
+      "Keg-only formulae (e.g. versioned ones) are not linked by default; brew info shows how to add them to PATH instead"
+    ],
+    "relatedCommands": [
+      "brew-install",
+      "brew-config"
+    ]
+  },
+  {
+    "id": "brew-bundle-dump",
+    "name": "brew bundle dump",
+    "description": "Write all installed formulae, casks, and taps to a Brewfile.",
+    "category": "Bundle",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--file <path>",
+        "description": "Path of the Brewfile to write"
+      },
+      {
+        "flag": "-f, --force",
+        "description": "Overwrite an existing Brewfile"
+      },
+      {
+        "flag": "--describe",
+        "description": "Add package descriptions as comments"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew bundle dump",
+        "description": "Create ./Brewfile"
+      },
+      {
+        "command": "brew bundle dump --file=~/dotfiles/Brewfile --force --describe",
+        "description": "Back up to dotfiles"
+      }
+    ],
+    "relatedCommands": [
+      "brew-bundle-install"
+    ]
+  },
+  {
+    "id": "brew-bundle-install",
+    "name": "brew bundle install",
+    "description": "Install everything listed in a Brewfile.",
+    "category": "Bundle",
+    "technologyId": "homebrew",
+    "flags": [
+      {
+        "flag": "--file <path>",
+        "description": "Path of the Brewfile"
+      },
+      {
+        "flag": "--no-upgrade",
+        "description": "Do not upgrade already installed packages"
+      }
+    ],
+    "examples": [
+      {
+        "command": "brew bundle",
+        "description": "Install from ./Brewfile (install is the default)"
+      },
+      {
+        "command": "brew bundle --file=~/dotfiles/Brewfile",
+        "description": "Set up a new Mac from dotfiles"
+      },
+      {
+        "command": "brew bundle check",
+        "description": "Check whether all dependencies are installed"
+      },
+      {
+        "command": "brew bundle cleanup --force",
+        "description": "Uninstall anything not listed in the Brewfile"
+      }
+    ],
+    "notes": [
+      "brew bundle cleanup --force uninstalls every package not in the Brewfile; run without --force first to preview"
+    ],
+    "relatedCommands": [
+      "brew-bundle-dump"
+    ]
+  }
+]
