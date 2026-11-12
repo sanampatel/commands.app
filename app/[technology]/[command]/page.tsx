@@ -148,7 +148,7 @@ export default async function CommandPage({ params }: CommandPageProps) {
             <CardContent>
               <dl className="divide-y">
                 {cmd.flags.map((flag, index) => (
-                  <div key={index} className="grid gap-2 py-3 first:pt-0 last:pb-0 sm:grid-cols-[minmax(8rem,auto)_1fr] sm:gap-4">
+                  <div key={index} className="grid grid-cols-1 gap-2 py-3 first:pt-0 last:pb-0 sm:grid-cols-[minmax(8rem,auto)_minmax(0,1fr)] sm:gap-4">
                     <dt>
                       <code className="bg-muted rounded px-2 py-1 font-mono text-sm font-semibold break-all">
                         {flag.flag}
@@ -192,7 +192,7 @@ export default async function CommandPage({ params }: CommandPageProps) {
                     ) : (
                       <Info className="mt-0.5 h-4 w-4 shrink-0" />
                     )}
-                    <span>
+                    <span className="min-w-0 break-words">
                       {note.warning && <strong className="font-semibold">Warning: </strong>}
                       {note.text}
                     </span>

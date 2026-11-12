@@ -154,12 +154,12 @@ export default function ContributingPage() {
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                   1
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <h4 className="font-semibold mb-1">Fork the Repository</h4>
                   <p className="text-sm text-muted-foreground">
                     Click the &ldquo;Fork&rdquo; button on our GitHub repository
                   </p>
-                  <code className="block mt-2 px-3 py-2 bg-muted rounded text-xs">
+                  <code className="block mt-2 px-3 py-2 bg-muted rounded text-xs break-all">
                     https://github.com/sanampatel/commands.app
                   </code>
                 </div>
@@ -169,7 +169,7 @@ export default function ContributingPage() {
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                   2
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <h4 className="font-semibold mb-1">Clone Your Fork</h4>
                   <p className="text-sm text-muted-foreground mb-2">
                     Clone the repository to your local machine
@@ -186,7 +186,7 @@ export default function ContributingPage() {
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                   3
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <h4 className="font-semibold mb-1">Create a Branch</h4>
                   <p className="text-sm text-muted-foreground mb-2">
                     Create a new branch for your changes
@@ -201,10 +201,10 @@ export default function ContributingPage() {
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                   4
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <h4 className="font-semibold mb-1">Make Your Changes</h4>
                   <p className="text-sm text-muted-foreground">
-                    Edit the technology&apos;s file in <code className="px-1.5 py-0.5 bg-muted rounded">data/commands/&lt;technology&gt;.json</code>.
+                    Edit the technology&apos;s file in <code className="px-1.5 py-0.5 bg-muted rounded break-all">data/commands/&lt;technology&gt;.json</code>.
                     See the{" "}
                     <a
                       href="https://github.com/sanampatel/commands.app/blob/main/CONTRIBUTING.md"
@@ -223,7 +223,7 @@ export default function ContributingPage() {
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                   5
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <h4 className="font-semibold mb-1">Test Your Changes</h4>
                   <p className="text-sm text-muted-foreground mb-2">
                     Run the development server and verify your changes
@@ -242,7 +242,7 @@ export default function ContributingPage() {
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                   6
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <h4 className="font-semibold mb-1">Commit and Push</h4>
                   <p className="text-sm text-muted-foreground mb-2">
                     Commit your changes with a clear message
@@ -261,7 +261,7 @@ export default function ContributingPage() {
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                   7
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <h4 className="font-semibold mb-1">Create Pull Request</h4>
                   <p className="text-sm text-muted-foreground">
                     Go to your fork on GitHub and click &ldquo;New Pull Request&rdquo;. Provide a clear

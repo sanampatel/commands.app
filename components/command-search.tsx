@@ -195,14 +195,14 @@ export function CommandSearch({ commands, technologyId, technologyName }: Comman
           )}
         </div>
       ) : (
-        <ul className="grid gap-3">
+        <ul className="grid grid-cols-1 gap-3">
           {filteredCommands.map((command) => {
             const starred = isFavorite(technologyId, command.id);
             const example = command.examples[0];
             return (
               <li
                 key={command.id}
-                className="group bg-card hover:border-foreground/20 focus-within:border-foreground/30 relative rounded-xl border p-4 transition-colors hover:shadow-sm sm:p-5"
+                className="group bg-card min-w-0 hover:border-foreground/20 focus-within:border-foreground/30 relative rounded-xl border p-4 transition-colors hover:shadow-sm sm:p-5"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
