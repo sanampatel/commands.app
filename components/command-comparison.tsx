@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import Fuse from "fuse.js";
 import { ArrowLeftRight, Plus, Search, X } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +11,7 @@ import { CopyButton } from "@/components/copy-button";
 import { TechIcon } from "@/components/tech-icon";
 import { loadSearchIndex } from "@/lib/search-index";
 import { cn } from "@/lib/utils";
+import { createCommandSearch } from "@/lib/search";
 import type { Command, SearchEntry, Technology } from "@/types";
 
 const MAX_SELECTED = 3;
@@ -89,17 +89,23 @@ export function CommandComparison({ technologies }: CommandComparisonProps) {
     () => (index ?? []).filter((c) => selectedTechnology === "all" || c.technologyId === selectedTechnology),
     [index, selectedTechnology]
   );
-  const fuse = useMemo(
-    () => new Fuse(scoped, { keys: ["name", "description", "category"], threshold: 0.4, ignoreLocation: true }),
+  const search = useMemo(
+    () =>
+      createCommandSearch(scoped, [
+        { name: "name", weight: 0.5 },
+        { name: "description", weight: 0.25 },
+        { name: "keywords", weight: 0.2 },
+        { name: "category", weight: 0.05 },
+      ]),
     [scoped]
   );
 
   const results = useMemo(() => {
     const q = searchQuery.trim();
     const selectedKeys = new Set(selected.map(keyOf));
-    const list = q ? fuse.search(q, { limit: 30 }).map((r) => r.item) : [];
+    const list = q ? search(q, 30) : [];
     return list.filter((c) => !selectedKeys.has(keyOf(c))).slice(0, 10);
-  }, [fuse, searchQuery, selected]);
+  }, [search, searchQuery, selected]);
 
   const addCommand = useCallback(
     async (entry: SearchEntry) => {

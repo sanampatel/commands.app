@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import Fuse from "fuse.js";
 import { Search, Star, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/copy-button";
 import { useFavorites } from "@/lib/favorites";
 import { isEditableTarget } from "@/lib/keyboard";
+import { createCommandSearch } from "@/lib/search";
 import { cn } from "@/lib/utils";
 import type { Command } from "@/types";
 
@@ -73,30 +73,27 @@ export function CommandSearch({ commands, technologyId, technologyName }: Comman
     return [...counts.entries()];
   }, [commands]);
 
-  const fuse = useMemo(
+  const search = useMemo(
     () =>
-      new Fuse(commands, {
-        keys: [
-          { name: "name", weight: 0.4 },
-          { name: "description", weight: 0.3 },
-          { name: "category", weight: 0.1 },
-          { name: "examples.command", weight: 0.1 },
-          { name: "flags.flag", weight: 0.1 },
-        ],
-        threshold: 0.4,
-        ignoreLocation: true,
-      }),
+      createCommandSearch(commands, [
+        { name: "name", weight: 0.4 },
+        { name: "description", weight: 0.25 },
+        { name: "examples.description", weight: 0.15 },
+        { name: "examples.command", weight: 0.1 },
+        { name: "flags.flag", weight: 0.05 },
+        { name: "category", weight: 0.05 },
+      ]),
     [commands]
   );
 
   const filteredCommands = useMemo(() => {
-    const results = searchQuery.trim() ? fuse.search(searchQuery.trim()).map((r) => r.item) : commands;
+    const results = searchQuery.trim() ? search(searchQuery) : commands;
     return results.filter(
       (command) =>
         (selectedCategory === "all" || command.category === selectedCategory) &&
         (!showFavoritesOnly || isFavorite(technologyId, command.id))
     );
-  }, [commands, searchQuery, selectedCategory, showFavoritesOnly, isFavorite, technologyId, fuse]);
+  }, [commands, searchQuery, selectedCategory, showFavoritesOnly, isFavorite, technologyId, search]);
 
   const hasFilters = searchQuery.trim() !== "" || selectedCategory !== "all" || showFavoritesOnly;
   const clearFilters = () => {
@@ -206,7 +203,7 @@ export function CommandSearch({ commands, technologyId, technologyName }: Comman
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-mono text-base font-semibold sm:text-lg">
+                    <h3 className="font-mono text-base font-semibold [overflow-wrap:anywhere] sm:text-lg">
                       {/* The ::after overlay makes the whole card clickable without nesting buttons in a link. */}
                       <Link
                         href={`/${technologyId}/${command.id}`}

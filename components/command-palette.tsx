@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Fuse from "fuse.js";
 import { ArrowLeftRight, Search, Star } from "lucide-react";
 import {
   CommandDialog,
@@ -16,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { TechIcon } from "@/components/tech-icon";
 import { isEditableTarget } from "@/lib/keyboard";
+import { createCommandSearch } from "@/lib/search";
 import { loadSearchIndex } from "@/lib/search-index";
 import type { SearchEntry, Technology } from "@/types";
 
@@ -70,27 +70,24 @@ export function CommandPalette({ technologies }: CommandPaletteProps) {
 
   const techNames = useMemo(() => new Map(technologies.map((t) => [t.id, t.name])), [technologies]);
 
-  const fuse = useMemo(
+  const search = useMemo(
     () =>
       index &&
-      new Fuse(
+      createCommandSearch(
         index.map((e) => ({ ...e, technologyName: techNames.get(e.technologyId) ?? e.technologyId })),
-        {
-          keys: [
-            { name: "name", weight: 0.5 },
-            { name: "description", weight: 0.25 },
-            { name: "technologyName", weight: 0.15 },
-            { name: "category", weight: 0.1 },
-          ],
-          threshold: 0.35,
-          ignoreLocation: true,
-        }
+        [
+          { name: "name", weight: 0.45 },
+          { name: "description", weight: 0.25 },
+          { name: "keywords", weight: 0.15 },
+          { name: "technologyName", weight: 0.1 },
+          { name: "category", weight: 0.05 },
+        ]
       ),
     [index, techNames]
   );
 
   const q = query.trim();
-  const results = useMemo(() => (fuse && q ? fuse.search(q, { limit: 40 }).map((r) => r.item) : []), [fuse, q]);
+  const results = useMemo(() => (search && q ? search(q, 40) : []), [search, q]);
   const matchingTechs = useMemo(() => {
     const lower = q.toLowerCase();
     return q ? technologies.filter((t) => t.name.toLowerCase().includes(lower) || t.id.includes(lower)) : technologies;

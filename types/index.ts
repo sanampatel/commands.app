@@ -38,6 +38,8 @@ export type Command = {
   notes?: string[];
   relatedCommands?: string[]; // array of command IDs
   technologyId: string;
+  /** Example descriptions, so task-style queries ("undo last commit") find the command. */
+  keywords: string;
 };
 
 export type CommandsData = {
