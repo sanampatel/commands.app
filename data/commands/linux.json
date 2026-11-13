@@ -2910,6 +2910,7 @@
     "description": "Display network connections, routing tables, and interface statistics",
     "category": "Networking",
     "technologyId": "linux",
+    "status": "legacy",
     "flags": [
       {
         "flag": "-a",
@@ -3968,6 +3969,7 @@
     "description": "Run a System V init script or systemd unit (legacy wrapper)",
     "category": "Services & Logs",
     "technologyId": "linux",
+    "status": "legacy",
     "examples": [
       {
         "command": "sudo service nginx restart",

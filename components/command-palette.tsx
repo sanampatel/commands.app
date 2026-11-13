@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { TechIcon } from "@/components/tech-icon";
+import { StatusBadge } from "@/components/status-badge";
 import { isEditableTarget } from "@/lib/keyboard";
 import { createCommandSearch } from "@/lib/search";
 import { loadSearchIndex } from "@/lib/search-index";
@@ -153,7 +154,10 @@ export function CommandPalette({ technologies }: CommandPaletteProps) {
                 >
                   <TechIcon name={cmd.technologyId} className="mt-0.5 h-5 w-5" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-mono text-sm font-medium">{cmd.name}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="truncate font-mono text-sm font-medium">{cmd.name}</span>
+                      <StatusBadge status={cmd.status} />
+                    </div>
                     <div className="text-muted-foreground truncate text-xs">{cmd.description}</div>
                   </div>
                   <span className="text-muted-foreground hidden shrink-0 text-xs sm:inline">

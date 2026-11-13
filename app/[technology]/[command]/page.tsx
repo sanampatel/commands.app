@@ -9,6 +9,7 @@ import { CopyButton } from "@/components/copy-button";
 import { CommandText } from "@/components/command-text";
 import { ExportButtons } from "@/components/export-buttons";
 import { FavoriteButton } from "@/components/favorite-button";
+import { StatusBadge } from "@/components/status-badge";
 import { TechIcon } from "@/components/tech-icon";
 import { editOnGitHubUrl, newIssueUrl, siteConfig } from "@/lib/site";
 
@@ -97,7 +98,10 @@ export default async function CommandPage({ params }: CommandPageProps) {
         <header className="space-y-4">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 space-y-3">
-              <Badge variant="secondary">{cmd.category}</Badge>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">{cmd.category}</Badge>
+                <StatusBadge status={cmd.status} className="py-1" />
+              </div>
               <h1 className="font-mono text-3xl font-bold tracking-tight break-words sm:text-4xl">{cmd.name}</h1>
             </div>
             <div className="flex items-center gap-2">
@@ -219,7 +223,10 @@ export default async function CommandPage({ params }: CommandPageProps) {
                   href={`/${tech.id}/${related.id}`}
                   className="hover:bg-accent rounded-lg border p-3 transition-colors"
                 >
-                  <div className="font-mono text-sm font-medium">{related.name}</div>
+                  <div className="flex items-center gap-2 font-mono text-sm font-medium">
+                    {related.name}
+                    <StatusBadge status={related.status} />
+                  </div>
                   <div className="text-muted-foreground line-clamp-1 text-xs">{related.description}</div>
                 </Link>
               ))}

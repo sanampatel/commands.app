@@ -1783,6 +1783,7 @@
     "description": "Start and follow Copilot coding agent tasks that open pull requests (preview).",
     "category": "Advanced",
     "technologyId": "github-cli",
+    "status": "preview",
     "flags": [
       {
         "flag": "-b, --base <branch>",
@@ -1834,6 +1835,7 @@
     "description": "Run the GitHub Copilot CLI agent, downloading it on first use (preview).",
     "category": "Advanced",
     "technologyId": "github-cli",
+    "status": "preview",
     "flags": [
       {
         "flag": "--remove",

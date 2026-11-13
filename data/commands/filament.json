@@ -481,6 +481,7 @@
     "description": "Automated upgrade script from Filament v3 to v4 (legacy)",
     "category": "Maintenance",
     "technologyId": "filament",
+    "status": "legacy",
     "examples": [
       {
         "command": "composer require filament/upgrade:\"^4.0\" -W --dev",

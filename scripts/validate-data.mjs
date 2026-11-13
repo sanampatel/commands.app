@@ -69,7 +69,9 @@ for (const file of files) {
       if (!f.flag?.trim() || !f.description?.trim()) err(`${where}: flag missing flag/description`);
     }
     if (c.notes && !Array.isArray(c.notes)) err(`${where}: notes must be an array`);
-    const allowed = new Set(["id", "name", "description", "category", "technologyId", "flags", "examples", "notes", "relatedCommands"]);
+    const allowed = new Set(["id", "name", "description", "category", "technologyId", "flags", "examples", "notes", "relatedCommands", "status"]);
+    if (c.status !== undefined && !["legacy", "deprecated", "preview"].includes(c.status))
+      err(`${where}: status must be "legacy", "deprecated" or "preview"`);
     for (const key of Object.keys(c)) if (!allowed.has(key)) warn(`${where}: unknown key "${key}"`);
   }
   byTech.set(techId, { commands, ids });

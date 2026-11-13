@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CopyButton } from "@/components/copy-button";
 import { CommandText } from "@/components/command-text";
+import { StatusBadge } from "@/components/status-badge";
 import { TechIcon } from "@/components/tech-icon";
 import { loadSearchIndex } from "@/lib/search-index";
 import { cn } from "@/lib/utils";
@@ -234,6 +235,7 @@ export function CommandComparison({ technologies }: CommandComparisonProps) {
                         <TechIcon name={cmd.technologyId} className="h-5 w-5" />
                         <span className="min-w-0">
                           <span className="font-mono font-medium">{cmd.name}</span>
+                          <StatusBadge status={cmd.status} className="ml-2 align-middle" />
                           <span className="text-muted-foreground block truncate text-sm">{cmd.description}</span>
                         </span>
                       </span>

@@ -14,7 +14,7 @@ A modern, comprehensive command-line reference for developers. Search, explore, 
 - ⚖️ **Command Comparison** - compare up to 3 commands side by side, with shareable links
 - ⭐ **Favorites** - star commands and find them all on the Favorites page (synced across tabs)
 - 📄 **Export** - copy as Markdown, download Markdown, or print / save as PDF
-- ⚠️ **Highlighted warnings** for destructive commands, plus deprecation notes for outdated ones
+- ⚠️ **Highlighted warnings** for destructive commands, and **Legacy / Deprecated / Preview** badges so you know what's current
 - ✏️ **Edit on GitHub** links on every page to make contributing easy
 - 🌙 **Dark Mode**, 📱 responsive layout, ♿ keyboard and screen-reader friendly
 - 🚀 **Fully static** - every page is pre-rendered with Next.js 16, plus sitemap, robots and Open Graph metadata

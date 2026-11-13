@@ -38,9 +38,11 @@ export type Command = {
   notes?: string[];
   relatedCommands?: string[]; // array of command IDs
   technologyId: string;
-  /** Example descriptions, so task-style queries ("undo last commit") find the command. */
-  keywords: string;
+  /** Lifecycle marker shown as a badge: superseded, going away, or not yet stable. */
+  status?: CommandStatus;
 };
+
+export type CommandStatus = "legacy" | "deprecated" | "preview";
 
 export type CommandsData = {
   technologies: Technology[];
@@ -54,4 +56,7 @@ export type SearchEntry = {
   description: string;
   category: string;
   technologyId: string;
+  status?: CommandStatus;
+  /** Example descriptions, so task-style queries ("undo last commit") find the command. */
+  keywords: string;
 };

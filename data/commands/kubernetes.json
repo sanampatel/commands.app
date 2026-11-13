@@ -1161,6 +1161,7 @@
     "description": "Configure kubectl aliases and default flags in a kuberc preferences file, separate from kubeconfig.",
     "category": "Configuration",
     "technologyId": "kubernetes",
+    "status": "preview",
     "flags": [
       {
         "flag": "--section",

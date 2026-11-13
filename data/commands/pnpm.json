@@ -1092,6 +1092,7 @@
     "description": "Install and activate a Node.js version via pnpm (deprecated; use pnpm runtime).",
     "category": "Environment",
     "technologyId": "pnpm",
+    "status": "deprecated",
     "flags": [
       {
         "flag": "-g, --global",

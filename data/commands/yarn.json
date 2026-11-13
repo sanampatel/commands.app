@@ -133,6 +133,7 @@
     "description": "Upgrade packages to latest version",
     "category": "Package Management",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn upgrade",
@@ -181,6 +182,7 @@
     "description": "Manage global packages",
     "category": "Package Management",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn global add package-name",
@@ -309,6 +311,7 @@
     "description": "Check for outdated packages",
     "category": "Package Management",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn outdated",
@@ -524,6 +527,7 @@
     "description": "Verify package dependencies",
     "category": "Maintenance",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn check",
@@ -611,6 +615,7 @@
     "description": "Manage Yarn policies and releases",
     "category": "Configuration",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn policies set-version",
@@ -722,6 +727,7 @@
     "description": "Clean and remove unnecessary files from dependencies",
     "category": "Maintenance",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn autoclean --init",
@@ -892,6 +898,7 @@
     "description": "Generate yarn.lock from package-lock.json",
     "category": "Migration",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn import",
@@ -912,6 +919,7 @@
     "description": "List licenses of installed packages",
     "category": "Information",
     "technologyId": "yarn",
+    "status": "legacy",
     "examples": [
       {
         "command": "yarn licenses list",

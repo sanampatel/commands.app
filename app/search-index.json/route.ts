@@ -6,12 +6,13 @@ import type { SearchEntry } from "@/types";
 export const dynamic = "force-static";
 
 export function GET() {
-  const index: SearchEntry[] = commands.map(({ id, name, description, category, technologyId, examples }) => ({
+  const index: SearchEntry[] = commands.map(({ id, name, description, category, technologyId, status, examples }) => ({
     id,
     name,
     description,
     category,
     technologyId,
+    ...(status && { status }),
     keywords: [...new Set(examples.map((e) => e.description))].join(" · "),
   }));
   return Response.json(index);

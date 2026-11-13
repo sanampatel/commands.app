@@ -131,6 +131,7 @@ Each technology has its own file in `data/commands/` (for example `data/commands
 - **examples** (required): At least one practical example
 - **notes** (optional): Additional information, tips, or warnings
 - **relatedCommands** (optional): Array of related command IDs
+- **status** (optional): `"legacy"` (superseded by a newer tool or version), `"deprecated"` (deprecated or removed in current versions) or `"preview"` (experimental/beta). Shown as a badge; explain the details in `notes`.
 
 ### Step-by-Step: Adding a Command
 

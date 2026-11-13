@@ -2841,6 +2841,7 @@
     "description": "Install Breeze auth scaffolding (legacy, Laravel 11 and earlier)",
     "category": "Breeze",
     "technologyId": "laravel",
+    "status": "legacy",
     "examples": [
       {
         "command": "php artisan breeze:install",

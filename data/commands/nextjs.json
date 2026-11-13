@@ -281,6 +281,7 @@
     "description": "Linting in Next.js 16: next lint was removed, use the ESLint or Biome CLI",
     "category": "Development",
     "technologyId": "nextjs",
+    "status": "deprecated",
     "examples": [
       {
         "command": "npx @next/codemod@canary next-lint-to-eslint-cli .",

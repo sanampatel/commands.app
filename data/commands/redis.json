@@ -224,6 +224,7 @@
     "description": "Set a key only if it does not already exist",
     "category": "Strings",
     "technologyId": "redis",
+    "status": "deprecated",
     "examples": [
       {
         "command": "SETNX config:initialized \"1\"",

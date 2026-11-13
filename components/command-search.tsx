@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/copy-button";
 import { CommandText } from "@/components/command-text";
+import { StatusBadge } from "@/components/status-badge";
 import { useFavorites } from "@/lib/favorites";
 import { isEditableTarget } from "@/lib/keyboard";
 import { createCommandSearch } from "@/lib/search";
@@ -212,6 +213,7 @@ export function CommandSearch({ commands, technologyId, technologyName }: Comman
                       >
                         {command.name}
                       </Link>
+                      <StatusBadge status={command.status} className="ml-2 align-middle" />
                     </h3>
                     <p className="text-muted-foreground mt-1 text-sm">{command.description}</p>
                   </div>

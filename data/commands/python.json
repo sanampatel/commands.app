@@ -940,6 +940,7 @@
     "description": "Resolve requirements and write a standard pylock.toml lockfile (PEP 751)",
     "category": "Package Management",
     "technologyId": "python",
+    "status": "preview",
     "flags": [
       {
         "flag": "-o, --output <path>",

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Star, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TechIcon } from "@/components/tech-icon";
+import { StatusBadge } from "@/components/status-badge";
 import { favoriteKey, useFavorites } from "@/lib/favorites";
 import { loadSearchIndex } from "@/lib/search-index";
 import type { SearchEntry, Technology } from "@/types";
@@ -80,7 +81,10 @@ export function FavoritesList({ technologies }: { technologies: Pick<Technology,
             {commands.map((cmd) => (
               <li key={favoriteKey(tech.id, cmd.id)} className="flex items-center gap-3 p-3">
                 <Link href={`/${tech.id}/${cmd.id}`} className="min-w-0 flex-1 hover:underline">
-                  <div className="font-mono text-sm font-medium">{cmd.name}</div>
+                  <div className="flex items-center gap-2 font-mono text-sm font-medium">
+                    {cmd.name}
+                    <StatusBadge status={cmd.status} />
+                  </div>
                   <div className="text-muted-foreground truncate text-xs">{cmd.description}</div>
                 </Link>
                 <Button

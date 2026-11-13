@@ -482,6 +482,7 @@
     "description": "Serve HTTP/3 over QUIC alongside regular HTTPS.",
     "category": "Config Snippets",
     "technologyId": "nginx",
+    "status": "preview",
     "examples": [
       {
         "command": "server {\n    listen 443 quic reuseport;\n    listen 443 ssl;\n    http2 on;\n    server_name example.com;\n\n    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n\n    location / {\n        # advertise HTTP/3 to browsers\n        add_header Alt-Svc 'h3=\":443\"; ma=86400';\n    }\n}",

@@ -1564,6 +1564,7 @@
     "description": "Rewrite individual commits without an interactive rebase (experimental)",
     "category": "Advanced",
     "technologyId": "git",
+    "status": "preview",
     "flags": [
       {
         "flag": "--dry-run",
@@ -1613,6 +1614,7 @@
     "description": "Show the commit that last modified each file or directory (experimental)",
     "category": "History",
     "technologyId": "git",
+    "status": "preview",
     "flags": [
       {
         "flag": "-r, --recursive",
@@ -1659,6 +1661,7 @@
     "description": "Download missing file contents in a blobless partial clone in efficient batches (experimental)",
     "category": "Advanced",
     "technologyId": "git",
+    "status": "preview",
     "flags": [
       {
         "flag": "--min-batch-size=<n>",
@@ -1698,6 +1701,7 @@
     "description": "Print repository metadata and size statistics (experimental)",
     "category": "Advanced",
     "technologyId": "git",
+    "status": "preview",
     "flags": [
       {
         "flag": "--all",

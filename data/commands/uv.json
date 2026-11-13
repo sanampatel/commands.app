@@ -470,6 +470,7 @@
     "description": "Format the project's Python code with Ruff",
     "category": "Projects",
     "technologyId": "uv",
+    "status": "preview",
     "flags": [
       {
         "flag": "--check",
@@ -508,6 +509,7 @@
     "description": "Type check the project with ty",
     "category": "Projects",
     "technologyId": "uv",
+    "status": "preview",
     "flags": [
       {
         "flag": "--fix",
@@ -537,6 +539,7 @@
     "description": "Audit project dependencies for known vulnerabilities and deprecated or quarantined packages",
     "category": "Projects",
     "technologyId": "uv",
+    "status": "preview",
     "flags": [
       {
         "flag": "--ignore",
