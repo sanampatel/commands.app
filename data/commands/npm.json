@@ -27,6 +27,14 @@
         "description": "Ignore peer dependency conflicts (npm 6 behavior)"
       },
       {
+        "flag": "--allow-scripts=<pkgs>",
+        "description": "npm 12+: allow install scripts for these packages for this run (comma-separated)"
+      },
+      {
+        "flag": "--min-release-age=<days>",
+        "description": "Only install versions published at least this many days ago"
+      },
+      {
         "flag": "--no-fund",
         "description": "Hide the funding message"
       }
@@ -55,22 +63,31 @@
       {
         "command": "npm install -E prettier",
         "description": "Pin an exact version"
+      },
+      {
+        "command": "npm install --min-release-age=3",
+        "description": "Skip versions published in the last 3 days (supply-chain cooldown)"
       }
     ],
     "notes": [
-      "Alias: npm i",
+      "Alias: npm i (also npm add)",
       "--production is deprecated; use --omit=dev",
+      "npm 12+: dependency install scripts are blocked by default unless approved in package.json allowScripts; review with npm install-scripts ls",
+      "npm 12+: git and remote tarball dependencies are blocked by default (allow-git / allow-remote default to none)",
+      "npm 12+: unknown or abbreviated CLI flags are now errors instead of warnings",
       "Use npm ci in CI for reproducible installs from package-lock.json"
     ],
     "relatedCommands": [
       "npm-uninstall",
-      "npm-update"
+      "npm-update",
+      "npm-ci",
+      "npm-install-scripts"
     ]
   },
   {
     "id": "npm-init",
     "name": "npm init",
-    "description": "Create a package.json file",
+    "description": "Create a package.json, or scaffold a project with a create-* initializer",
     "category": "Project Setup",
     "technologyId": "npm",
     "flags": [
@@ -87,9 +104,20 @@
       {
         "command": "npm init -y",
         "description": "Initialize with defaults"
+      },
+      {
+        "command": "npm init vite@latest my-app",
+        "description": "Run the create-vite initializer (same as npx create-vite@latest)"
       }
     ],
-    "relatedCommands": []
+    "notes": [
+      "Alias: npm create (npm create vite@latest is the same as npm init vite@latest)",
+      "npm 12+: no default license is written; set one with npm pkg set license=MIT or init-license"
+    ],
+    "relatedCommands": [
+      "npm-pkg",
+      "npm-exec"
+    ]
   },
   {
     "id": "npm-pkg",
@@ -120,7 +148,8 @@
       }
     ],
     "notes": [
-      "Use --json to set non-string values, e.g. npm pkg set private=true --json"
+      "Use --json to set non-string values, e.g. npm pkg set private=true --json",
+      "npm 12+: npm pkg get prints plain values instead of always wrapping them in JSON"
     ],
     "relatedCommands": [
       "npm-init"
@@ -201,7 +230,8 @@
     ],
     "notes": [
       "Local project binaries are used first; otherwise the package is fetched into the npx cache",
-      "Pin a version (pkg@1.2.3 or @latest) for reproducible results"
+      "Pin a version (pkg@1.2.3 or @latest) for reproducible results",
+      "npm 12+: install scripts of fetched packages are blocked; pass --allow-scripts=<pkg> if a tool needs its postinstall"
     ],
     "relatedCommands": [
       "npm-run",
@@ -229,6 +259,9 @@
         "command": "npm uninstall -g typescript",
         "description": "Uninstall global package"
       }
+    ],
+    "notes": [
+      "Aliases: npm remove, npm rm, npm r, npm un, npm unlink"
     ],
     "relatedCommands": [
       "npm-install"
@@ -333,6 +366,10 @@
         "description": "Subcommand: apply compatible security updates"
       },
       {
+        "flag": "signatures",
+        "description": "Subcommand: verify registry signatures and provenance attestations of installed packages"
+      },
+      {
         "flag": "--audit-level=<level>",
         "description": "Exit non-zero only at or above low|moderate|high|critical"
       },
@@ -353,6 +390,10 @@
       {
         "command": "npm audit fix",
         "description": "Fix vulnerabilities automatically"
+      },
+      {
+        "command": "npm audit signatures",
+        "description": "Verify registry signatures of installed packages"
       },
       {
         "command": "npm audit --audit-level=high --omit=dev",
@@ -396,10 +437,101 @@
       }
     ],
     "notes": [
-      "Requires a package-lock.json or installed node_modules"
+      "Requires a package-lock.json or installed node_modules",
+      "npm 12+: CycloneDX output uses each package's package.json name rather than its folder name"
     ],
     "relatedCommands": [
       "npm-audit"
+    ]
+  },
+  {
+    "id": "npm-install-scripts",
+    "name": "npm install-scripts",
+    "description": "Review, approve or deny dependency install scripts (npm 12+)",
+    "category": "Security",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "approve <pkg...>",
+        "description": "Allow install scripts for these packages (pinned to the installed version)"
+      },
+      {
+        "flag": "deny <pkg...>",
+        "description": "Record an explicit denial that survives approve --all"
+      },
+      {
+        "flag": "ls",
+        "description": "List packages whose install scripts are not yet approved or denied"
+      },
+      {
+        "flag": "prune",
+        "description": "Remove allowScripts entries that no longer match an installed package"
+      },
+      {
+        "flag": "--all",
+        "description": "Approve or deny every pending package"
+      },
+      {
+        "flag": "--no-allow-scripts-pin",
+        "description": "Write name-only entries that allow any future version"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm install-scripts ls",
+        "description": "See which dependencies had their install scripts skipped"
+      },
+      {
+        "command": "npm install-scripts approve esbuild sharp",
+        "description": "Approve specific packages, pinned to their installed versions"
+      },
+      {
+        "command": "npm install-scripts deny some-package",
+        "description": "Keep a package's install scripts blocked"
+      },
+      {
+        "command": "npm rebuild",
+        "description": "Run the newly approved scripts"
+      },
+      {
+        "command": "npm approve-scripts --all",
+        "description": "Alias form: approve every pending package"
+      }
+    ],
+    "notes": [
+      "Approvals are stored in the allowScripts field of package.json; commit it",
+      "npm approve-scripts and npm deny-scripts are aliases for install-scripts approve / deny",
+      "WARNING: --dangerously-allow-all-scripts bypasses the policy entirely; use only as a temporary migration escape hatch"
+    ],
+    "relatedCommands": [
+      "npm-install",
+      "npm-rebuild",
+      "npm-audit"
+    ]
+  },
+  {
+    "id": "npm-rebuild",
+    "name": "npm rebuild",
+    "description": "Re-run install scripts and relink binaries for installed packages",
+    "category": "Maintenance",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm rebuild",
+        "description": "Rebuild all packages (e.g. after approving install scripts)"
+      },
+      {
+        "command": "npm rebuild sharp",
+        "description": "Rebuild one native package"
+      }
+    ],
+    "notes": [
+      "Alias: npm rb",
+      "Needed after switching Node.js versions so native add-ons are recompiled"
+    ],
+    "relatedCommands": [
+      "npm-install-scripts",
+      "npm-install"
     ]
   },
   {
@@ -428,7 +560,8 @@
       "Faster and more reliable than npm install in CI",
       "Requires package-lock.json",
       "Removes node_modules before installing",
-      "Fails if package.json and package-lock.json are out of sync"
+      "Fails if package.json and package-lock.json are out of sync",
+      "npm 12+: the allowScripts policy applies, so unapproved dependency install scripts are skipped"
     ],
     "relatedCommands": [
       "npm-install"
@@ -448,6 +581,14 @@
       {
         "command": "npm cache verify",
         "description": "Verify cache integrity"
+      },
+      {
+        "command": "npm cache ls",
+        "description": "List cached package entries"
+      },
+      {
+        "command": "npm cache npx ls",
+        "description": "List packages cached by npx"
       }
     ],
     "notes": [
@@ -498,13 +639,18 @@
       }
     ],
     "notes": [
-      "Requires npm account and login",
-      "Use the 'files' field in package.json to control what gets published"
+      "Requires npm account and login (or a trusted-publishing OIDC token in CI)",
+      "Use the 'files' field in package.json to control what gets published",
+      "Prefer trusted publishing (npm trust) over long-lived tokens in CI",
+      "npm 12+: the --json output format of npm publish and npm pack changed"
     ],
     "relatedCommands": [
       "npm-version",
       "npm-login",
-      "npm-whoami"
+      "npm-whoami",
+      "npm-trust",
+      "npm-stage",
+      "npm-dist-tag"
     ]
   },
   {
@@ -564,7 +710,8 @@
       }
     ],
     "notes": [
-      "In CI, use an access token in .npmrc (//registry.npmjs.org/:_authToken=${NPM_TOKEN}) instead of npm login"
+      "In CI, use an access token in .npmrc (//registry.npmjs.org/:_authToken=${NPM_TOKEN}) or trusted publishing instead of npm login",
+      "npm 12 removed npm adduser; create accounts on the npm website"
     ],
     "relatedCommands": [
       "npm-whoami",
@@ -592,6 +739,123 @@
     ]
   },
   {
+    "id": "npm-trust",
+    "name": "npm trust",
+    "description": "Configure trusted publishing (OIDC) between a package and a CI provider",
+    "category": "Publishing",
+    "technologyId": "npm",
+    "flags": [
+      {
+        "flag": "--file <workflow>",
+        "description": "Workflow/pipeline file name (required for github and gitlab)"
+      },
+      {
+        "flag": "--repo <owner/repo>",
+        "description": "Repository (defaults to repository.url in package.json)"
+      },
+      {
+        "flag": "--env <name>",
+        "description": "Restrict to a CI environment"
+      },
+      {
+        "flag": "--allow-publish",
+        "description": "Allow the trusted publisher to run npm publish"
+      },
+      {
+        "flag": "--allow-stage-publish",
+        "description": "Allow the trusted publisher to stage publishes (npm stage)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npm trust github my-package --file release.yml --repo my-org/my-repo --allow-publish",
+        "description": "Trust a GitHub Actions workflow to publish"
+      },
+      {
+        "command": "npm trust gitlab my-package --file .gitlab-ci.yml --project my-group/my-project --allow-publish",
+        "description": "Trust a GitLab CI pipeline"
+      },
+      {
+        "command": "npm trust list my-package",
+        "description": "Show the configured trusted publisher"
+      },
+      {
+        "command": "npm trust revoke my-package --id=<trust-id>",
+        "description": "Remove a trust relationship"
+      }
+    ],
+    "notes": [
+      "Requires 2FA on your account and an existing package",
+      "Only one trust configuration per package; revoke the old one before adding a new one",
+      "Supported providers: github, gitlab, circleci"
+    ],
+    "relatedCommands": [
+      "npm-publish",
+      "npm-stage"
+    ]
+  },
+  {
+    "id": "npm-stage",
+    "name": "npm stage",
+    "description": "Stage a package version for later 2FA-approved publishing",
+    "category": "Publishing",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm stage publish",
+        "description": "Upload the current package as a staged (not yet public) version"
+      },
+      {
+        "command": "npm stage list",
+        "description": "List staged versions"
+      },
+      {
+        "command": "npm stage approve <stage-id>",
+        "description": "Approve and publish a staged version (prompts for 2FA)"
+      },
+      {
+        "command": "npm stage reject <stage-id>",
+        "description": "Discard a staged version"
+      }
+    ],
+    "notes": [
+      "Lets CI stage releases without 2FA while a maintainer approves them later",
+      "Prereleases and non-latest versions need an explicit --tag, as with npm publish"
+    ],
+    "relatedCommands": [
+      "npm-publish",
+      "npm-trust"
+    ]
+  },
+  {
+    "id": "npm-dist-tag",
+    "name": "npm dist-tag",
+    "description": "Manage distribution tags (latest, next, beta, ...) for a package",
+    "category": "Publishing",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm dist-tag ls my-package",
+        "description": "List tags and the versions they point to"
+      },
+      {
+        "command": "npm dist-tag add my-package@2.0.0 latest",
+        "description": "Point latest at a version (e.g. promote a beta)"
+      },
+      {
+        "command": "npm dist-tag rm my-package beta",
+        "description": "Remove a tag"
+      }
+    ],
+    "notes": [
+      "Alias: npm dist-tags"
+    ],
+    "relatedCommands": [
+      "npm-publish",
+      "npm-view"
+    ]
+  },
+  {
     "id": "npm-link",
     "name": "npm link",
     "description": "Create symlink for local development",
@@ -608,13 +872,48 @@
       },
       {
         "command": "npm unlink package-name",
-        "description": "Remove the link and restore the registry version"
+        "description": "Remove the linked package (unlink is an alias of uninstall)"
       }
     ],
     "notes": [
-      "Useful for testing packages locally"
+      "Useful for testing packages locally",
+      "npm unlink is an alias of npm uninstall, so it also removes the package from package.json; reinstall it to get the registry version back"
     ],
     "relatedCommands": []
+  },
+  {
+    "id": "npm-patch",
+    "name": "npm patch",
+    "description": "Patch an installed dependency and re-apply the patch on every install (npm 12+)",
+    "category": "Development",
+    "technologyId": "npm",
+    "examples": [
+      {
+        "command": "npm patch lodash",
+        "description": "Extract a clean copy of lodash to a temp folder for editing (prints the path)"
+      },
+      {
+        "command": "npm patch commit <edit-dir>",
+        "description": "Write the diff to patches/ and register it in patchedDependencies"
+      },
+      {
+        "command": "npm patch ls",
+        "description": "List registered patches"
+      },
+      {
+        "command": "npm patch rm lodash",
+        "description": "Remove a patch"
+      }
+    ],
+    "notes": [
+      "Patches are applied during install, even with --ignore-scripts",
+      "A patch that fails to apply aborts the install by default",
+      "If several versions are installed, use an exact selector such as npm patch add lodash@4.17.21"
+    ],
+    "relatedCommands": [
+      "npm-install",
+      "npm-link"
+    ]
   },
   {
     "id": "npm-prune",
@@ -626,10 +925,6 @@
       {
         "command": "npm prune",
         "description": "Remove packages not in package.json"
-      },
-      {
-        "command": "npm prune --production",
-        "description": "Remove devDependencies"
       },
       {
         "command": "npm prune --omit=dev",
@@ -726,7 +1021,8 @@
       }
     ],
     "notes": [
-      "Aliases: npm info, npm show"
+      "Aliases: npm info, npm show",
+      "npm 12+: --json output is always an array"
     ],
     "relatedCommands": [
       "npm-outdated",

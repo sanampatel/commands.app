@@ -16,15 +16,19 @@
       },
       {
         "flag": "--tailwind",
-        "description": "Initialize with Tailwind CSS"
+        "description": "Initialize with Tailwind CSS (default)"
       },
       {
-        "flag": "--eslint",
-        "description": "Initialize with ESLint config"
+        "flag": "--eslint / --biome / --no-linter",
+        "description": "Choose ESLint, Biome, or no linter"
       },
       {
         "flag": "--app",
         "description": "Use the App Router"
+      },
+      {
+        "flag": "--api",
+        "description": "Create a headless API-only app (route handlers only)"
       },
       {
         "flag": "--src-dir",
@@ -35,8 +39,8 @@
         "description": "Set the import alias, e.g. \"@/*\""
       },
       {
-        "flag": "--turbopack",
-        "description": "Use Turbopack (already the default bundler in Next.js 16)"
+        "flag": "--react-compiler",
+        "description": "Enable the React Compiler"
       },
       {
         "flag": "--use-npm / --use-pnpm / --use-yarn / --use-bun",
@@ -79,11 +83,17 @@
       {
         "command": "npx create-next-app@latest my-app --example with-docker",
         "description": "Start from an official example"
+      },
+      {
+        "command": "npx create-next-app@latest my-app --biome --react-compiler",
+        "description": "Use Biome instead of ESLint and enable the React Compiler"
       }
     ],
     "notes": [
       "Equivalents: pnpm create next-app, yarn create next-app, bun create next-app",
-      "Next.js 16 requires Node.js 20.9 or newer"
+      "Next.js 16 requires Node.js 20.9 or newer",
+      "Turbopack is the default bundler, so no bundler flag is needed",
+      "New apps include an AGENTS.md for coding agents by default (--no-agents-md to skip)"
     ],
     "relatedCommands": [
       "nextjs-dev"
@@ -110,7 +120,11 @@
       },
       {
         "flag": "--turbopack",
-        "description": "Use Turbopack; the default since Next.js 16, only needed on 15.x"
+        "description": "Use Turbopack; the default since Next.js 16, only needed on 15.x (alias --turbo)"
+      },
+      {
+        "flag": "--inspect [[host:]port]",
+        "description": "Enable the Node.js inspector for server-side code"
       },
       {
         "flag": "--experimental-https",
@@ -136,12 +150,15 @@
       }
     ],
     "notes": [
-      "Turbopack is the default bundler for next dev and next build in Next.js 16; '--turbo' was the old flag name"
+      "Turbopack is the default bundler for next dev and next build in Next.js 16",
+      "Running next with no command is the same as next dev",
+      "Next.js 16 writes dev output to .next/dev, so next dev and next build can run at the same time"
     ],
     "relatedCommands": [
       "nextjs-build",
       "nextjs-start",
-      "nextjs-dev-turbo"
+      "nextjs-dev-turbo",
+      "nextjs-dev-inspect"
     ]
   },
   {
@@ -156,8 +173,20 @@
         "description": "Build with webpack instead of Turbopack (Next.js 16+)"
       },
       {
-        "flag": "--debug",
+        "flag": "-d, --debug",
         "description": "Enable verbose build output"
+      },
+      {
+        "flag": "--debug-prerender",
+        "description": "Readable stack traces for prerender errors (don't deploy the result)"
+      },
+      {
+        "flag": "--debug-build-paths <patterns>",
+        "description": "Build only matching routes, e.g. \"app/**/page.tsx,!app/admin/**\""
+      },
+      {
+        "flag": "--analyze",
+        "description": "Generate bundle analysis data (Turbopack only)"
       },
       {
         "flag": "--profile",
@@ -176,6 +205,14 @@
       {
         "command": "next build --webpack",
         "description": "Build with webpack (opt out of Turbopack)"
+      },
+      {
+        "command": "next build --debug-prerender",
+        "description": "Debug prerender errors with unminified server code"
+      },
+      {
+        "command": "next build --debug-build-paths=\"app/dashboard/**\"",
+        "description": "Build only some routes while debugging"
       }
     ],
     "notes": [
@@ -187,7 +224,8 @@
     "relatedCommands": [
       "nextjs-start",
       "nextjs-build-standalone",
-      "nextjs-build-static-export"
+      "nextjs-build-static-export",
+      "nextjs-analyze"
     ]
   },
   {
@@ -198,12 +236,20 @@
     "technologyId": "nextjs",
     "flags": [
       {
-        "flag": "-p PORT",
-        "description": "Specify port (default 3000)"
+        "flag": "-p, --port PORT",
+        "description": "Specify port (default 3000, or the PORT env var)"
       },
       {
-        "flag": "-H HOST",
-        "description": "Specify hostname"
+        "flag": "-H, --hostname HOST",
+        "description": "Specify hostname (default 0.0.0.0)"
+      },
+      {
+        "flag": "--keepAliveTimeout <ms>",
+        "description": "Close inactive connections after this many milliseconds"
+      },
+      {
+        "flag": "--inspect [[host:]port]",
+        "description": "Enable the Node.js inspector"
       }
     ],
     "examples": [
@@ -231,20 +277,10 @@
   },
   {
     "id": "nextjs-lint",
-    "name": "next lint",
-    "description": "Run ESLint through Next.js (removed in Next.js 16)",
+    "name": "next lint (removed)",
+    "description": "Linting in Next.js 16: next lint was removed, use the ESLint or Biome CLI",
     "category": "Development",
     "technologyId": "nextjs",
-    "flags": [
-      {
-        "flag": "--fix",
-        "description": "Automatically fix issues"
-      },
-      {
-        "flag": "--dir",
-        "description": "Specify directory to lint"
-      }
-    ],
     "examples": [
       {
         "command": "npx @next/codemod@canary next-lint-to-eslint-cli .",
@@ -259,22 +295,18 @@
         "description": "Auto-fix with the ESLint CLI"
       },
       {
-        "command": "next lint",
-        "description": "Run ESLint"
-      },
-      {
-        "command": "next lint --fix",
-        "description": "Fix auto-fixable issues"
-      },
-      {
         "command": "npm run lint",
-        "description": "Lint using package.json script"
+        "description": "Lint using the package.json script"
+      },
+      {
+        "command": "next lint",
+        "description": "Next.js 15 and earlier only"
       }
     ],
     "notes": [
       "DEPRECATED: next lint was deprecated in Next.js 15.5 and removed in Next.js 16. Use the ESLint CLI (eslint .) or another linter such as Biome",
       "The next-lint-to-eslint-cli codemod updates package.json scripts and sets up eslint.config.mjs with eslint-config-next",
-      "The 'next lint' examples only work on Next.js 15 and earlier"
+      "next build no longer runs the linter in Next.js 16; add a separate lint step to CI"
     ],
     "relatedCommands": [
       "nextjs-dev"
@@ -286,23 +318,32 @@
     "description": "Manage Next.js telemetry settings",
     "category": "Configuration",
     "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "--enable",
+        "description": "Enable telemetry collection"
+      },
+      {
+        "flag": "--disable",
+        "description": "Disable telemetry collection"
+      }
+    ],
     "examples": [
       {
-        "command": "next telemetry status",
-        "description": "Check telemetry status"
+        "command": "next telemetry",
+        "description": "Show the current telemetry status"
       },
       {
         "command": "next telemetry disable",
-        "description": "Disable telemetry"
+        "description": "Disable telemetry (same as --disable)"
       },
       {
         "command": "next telemetry enable",
-        "description": "Enable telemetry"
+        "description": "Enable telemetry (same as --enable)"
       }
     ],
     "notes": [
-      "Telemetry helps improve Next.js",
-      "Completely anonymous",
+      "Telemetry is completely anonymous",
       "Set NEXT_TELEMETRY_DISABLED=1 to disable it in CI"
     ],
     "relatedCommands": []
@@ -313,6 +354,12 @@
     "description": "Print relevant system and Next.js installation information",
     "category": "Development",
     "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "--verbose",
+        "description": "Collect additional debugging information"
+      }
+    ],
     "examples": [
       {
         "command": "next info",
@@ -321,7 +368,7 @@
     ],
     "notes": [
       "Useful for bug reports",
-      "Shows Node version, OS, package versions"
+      "Shows OS, Node.js and package manager versions, and next/react package versions"
     ],
     "relatedCommands": [
       "nextjs-codemod-upgrade"
@@ -349,7 +396,7 @@
     ],
     "notes": [
       "Turbopack is stable and the default bundler for both next dev and next build in Next.js 16, so no flag is needed",
-      "'--turbo' is the old flag name; Next.js 15 used '--turbopack'",
+      "--turbo is still accepted as an alias of --turbopack",
       "Pass --webpack to dev/build if you depend on a custom webpack() config in next.config"
     ],
     "relatedCommands": [
@@ -415,6 +462,48 @@
     ]
   },
   {
+    "id": "nextjs-analyze",
+    "name": "next analyze",
+    "description": "Explore bundle size and composition in an interactive analyzer (Turbopack)",
+    "category": "Build",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "-o, --output",
+        "description": "Write analysis files to .next/diagnostics/analyze without starting the UI"
+      },
+      {
+        "flag": "--snapshot <name>",
+        "description": "Save a named snapshot"
+      },
+      {
+        "flag": "--port <port>",
+        "description": "Port for the analyzer UI (default 4000)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "next analyze",
+        "description": "Analyze the bundle and open the analyzer UI"
+      },
+      {
+        "command": "next analyze --output --snapshot before-refactor",
+        "description": "Save a snapshot without serving the UI"
+      },
+      {
+        "command": "next analyze export --snapshot before-refactor > graph.jsonl",
+        "description": "Export a saved snapshot as JSON Lines"
+      }
+    ],
+    "notes": [
+      "Does not produce a deployable build",
+      "Only works with Turbopack"
+    ],
+    "relatedCommands": [
+      "nextjs-build"
+    ]
+  },
+  {
     "id": "nextjs-experimental-https",
     "name": "next dev --experimental-https",
     "description": "Run development server with HTTPS",
@@ -441,11 +530,39 @@
       }
     ],
     "notes": [
-      "Generates a locally trusted certificate with mkcert",
+      "Generates a self-signed certificate for localhost",
       "For local development only"
     ],
     "relatedCommands": [
       "nextjs-dev"
+    ]
+  },
+  {
+    "id": "nextjs-dev-inspect",
+    "name": "next dev --inspect",
+    "description": "Debug server-side code with the Node.js inspector",
+    "category": "Development",
+    "technologyId": "nextjs",
+    "examples": [
+      {
+        "command": "next dev --inspect",
+        "description": "Start the dev server with the inspector on the default port"
+      },
+      {
+        "command": "next dev --inspect=0.0.0.0:9229",
+        "description": "Listen on a specific host and port (e.g. in Docker)"
+      },
+      {
+        "command": "next start --inspect",
+        "description": "Inspect the production server"
+      }
+    ],
+    "notes": [
+      "Attach Chrome DevTools (chrome://inspect) or your editor's debugger"
+    ],
+    "relatedCommands": [
+      "nextjs-dev",
+      "nextjs-start"
     ]
   },
   {
@@ -462,10 +579,16 @@
       {
         "command": "next typegen && tsc --noEmit",
         "description": "Type-check in CI without a full build"
+      },
+      {
+        "command": "next typegen ./apps/web",
+        "description": "Generate types for one app in a monorepo"
       }
     ],
     "notes": [
-      "Available since Next.js 15.5"
+      "Available since Next.js 15.5",
+      "Writes to .next/types (or .next/dev/types in development) and generates next-env.d.ts",
+      "Loads next.config with the production build phase, so required env vars must be set"
     ],
     "relatedCommands": [
       "nextjs-build",
@@ -540,6 +663,10 @@
         "description": "Upgrade to the latest stable Next.js with codemods"
       },
       {
+        "command": "npx @next/codemod upgrade major",
+        "description": "Upgrade to the next major version (e.g. 15.x to 16.x)"
+      },
+      {
         "command": "npx @next/codemod@canary next-lint-to-eslint-cli .",
         "description": "Run a single codemod by name"
       },
@@ -549,11 +676,57 @@
       }
     ],
     "notes": [
-      "Commit or stash your work first so you can review the diff"
+      "Commit or stash your work first so you can review the diff",
+      "The revision can be patch, minor (default), major, a dist-tag or an exact version",
+      "Inside an existing app you can also run next upgrade"
     ],
     "relatedCommands": [
+      "nextjs-upgrade",
       "nextjs-info",
       "nextjs-lint"
+    ]
+  },
+  {
+    "id": "nextjs-upgrade",
+    "name": "next upgrade",
+    "description": "Upgrade the current app's Next.js version and run the related codemods",
+    "category": "Maintenance",
+    "technologyId": "nextjs",
+    "flags": [
+      {
+        "flag": "--revision <version|tag>",
+        "description": "Target version or dist-tag (e.g. latest, canary, 16.4.0)"
+      },
+      {
+        "flag": "--agent [security|latest|experimental-future]",
+        "description": "Let a coding agent run the upgrade and verify the app"
+      },
+      {
+        "flag": "--verbose",
+        "description": "Show verbose output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "npx next upgrade",
+        "description": "Upgrade to the latest release on your current channel"
+      },
+      {
+        "command": "npx next upgrade --revision canary",
+        "description": "Upgrade to the canary channel"
+      },
+      {
+        "command": "npx next upgrade --agent",
+        "description": "Upgrade with a coding agent (defaults to security updates)"
+      }
+    ],
+    "notes": [
+      "Alias: next update",
+      "--agent cannot be combined with --revision"
+    ],
+    "relatedCommands": [
+      "nextjs-codemod-upgrade",
+      "nextjs-info"
     ]
   }
 ]

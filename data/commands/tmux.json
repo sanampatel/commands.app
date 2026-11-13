@@ -193,11 +193,16 @@
       {
         "command": "tmux switch-client -t work",
         "description": "Switch the current client to another session"
+      },
+      {
+        "command": "Ctrl-b Shift-Tab",
+        "description": "Fuzzy session switcher: type to filter, Enter to switch (tmux 3.8+)"
       }
     ],
     "notes": [
       "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
-      "Ctrl-b ( and Ctrl-b ) cycle to the previous/next session."
+      "Ctrl-b ( and Ctrl-b ) cycle to the previous/next session.",
+      "Ctrl-b L switches back to the last session."
     ],
     "relatedCommands": [
       "tmux-ls",
@@ -254,6 +259,10 @@
       {
         "command": "tmux choose-tree -w",
         "description": "Pick from a window list (Ctrl-b w)"
+      },
+      {
+        "command": "Ctrl-b Tab",
+        "description": "Fuzzy window switcher in a floating pane (tmux 3.8+)"
       }
     ],
     "notes": [
@@ -282,7 +291,41 @@
       "Ctrl-b & kills the current window (asks for confirmation); `tmux kill-window -t 2` from the shell."
     ],
     "relatedCommands": [
-      "tmux-new-window"
+      "tmux-new-window",
+      "tmux-move-window"
+    ]
+  },
+  {
+    "id": "tmux-move-window",
+    "name": "Ctrl-b .",
+    "description": "Move, swap or renumber windows.",
+    "category": "Windows",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux move-window -t 5",
+        "description": "Move the current window to index 5 (Ctrl-b . prompts for it)"
+      },
+      {
+        "command": "tmux swap-window -t 1",
+        "description": "Swap the current window with window 1"
+      },
+      {
+        "command": "tmux move-window -r",
+        "description": "Renumber all windows sequentially to close gaps"
+      },
+      {
+        "command": "tmux move-window -s work:3 -t other:",
+        "description": "Move a window to another session"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "`set -g renumber-windows on` renumbers automatically whenever a window closes."
+    ],
+    "relatedCommands": [
+      "tmux-select-window",
+      "tmux-rename-window"
     ]
   },
   {
@@ -356,7 +399,7 @@
       },
       {
         "command": "tmux display-panes",
-        "description": "Show pane numbers, then press a number to jump (Ctrl-b q)"
+        "description": "Show pane numbers, then press a number to jump (Ctrl-b q); a mode since tmux 3.8"
       }
     ],
     "notes": [
@@ -401,7 +444,7 @@
     ],
     "notes": [
       "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
-      "Ctrl-b Space cycles through preset layouts. Hold Ctrl after the prefix and tap the arrow repeatedly to keep resizing."
+      "Ctrl-b Space cycles through preset layouts. Ctrl-b Ctrl-arrow resizes by 1 cell and Ctrl-b Alt-arrow by 5; both repeat without pressing the prefix again. With the mouse on, drag pane borders."
     ],
     "relatedCommands": [
       "tmux-zoom-pane",
@@ -457,6 +500,139 @@
     ]
   },
   {
+    "id": "tmux-floating-pane",
+    "name": "Ctrl-b *",
+    "description": "Open a floating pane that sits above the tiled layout (tmux 3.7+).",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "flags": [
+      {
+        "flag": "-x / -y",
+        "description": "Width / height in cells or as a percentage, e.g. -x 80%"
+      },
+      {
+        "flag": "-X / -Y",
+        "description": "Position of the upper-left corner"
+      },
+      {
+        "flag": "-c",
+        "description": "Start directory"
+      },
+      {
+        "flag": "-E",
+        "description": "Create an empty pane with no command"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tmux new-pane",
+        "description": "Equivalent command"
+      },
+      {
+        "command": "tmux new-pane -x 80% -y 60% 'htop'",
+        "description": "Floating pane running htop, sized as a percentage of the window"
+      },
+      {
+        "command": "tmux new-pane -c '#{pane_current_path}'",
+        "description": "Open in the current pane's directory"
+      },
+      {
+        "command": "Ctrl-b @",
+        "description": "Toggle the current pane between floating and tiled"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "Floating panes behave like normal panes (not modal like popups). In tmux 3.8 they can be moved and resized with move-pane/resize-pane, the mouse, or the Ctrl-b g bindings.",
+      "Requires tmux 3.7 or newer; check with tmux -V."
+    ],
+    "relatedCommands": [
+      "tmux-popup",
+      "tmux-split-horizontal",
+      "tmux-break-pane"
+    ]
+  },
+  {
+    "id": "tmux-popup",
+    "name": "tmux display-popup",
+    "description": "Run a command in a temporary popup window over the current panes.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "flags": [
+      {
+        "flag": "-E",
+        "description": "Close the popup when the command exits (-EE only on success)"
+      },
+      {
+        "flag": "-w / -h",
+        "description": "Width / height, e.g. 80%"
+      },
+      {
+        "flag": "-d",
+        "description": "Start directory"
+      },
+      {
+        "flag": "-T",
+        "description": "Popup title"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tmux display-popup -E -w 80% -h 80% 'lazygit'",
+        "description": "Run a TUI in a large popup that closes when it exits"
+      },
+      {
+        "command": "tmux popup -E -d '#{pane_current_path}'",
+        "description": "Quick shell in the current directory"
+      },
+      {
+        "command": "bind G display-popup -E -w 90% -h 90% 'lazygit'",
+        "description": "tmux.conf binding: Ctrl-b G opens the popup"
+      }
+    ],
+    "notes": [
+      "Popups are modal: Escape or Ctrl-c closes them unless the command handles those keys."
+    ],
+    "relatedCommands": [
+      "tmux-floating-pane",
+      "tmux-source-file"
+    ]
+  },
+  {
+    "id": "tmux-break-pane",
+    "name": "Ctrl-b !",
+    "description": "Move a pane into its own window, or join a pane into another window.",
+    "category": "Panes",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux break-pane",
+        "description": "Equivalent command: make the current pane a new window"
+      },
+      {
+        "command": "tmux join-pane -s :2",
+        "description": "Pull the active pane of window 2 into the current window"
+      },
+      {
+        "command": "tmux join-pane -h -s :logs -t :1",
+        "description": "Move the logs window's pane into window 1 as a side-by-side split"
+      },
+      {
+        "command": "tmux swap-pane -D",
+        "description": "Swap the current pane with the next one (Ctrl-b })"
+      }
+    ],
+    "notes": [
+      "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
+      "join-pane takes the same -h / -v / -l options as split-window."
+    ],
+    "relatedCommands": [
+      "tmux-split-horizontal",
+      "tmux-select-pane",
+      "tmux-floating-pane"
+    ]
+  },
+  {
     "id": "tmux-copy-mode",
     "name": "Ctrl-b [",
     "description": "Enter copy mode to scroll back, search, and copy text.",
@@ -479,7 +655,8 @@
     "notes": [
       "Key bindings shown assume the default prefix Ctrl-b; press the prefix, release, then press the key.",
       "In emacs mode (default) start selection with Ctrl-Space and copy with Alt-w; with `setw -g mode-keys vi` use Space/v and Enter/y. Search with / or ? (vi) or Ctrl-s/Ctrl-r (emacs). q exits.",
-      "Ctrl-b PgUp enters copy mode and scrolls up immediately. `set -g mouse on` enables wheel scrolling."
+      "Ctrl-b PgUp enters copy mode and scrolls up immediately. The mouse option is on by default since tmux 3.8, so the wheel scrolls into copy mode; older versions need `set -g mouse on`.",
+      "tmux 3.7+ can show line numbers in copy mode: `set -g copy-mode-line-numbers relative` (or absolute, hybrid)."
     ],
     "relatedCommands": [
       "tmux-source-file"
@@ -506,7 +683,87 @@
     ],
     "relatedCommands": [
       "tmux-new-session",
-      "tmux-synchronize-panes"
+      "tmux-synchronize-panes",
+      "tmux-capture-pane"
+    ]
+  },
+  {
+    "id": "tmux-capture-pane",
+    "name": "tmux capture-pane",
+    "description": "Dump the visible contents or scrollback history of a pane as text.",
+    "category": "Scripting & Config",
+    "technologyId": "tmux",
+    "flags": [
+      {
+        "flag": "-p",
+        "description": "Print to stdout instead of a paste buffer"
+      },
+      {
+        "flag": "-S / -E",
+        "description": "Start / end line; negative numbers reach into history and - means the very start or end"
+      },
+      {
+        "flag": "-J",
+        "description": "Join wrapped lines and keep trailing spaces"
+      },
+      {
+        "flag": "-e",
+        "description": "Include colour escape sequences"
+      },
+      {
+        "flag": "-t",
+        "description": "Target pane"
+      }
+    ],
+    "examples": [
+      {
+        "command": "tmux capture-pane -p -S - > pane.log",
+        "description": "Save the whole scrollback of the current pane to a file"
+      },
+      {
+        "command": "tmux capture-pane -p -t work:1.0 | tail -20",
+        "description": "Read the last lines of another pane from a script"
+      },
+      {
+        "command": "tmux capture-pane -pJ -S -1000 | grep ERROR",
+        "description": "Search the last 1000 lines of history"
+      }
+    ],
+    "notes": [
+      "Scrollback is limited by the history-limit option (2000 lines by default); raise it with `set -g history-limit 50000`."
+    ],
+    "relatedCommands": [
+      "tmux-send-keys",
+      "tmux-pipe-pane",
+      "tmux-copy-mode"
+    ]
+  },
+  {
+    "id": "tmux-pipe-pane",
+    "name": "tmux pipe-pane",
+    "description": "Continuously log everything a pane outputs to a command or file.",
+    "category": "Scripting & Config",
+    "technologyId": "tmux",
+    "examples": [
+      {
+        "command": "tmux pipe-pane -o 'cat >> ~/tmux-#S-#I-#P.log'",
+        "description": "Start logging the current pane (-o toggles: run again to stop)"
+      },
+      {
+        "command": "tmux pipe-pane",
+        "description": "Stop piping the current pane"
+      },
+      {
+        "command": "bind P pipe-pane -o 'cat >> ~/tmux-#S-#I-#P.log' \\; display 'Toggled logging'",
+        "description": "tmux.conf binding to toggle logging with Ctrl-b P"
+      }
+    ],
+    "notes": [
+      "Only output produced after the pipe starts is logged; use capture-pane for existing scrollback.",
+      "Logs include raw terminal escape sequences."
+    ],
+    "relatedCommands": [
+      "tmux-capture-pane"
     ]
   },
   {
@@ -517,8 +774,8 @@
     "technologyId": "tmux",
     "examples": [
       {
-        "command": "set -g mouse on",
-        "description": "Type at the prompt to enable mouse support for this server"
+        "command": "setw -g mode-keys vi",
+        "description": "Type at the prompt to use vi keys in copy mode for this server"
       },
       {
         "command": "kill-session -t old",
@@ -550,9 +807,10 @@
       }
     ],
     "notes": [
-      "tmux 3.1+ also reads ~/.config/tmux/tmux.conf.",
-      "Common config lines: `set -g mouse on`, `set -g base-index 1`, `setw -g mode-keys vi`, `set -g prefix C-a`.",
-      "Removed settings are not unset by reloading; restart the server (`tmux kill-server`) for a clean state."
+      "tmux reads ~/.tmux.conf or $XDG_CONFIG_HOME/tmux/tmux.conf (usually ~/.config/tmux/tmux.conf).",
+      "Common config lines: `set -g base-index 1`, `set -g renumber-windows on`, `setw -g mode-keys vi`, `set -g prefix C-a`. Mouse support is on by default since tmux 3.8 (`set -g mouse off` to disable).",
+      "Removed settings are not unset by reloading; restart the server (`tmux kill-server`) for a clean state.",
+      "tmux 3.8 applies built-in light/dark colour themes; `set -s theme terminal` restores the previous terminal-colour look."
     ],
     "relatedCommands": [
       "tmux-list-keys",

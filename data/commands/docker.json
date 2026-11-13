@@ -87,6 +87,16 @@
     "description": "Stop one or more running containers",
     "category": "Container Management",
     "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-t, --timeout",
+        "description": "Seconds to wait before killing the container (default 10)"
+      },
+      {
+        "flag": "-s, --signal",
+        "description": "Signal to send instead of the image's STOPSIGNAL (default SIGTERM)"
+      }
+    ],
     "examples": [
       {
         "command": "docker stop mycontainer",
@@ -95,7 +105,14 @@
       {
         "command": "docker stop $(docker ps -q)",
         "description": "Stop all running containers"
+      },
+      {
+        "command": "docker stop -t 30 mycontainer",
+        "description": "Give the app 30 seconds to shut down gracefully"
       }
+    ],
+    "notes": [
+      "The --time spelling of the timeout flag is deprecated since Docker 28; use -t/--timeout."
     ],
     "relatedCommands": [
       "docker-start",
@@ -149,7 +166,7 @@
       },
       {
         "flag": "-v",
-        "description": "Remove associated volumes"
+        "description": "Also remove anonymous volumes created for the container (named volumes are kept)"
       }
     ],
     "examples": [
@@ -183,11 +200,15 @@
     "flags": [
       {
         "flag": "-a",
-        "description": "Show all images"
+        "description": "Also show untagged (dangling) and intermediate images"
       },
       {
         "flag": "-q",
         "description": "Only show image IDs"
+      },
+      {
+        "flag": "--tree",
+        "description": "Show multi-platform images as a tree of platform variants (experimental)"
       }
     ],
     "examples": [
@@ -205,7 +226,8 @@
       }
     ],
     "notes": [
-      "'docker image ls' is the equivalent long form"
+      "'docker image ls' is the equivalent long form",
+      "Since Docker Engine 29 the default view is more compact and hides untagged images; add -a to include them"
     ],
     "relatedCommands": [
       "docker-pull",
@@ -271,6 +293,10 @@
       {
         "flag": "--pull",
         "description": "Always pull a newer base image"
+      },
+      {
+        "flag": "--check",
+        "description": "Run Dockerfile build checks (lint) without building"
       }
     ],
     "examples": [
@@ -293,6 +319,10 @@
       {
         "command": "docker build --build-arg NODE_VERSION=22 -t myapp .",
         "description": "Pass a build argument"
+      },
+      {
+        "command": "docker build --check .",
+        "description": "Lint the Dockerfile for common mistakes and deprecated syntax"
       }
     ],
     "notes": [
@@ -363,6 +393,49 @@
     ],
     "relatedCommands": [
       "docker-run"
+    ]
+  },
+  {
+    "id": "docker-debug",
+    "name": "docker debug",
+    "description": "Get a shell with a debugging toolbox into any container or image, even slim/distroless ones without a shell.",
+    "category": "Container Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "--shell",
+        "description": "Shell to use: bash, fish, zsh or auto (default)"
+      },
+      {
+        "flag": "-c, --command",
+        "description": "Run a command non-interactively instead of opening a shell"
+      },
+      {
+        "flag": "--host",
+        "description": "Daemon socket to connect to, e.g. ssh://user@host"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker debug mycontainer",
+        "description": "Open a debug shell in a running container"
+      },
+      {
+        "command": "docker debug nginx:alpine",
+        "description": "Explore an image without starting it"
+      },
+      {
+        "command": "docker debug -c \"ls -la /app\" mycontainer",
+        "description": "Run one command and exit"
+      }
+    ],
+    "notes": [
+      "Part of Docker Desktop; not available with the standalone Docker Engine.",
+      "The toolbox (vim, curl, htop, ...) is mounted alongside the container, so the image itself is not modified. Use install <pkg> inside the session to add tools."
+    ],
+    "relatedCommands": [
+      "docker-exec",
+      "docker-logs"
     ]
   },
   {
@@ -450,15 +523,18 @@
       }
     ],
     "notes": [
-      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin",
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' plugin. The plugin jumped from v2.x to v5.x in late 2025 (v3/v4 were skipped to avoid confusion with legacy compose-file versions)",
       "Compose looks for compose.yaml (preferred) or docker-compose.yml in the current directory",
-      "Use -p <name> to set the project name"
+      "Use -p <name> to set the project name",
+      "The top-level 'version:' key in compose files is obsolete and ignored (Compose prints a warning)"
     ],
     "relatedCommands": [
       "docker-compose-down",
       "docker-compose-ps",
       "docker-compose-logs",
-      "docker-compose-build"
+      "docker-compose-build",
+      "docker-compose-watch",
+      "docker-compose-config"
     ]
   },
   {
@@ -705,11 +781,13 @@
       }
     ],
     "notes": [
-      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin"
+      "Compose v1 ('docker-compose' with a hyphen) is end-of-life; use the built-in 'docker compose' (v2) plugin",
+      "Since Compose v5, builds are always delegated to BuildKit via Bake (the internal builder was removed), so build output matches docker buildx bake"
     ],
     "relatedCommands": [
       "docker-compose-up",
-      "docker-build"
+      "docker-build",
+      "docker-buildx-bake"
     ]
   },
   {
@@ -744,6 +822,102 @@
     "relatedCommands": [
       "docker-compose-up",
       "docker-pull"
+    ]
+  },
+  {
+    "id": "docker-compose-watch",
+    "name": "docker compose watch",
+    "description": "Automatically sync, rebuild or restart services when source files change, based on the develop.watch section of compose.yaml.",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "--no-up",
+        "description": "Do not build and start services before watching"
+      },
+      {
+        "flag": "--prune",
+        "description": "Prune dangling images left by rebuilds"
+      },
+      {
+        "flag": "--quiet",
+        "description": "Hide build output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose watch",
+        "description": "Start the project and watch files, with sync/rebuild events separated from app logs"
+      },
+      {
+        "command": "docker compose up --watch",
+        "description": "Start the project in watch mode with logs and watch events together"
+      },
+      {
+        "command": "services:\n  web:\n    build: .\n    develop:\n      watch:\n        - action: sync\n          path: ./web\n          target: /src/web\n          ignore:\n            - node_modules/\n        - action: rebuild\n          path: package.json\n        - action: sync+restart\n          path: ./nginx.conf\n          target: /etc/nginx/conf.d/default.conf",
+        "description": "develop.watch rules: sync source files, rebuild on dependency changes, sync and restart on config changes"
+      }
+    ],
+    "notes": [
+      "Actions: sync (copy files into the running container), rebuild (rebuild the image and recreate the container), sync+restart (copy then restart).",
+      "Watch only works for services built from local source (a build: section); the image needs a writable target and tools like stat/mkdir for sync."
+    ],
+    "relatedCommands": [
+      "docker-compose-up",
+      "docker-compose-build"
+    ]
+  },
+  {
+    "id": "docker-compose-config",
+    "name": "docker compose config",
+    "description": "Validate the Compose files and print the fully merged, interpolated configuration.",
+    "category": "Docker Compose",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-q, --quiet",
+        "description": "Only validate; print nothing unless there is an error"
+      },
+      {
+        "flag": "--services",
+        "description": "Print service names, one per line"
+      },
+      {
+        "flag": "--format",
+        "description": "Output format: yaml (default) or json"
+      },
+      {
+        "flag": "--variables",
+        "description": "List the variables used in the model and their defaults"
+      },
+      {
+        "flag": "--environment",
+        "description": "Print the environment used for interpolation"
+      },
+      {
+        "flag": "--no-interpolate",
+        "description": "Do not substitute ${VAR} values"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker compose config",
+        "description": "Show the effective configuration after merging files and .env values"
+      },
+      {
+        "command": "docker compose -f compose.yaml -f compose.prod.yaml config > merged.yaml",
+        "description": "Check what an override file actually changes"
+      },
+      {
+        "command": "docker compose config -q",
+        "description": "Validate the compose file in CI"
+      }
+    ],
+    "notes": [
+      "The output includes interpolated secrets from .env files; be careful when sharing it."
+    ],
+    "relatedCommands": [
+      "docker-compose-up"
     ]
   },
   {
@@ -1171,12 +1345,116 @@
       }
     ],
     "notes": [
-      "Multi-platform builds need the containerd image store (Docker Desktop setting) or a docker-container builder",
+      "Multi-platform builds need the containerd image store (the default for fresh Docker Engine 29+ installs and recent Docker Desktop) or a docker-container builder",
       "Non-native platforms are emulated with QEMU, which is slow; native builders or cross-compilation are faster"
     ],
     "relatedCommands": [
       "docker-build",
       "docker-push"
+    ]
+  },
+  {
+    "id": "docker-buildx-bake",
+    "name": "docker buildx bake",
+    "description": "Build several images at once from a declarative file (docker-bake.hcl, compose.yaml or JSON).",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "-f FILE",
+        "description": "Bake file to use (default: compose.yaml, docker-bake.hcl and related files in the current directory)"
+      },
+      {
+        "flag": "--print",
+        "description": "Print the resolved build configuration without building"
+      },
+      {
+        "flag": "--list",
+        "description": "List targets or variables, e.g. --list=targets"
+      },
+      {
+        "flag": "--set",
+        "description": "Override a target value, e.g. --set app.tags=myapp:dev"
+      },
+      {
+        "flag": "--push",
+        "description": "Push all built images"
+      },
+      {
+        "flag": "--load",
+        "description": "Load images into the local image store"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker buildx bake",
+        "description": "Build the default group of targets"
+      },
+      {
+        "command": "docker buildx bake --list=targets",
+        "description": "Show the targets defined in the bake file"
+      },
+      {
+        "command": "docker buildx bake app --print",
+        "description": "Inspect the resolved configuration of one target"
+      },
+      {
+        "command": "target \"app\" {\n  context    = \".\"\n  dockerfile = \"Dockerfile\"\n  tags       = [\"myapp:latest\"]\n  platforms  = [\"linux/amd64\", \"linux/arm64\"]\n}\n\ngroup \"default\" {\n  targets = [\"app\"]\n}",
+        "description": "Minimal docker-bake.hcl"
+      }
+    ],
+    "notes": [
+      "Bake runs independent targets in parallel and can read build sections from compose.yaml directly."
+    ],
+    "relatedCommands": [
+      "docker-buildx-build",
+      "docker-compose-build"
+    ]
+  },
+  {
+    "id": "docker-scout",
+    "name": "docker scout",
+    "description": "Scan images for known vulnerabilities (CVEs) and get base-image update recommendations.",
+    "category": "Image Management",
+    "technologyId": "docker",
+    "flags": [
+      {
+        "flag": "--only-severity",
+        "description": "Only report these severities, e.g. critical,high"
+      },
+      {
+        "flag": "--only-fixed",
+        "description": "Only show vulnerabilities that have a fix available"
+      },
+      {
+        "flag": "--format",
+        "description": "Output format, e.g. packages (default), markdown, sarif"
+      }
+    ],
+    "examples": [
+      {
+        "command": "docker scout quickview myapp:1.0",
+        "description": "Summary of vulnerabilities by severity and base image"
+      },
+      {
+        "command": "docker scout cves --only-severity critical,high --only-fixed myapp:1.0",
+        "description": "List fixable critical/high CVEs"
+      },
+      {
+        "command": "docker scout recommendations myapp:1.0",
+        "description": "Suggest base-image tags with fewer vulnerabilities"
+      },
+      {
+        "command": "docker scout cves fs://.",
+        "description": "Scan a local directory instead of an image"
+      }
+    ],
+    "notes": [
+      "Included with Docker Desktop; on Linux install the docker-scout CLI plugin. Requires signing in with a Docker account."
+    ],
+    "relatedCommands": [
+      "docker-build",
+      "docker-images"
     ]
   },
   {
@@ -1228,6 +1506,10 @@
       {
         "flag": "-o FILE",
         "description": "Write to a file instead of stdout"
+      },
+      {
+        "flag": "--platform",
+        "description": "Save only the given platform variant(s) of a multi-platform image (comma-separated since Docker 29)"
       }
     ],
     "examples": [
@@ -1242,6 +1524,10 @@
       {
         "command": "docker save myapp:1.0 | ssh user@server docker load",
         "description": "Copy an image to another host without a registry"
+      },
+      {
+        "command": "docker save --platform linux/amd64 -o myapp-amd64.tar myapp:1.0",
+        "description": "Export just the amd64 variant"
       }
     ],
     "notes": [
@@ -1266,6 +1552,10 @@
       {
         "flag": "-q",
         "description": "Suppress progress output"
+      },
+      {
+        "flag": "--platform",
+        "description": "Load only the given platform variant(s) from the archive"
       }
     ],
     "examples": [
@@ -1327,11 +1617,51 @@
       }
     ],
     "notes": [
-      "Ships with Docker Desktop",
+      "Ships with Docker Desktop (not included in the standalone Linux Docker Engine packages)",
       "Review the generated files; it asks before overwriting existing ones"
     ],
     "relatedCommands": [
       "docker-build",
+      "docker-compose-up"
+    ]
+  },
+  {
+    "id": "docker-model",
+    "name": "docker model",
+    "description": "Pull and run AI models (LLMs) locally with Docker Model Runner through an OpenAI-compatible API.",
+    "category": "AI Models",
+    "technologyId": "docker",
+    "examples": [
+      {
+        "command": "docker model run ai/smollm2 \"Hi\"",
+        "description": "Run a model with a one-off prompt (pulls it if needed)"
+      },
+      {
+        "command": "docker model run ai/smollm2",
+        "description": "Start an interactive chat"
+      },
+      {
+        "command": "docker model pull hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF",
+        "description": "Pull a GGUF model from Hugging Face"
+      },
+      {
+        "command": "docker model list",
+        "description": "List models downloaded locally"
+      },
+      {
+        "command": "docker model ps",
+        "description": "Show models currently loaded in memory"
+      },
+      {
+        "command": "docker model rm ai/smollm2",
+        "description": "Delete a local model"
+      }
+    ],
+    "notes": [
+      "Enable Docker Model Runner in Docker Desktop settings; on Docker Engine install the docker-model-plugin package (manage it with docker model install-runner / status).",
+      "Models are distributed as OCI artifacts (e.g. the ai/ namespace on Docker Hub) and can be referenced from compose.yaml with the top-level models: key."
+    ],
+    "relatedCommands": [
       "docker-compose-up"
     ]
   }

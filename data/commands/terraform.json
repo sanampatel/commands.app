@@ -31,6 +31,10 @@
       {
         "flag": "-input=false",
         "description": "Disable interactive prompts"
+      },
+      {
+        "flag": "-lockfile=readonly",
+        "description": "Fail instead of updating .terraform.lock.hcl (useful in CI)"
       }
     ],
     "examples": [
@@ -114,6 +118,15 @@
         "flag": "-lock-timeout",
         "description": "Wait for a state lock before failing",
         "example": "terraform plan -lock-timeout=5m"
+      },
+      {
+        "flag": "-minimal-refresh",
+        "description": "Only refresh resources that have proposed changes, for faster plans (Terraform 1.17+)"
+      },
+      {
+        "flag": "-generate-config-out",
+        "description": "Write HCL for resources referenced by import blocks that have no resource block yet",
+        "example": "terraform plan -generate-config-out=generated.tf"
       }
     ],
     "examples": [
@@ -136,7 +149,8 @@
     ],
     "notes": [
       "terraform.tfvars and *.auto.tfvars are loaded automatically; other files need -var-file.",
-      "Variables can also be set via TF_VAR_<name> environment variables."
+      "Variables can also be set via TF_VAR_<name> environment variables.",
+      "`terraform refresh` is deprecated; use `terraform plan -refresh-only` / `terraform apply -refresh-only` instead."
     ],
     "relatedCommands": [
       "tf-apply",
@@ -364,6 +378,23 @@
       {
         "flag": "-verbose",
         "description": "Print plan or state for each run block"
+      },
+      {
+        "flag": "-junit-xml",
+        "description": "Save a JUnit XML test report (GA since 1.11)",
+        "example": "terraform test -junit-xml=test-results.xml"
+      },
+      {
+        "flag": "-parallelism",
+        "description": "Limit concurrent operations within each run block's plan/apply (1.12+)"
+      },
+      {
+        "flag": "-test-directory",
+        "description": "Directory containing test files (default tests)"
+      },
+      {
+        "flag": "-json",
+        "description": "Machine-readable output"
       }
     ],
     "examples": [
@@ -374,11 +405,16 @@
       {
         "command": "terraform test -filter=tests/defaults.tftest.hcl",
         "description": "Run a single test file"
+      },
+      {
+        "command": "terraform test -junit-xml=test-results.xml",
+        "description": "Produce a report for CI test dashboards"
       }
     ],
     "notes": [
       "Available since Terraform 1.6. Run blocks with `command = apply` create real resources and destroy them afterward, so use a test account.",
-      "OpenTofu also supports `tofu test` with the same file format (and *.tofutest.hcl)."
+      "OpenTofu also supports `tofu test` with the same file format (and *.tofutest.hcl).",
+      "Mock providers and override_* blocks (1.7+) let plan-only unit tests run without cloud credentials."
     ],
     "relatedCommands": [
       "tf-validate"
@@ -459,6 +495,20 @@
     "description": "Open an interactive console for evaluating expressions against the current state.",
     "category": "Inspection",
     "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-plan",
+        "description": "Create a plan first and evaluate against the planned state"
+      },
+      {
+        "flag": "-scope",
+        "description": "Evaluate expressions in a module instance's scope (Terraform 1.16+)"
+      },
+      {
+        "flag": "-var / -var-file",
+        "description": "Set input variables"
+      }
+    ],
     "examples": [
       {
         "command": "terraform console",
@@ -471,6 +521,10 @@
       {
         "command": "terraform console -var-file=dev.tfvars",
         "description": "Evaluate expressions with variables loaded"
+      },
+      {
+        "command": "terraform console -scope=module.network",
+        "description": "Evaluate locals and variables inside a child module"
       }
     ],
     "notes": [
@@ -490,6 +544,14 @@
       {
         "flag": "-type",
         "description": "Graph type: plan, plan-refresh-only, plan-destroy, or apply"
+      },
+      {
+        "flag": "-format",
+        "description": "Output format: dot (default) or mermaid (Terraform 1.16+)"
+      },
+      {
+        "flag": "-plan",
+        "description": "Render the graph for a saved plan file (implies -type=apply)"
       }
     ],
     "examples": [
@@ -500,6 +562,10 @@
       {
         "command": "terraform graph -type=plan-destroy | dot -Tpng > destroy.png",
         "description": "Visualize destroy ordering"
+      },
+      {
+        "command": "terraform graph -format=mermaid > graph.mmd",
+        "description": "Output a Mermaid diagram (renders in GitHub Markdown)"
       }
     ],
     "relatedCommands": [
@@ -550,6 +616,66 @@
     ]
   },
   {
+    "id": "terraform-modules",
+    "name": "terraform modules",
+    "description": "List all declared modules and the versions they resolved to.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-json",
+        "description": "Machine-readable output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform modules",
+        "description": "Show the module tree with resolved versions"
+      },
+      {
+        "command": "terraform modules -json",
+        "description": "Export module sources and versions for auditing"
+      }
+    ],
+    "notes": [
+      "Run terraform init first so modules are installed."
+    ],
+    "relatedCommands": [
+      "tf-providers",
+      "tf-init"
+    ]
+  },
+  {
+    "id": "terraform-version",
+    "name": "terraform version",
+    "description": "Show the Terraform version, provider versions and whether an update is available.",
+    "category": "Inspection",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-json",
+        "description": "Machine-readable output including provider selections"
+      }
+    ],
+    "examples": [
+      {
+        "command": "terraform version",
+        "description": "Print the CLI and provider versions",
+        "output": "Terraform v1.17.2\non darwin_arm64"
+      },
+      {
+        "command": "terraform version -json | jq -r .terraform_version",
+        "description": "Get just the version number in a script"
+      }
+    ],
+    "notes": [
+      "Pin the CLI version with required_version in the terraform block, e.g. required_version = \"~> 1.17\"."
+    ],
+    "relatedCommands": [
+      "tf-providers"
+    ]
+  },
+  {
     "id": "tf-state-list",
     "name": "terraform state list",
     "description": "List resource addresses tracked in the state.",
@@ -587,6 +713,12 @@
     "description": "Show the attributes of a single resource in the state.",
     "category": "State Management",
     "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-json",
+        "description": "Machine-readable output (Terraform 1.16+)"
+      }
+    ],
     "examples": [
       {
         "command": "terraform state show aws_instance.web",
@@ -595,6 +727,10 @@
       {
         "command": "terraform state show 'aws_subnet.private[\"us-east-1a\"]'",
         "description": "Show a for_each instance (quote the address)"
+      },
+      {
+        "command": "terraform state show -json aws_instance.web | jq",
+        "description": "Show one resource as JSON"
       }
     ],
     "relatedCommands": [
@@ -630,7 +766,8 @@
     ],
     "relatedCommands": [
       "tf-state-list",
-      "tf-state-pull"
+      "tf-state-pull",
+      "terraform-moved-removed-blocks"
     ]
   },
   {
@@ -657,10 +794,42 @@
     ],
     "notes": [
       "WARNING: The real resource keeps existing but is no longer tracked; if it stays in config, the next apply will try to create a duplicate.",
-      "Terraform 1.7+ supports a declarative `removed { from = ... lifecycle { destroy = false } }` block as an alternative."
+      "Prefer a declarative `removed { from = ... lifecycle { destroy = false } }` block (Terraform 1.7+), which is reviewed in the plan."
     ],
     "relatedCommands": [
       "tf-state-list",
+      "tf-import",
+      "terraform-moved-removed-blocks"
+    ]
+  },
+  {
+    "id": "terraform-moved-removed-blocks",
+    "name": "moved / removed blocks",
+    "description": "Refactor or stop managing resources declaratively in code instead of running terraform state mv/rm.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "examples": [
+      {
+        "command": "moved {\n  from = aws_instance.app\n  to   = aws_instance.web\n}",
+        "description": "Rename a resource without destroying it (replaces terraform state mv)"
+      },
+      {
+        "command": "moved {\n  from = aws_s3_bucket.logs\n  to   = module.storage.aws_s3_bucket.logs\n}",
+        "description": "Move a resource into a module"
+      },
+      {
+        "command": "removed {\n  from = aws_instance.legacy\n\n  lifecycle {\n    destroy = false\n  }\n}",
+        "description": "Stop managing a resource but keep the real object (replaces terraform state rm, Terraform 1.7+)"
+      }
+    ],
+    "notes": [
+      "Both blocks are applied by the normal plan/apply, so the change is visible in code review and works for every workspace and module consumer.",
+      "moved blocks require Terraform 1.1+; removed blocks require 1.7+. Keep moved blocks around until all consumers have applied them.",
+      "WARNING: Without lifecycle { destroy = false }, a removed block destroys the real object. Delete the resource block itself from the configuration when you add a removed block."
+    ],
+    "relatedCommands": [
+      "tf-state-mv",
+      "tf-state-rm",
       "tf-import"
     ]
   },
@@ -696,6 +865,10 @@
     "technologyId": "terraform",
     "examples": [
       {
+        "command": "import {\n  to = aws_s3_bucket.assets\n  id = \"my-assets-bucket\"\n}",
+        "description": "Preferred: declare the import in code, then review it with terraform plan and run terraform apply"
+      },
+      {
         "command": "terraform import aws_s3_bucket.assets my-assets-bucket",
         "description": "Import an existing bucket into a resource block you already wrote"
       },
@@ -705,11 +878,57 @@
       }
     ],
     "notes": [
-      "Preferred approach (Terraform 1.5+, OpenTofu 1.5+): declare `import { to = aws_s3_bucket.assets  id = \"my-assets-bucket\" }` in code and run plan/apply; the import is reviewed in the plan.",
+      "The import block (Terraform 1.5+, OpenTofu 1.5+) is preferred over the CLI command: the import is shown in the plan and is repeatable across environments. The import block also supports for_each.",
       "The resource block must exist (or be generated with -generate-config-out) before importing."
     ],
     "relatedCommands": [
       "tf-state-rm",
+      "tf-plan",
+      "terraform-query",
+      "terraform-moved-removed-blocks"
+    ]
+  },
+  {
+    "id": "terraform-query",
+    "name": "terraform query",
+    "description": "Search existing cloud infrastructure using list blocks in .tfquery.hcl files and optionally generate import configuration.",
+    "category": "State Management",
+    "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-generate-config-out",
+        "description": "Write import and resource blocks for every result to a new file"
+      },
+      {
+        "flag": "-json",
+        "description": "Machine-readable output"
+      },
+      {
+        "flag": "-var / -var-file",
+        "description": "Set variables used by the query file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "list \"aws_instance\" \"web\" {\n  provider         = aws\n  include_resource = true\n}",
+        "description": "Example list block in search.tfquery.hcl"
+      },
+      {
+        "command": "terraform query",
+        "description": "Run all list blocks and print the matching resources"
+      },
+      {
+        "command": "terraform query -generate-config-out=imported.tf",
+        "description": "Generate import and resource blocks for the results, then review and apply"
+      }
+    ],
+    "notes": [
+      "Added in Terraform 1.14. The provider must implement list resources for the type you query.",
+      "The file passed to -generate-config-out must not already exist.",
+      "`terraform validate -query` checks .tfquery.hcl files offline."
+    ],
+    "relatedCommands": [
+      "tf-import",
       "tf-plan"
     ]
   },
@@ -744,6 +963,12 @@
     "description": "List workspaces; the current one is marked with *.",
     "category": "Workspaces",
     "technologyId": "terraform",
+    "flags": [
+      {
+        "flag": "-json",
+        "description": "Machine-readable output (Terraform 1.16+)"
+      }
+    ],
     "examples": [
       {
         "command": "terraform workspace list",
@@ -826,7 +1051,8 @@
       }
     ],
     "notes": [
-      "Token is stored in ~/.terraform.d/credentials.tfrc.json. Remove it with `terraform logout`. In CI, use the TF_TOKEN_<hostname> environment variable instead."
+      "Token is stored in ~/.terraform.d/credentials.tfrc.json. Remove it with `terraform logout`. In CI, use the TF_TOKEN_<hostname> environment variable instead.",
+      "HCP Terraform workspaces and Stacks are also reachable from the CLI via the `terraform stacks` command (1.13+); run `terraform stacks -help` for its subcommands."
     ],
     "relatedCommands": [
       "tf-init"

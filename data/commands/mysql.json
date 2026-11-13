@@ -60,7 +60,8 @@
     "notes": [
       "Avoid -pSECRET on shared machines: the password is visible in shell history and process lists. Use -p alone or --login-path.",
       "On Linux, \"localhost\" connects via the Unix socket; use -h 127.0.0.1 to force TCP.",
-      "Exit the client with \\q, quit or exit."
+      "Exit the client with \\q, quit or exit.",
+      "mysql_native_password is disabled by default in MySQL 8.4 and removed in 9.0; old clients or drivers that only support it will fail to authenticate"
     ],
     "relatedCommands": [
       "mysql-execute",
@@ -253,7 +254,7 @@
       }
     ],
     "notes": [
-      "DESTRUCTIVE: all tables and data are deleted immediately and cannot be rolled back. Take a mysqldump first.",
+      "WARNING: all tables and data are deleted immediately and cannot be rolled back. Take a mysqldump first.",
       "Double-check the database name; there is no confirmation prompt."
     ],
     "relatedCommands": [
@@ -375,7 +376,7 @@
     ],
     "notes": [
       "An account is user + host: 'app'@'localhost' and 'app'@'%' are different accounts.",
-      "MySQL 8.0+ defaults to caching_sha2_password. mysql_native_password is disabled by default in 8.4 and removed in 9.0."
+      "MySQL 8.0+ defaults to caching_sha2_password. mysql_native_password is deprecated, disabled by default in 8.4 (enable with --mysql-native-password=ON) and removed in 9.0."
     ],
     "relatedCommands": [
       "mysql-grant",
@@ -473,6 +474,14 @@
       {
         "command": "ALTER USER 'app_user'@'%' ACCOUNT LOCK;",
         "description": "Disable logins for an account without dropping it"
+      },
+      {
+        "command": "ALTER USER 'app_user'@'%' IDENTIFIED WITH caching_sha2_password BY '<new-password>';",
+        "description": "Move an account off mysql_native_password before upgrading to 9.x"
+      },
+      {
+        "command": "SELECT user, host FROM mysql.user WHERE plugin = 'mysql_native_password';",
+        "description": "Find accounts still using the legacy plugin"
       }
     ],
     "relatedCommands": [
@@ -493,7 +502,7 @@
       }
     ],
     "notes": [
-      "DESTRUCTIVE: applications using this account will immediately fail to connect."
+      "WARNING: applications using this account will immediately fail to connect."
     ],
     "relatedCommands": [
       "mysql-create-user"
@@ -542,7 +551,7 @@
     ],
     "notes": [
       "Available in MySQL 8.0.18+.",
-      "The query is actually executed, so be careful running slow queries on production."
+      "WARNING: the query is actually executed; avoid running slow or data-modifying statements on production"
     ],
     "relatedCommands": [
       "mysql-explain"
@@ -649,6 +658,10 @@
       {
         "command": "SET SESSION sql_mode = 'STRICT_TRANS_TABLES';",
         "description": "Change a setting for the current connection only"
+      },
+      {
+        "command": "RESET PERSIST max_connections;",
+        "description": "Remove a persisted setting from mysqld-auto.cnf"
       }
     ],
     "notes": [
@@ -690,6 +703,152 @@
     "relatedCommands": [
       "mysql-explain",
       "mysql-set-global"
+    ]
+  },
+  {
+    "id": "mysql-sys-schema",
+    "name": "sys schema",
+    "description": "Use the built-in sys views to find slow statements, unused indexes and lock waits",
+    "category": "Performance",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SELECT query, exec_count, total_latency FROM sys.statement_analysis LIMIT 10;",
+        "description": "Top statements by total latency"
+      },
+      {
+        "command": "SELECT * FROM sys.statements_with_full_table_scans LIMIT 10;",
+        "description": "Statements that scan whole tables"
+      },
+      {
+        "command": "SELECT * FROM sys.schema_unused_indexes WHERE object_schema = 'myapp';",
+        "description": "Indexes not used since the server started"
+      },
+      {
+        "command": "SELECT * FROM sys.schema_redundant_indexes WHERE table_schema = 'myapp';",
+        "description": "Indexes duplicated by another index"
+      },
+      {
+        "command": "SELECT * FROM sys.innodb_lock_waits\\G",
+        "description": "Who is blocking whom right now"
+      }
+    ],
+    "notes": [
+      "Built on performance_schema (enabled by default); statistics reset on restart, so check uptime before dropping \"unused\" indexes",
+      "x$ variants (e.g. sys.x$statement_analysis) return raw numbers instead of formatted values"
+    ],
+    "relatedCommands": [
+      "mysql-explain",
+      "mysql-slow-query-log",
+      "mysql-show-processlist"
+    ]
+  },
+  {
+    "id": "mysql-show-replica-status",
+    "name": "SHOW REPLICA STATUS",
+    "description": "Check replication health on a replica and start or stop the replication threads",
+    "category": "Replication",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW REPLICA STATUS\\G",
+        "description": "Show replica thread state, lag and last errors"
+      },
+      {
+        "command": "mysql -e \"SHOW REPLICA STATUS\\G\" | grep -E \"Replica_(IO|SQL)_Running|Seconds_Behind_Source|Last_(IO|SQL)_Error:\"",
+        "description": "Quick health check from the shell"
+      },
+      {
+        "command": "STOP REPLICA;",
+        "description": "Stop the receiver and applier threads"
+      },
+      {
+        "command": "START REPLICA;",
+        "description": "Start replication"
+      },
+      {
+        "command": "SHOW REPLICAS;",
+        "description": "On the source: list connected replicas"
+      }
+    ],
+    "notes": [
+      "Healthy: Replica_IO_Running = Yes, Replica_SQL_Running = Yes, and Seconds_Behind_Source low (NULL means not replicating)",
+      "SHOW SLAVE STATUS, START/STOP SLAVE, RESET SLAVE and SHOW SLAVE HOSTS were removed in MySQL 8.4; use the REPLICA forms",
+      "performance_schema.replication_connection_status and replication_applier_status_by_worker give the same data as queryable tables"
+    ],
+    "relatedCommands": [
+      "mysql-change-replication-source",
+      "mysql-binary-logs"
+    ]
+  },
+  {
+    "id": "mysql-change-replication-source",
+    "name": "CHANGE REPLICATION SOURCE TO",
+    "description": "Point a replica at its source server (replaces CHANGE MASTER TO)",
+    "category": "Replication",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "CHANGE REPLICATION SOURCE TO SOURCE_HOST='source.example.com', SOURCE_PORT=3306, SOURCE_USER='repl', SOURCE_PASSWORD='<password>', SOURCE_AUTO_POSITION=1, SOURCE_SSL=1;",
+        "description": "Configure GTID-based replication over TLS"
+      },
+      {
+        "command": "CHANGE REPLICATION SOURCE TO SOURCE_HOST='source.example.com', SOURCE_USER='repl', SOURCE_PASSWORD='<password>', SOURCE_LOG_FILE='binlog.000042', SOURCE_LOG_POS=157;",
+        "description": "Configure file/position-based replication"
+      },
+      {
+        "command": "CHANGE REPLICATION SOURCE TO SOURCE_DELAY=3600;",
+        "description": "Keep a delayed replica one hour behind"
+      },
+      {
+        "command": "CREATE USER 'repl'@'%' IDENTIFIED BY '<password>'; GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';",
+        "description": "On the source: create the replication account"
+      }
+    ],
+    "notes": [
+      "Run STOP REPLICA first; connection options can't change while the receiver thread runs",
+      "CHANGE MASTER TO and the MASTER_* options were removed in MySQL 8.4; use SOURCE_* (e.g. SOURCE_HOST, SOURCE_LOG_POS)",
+      "With caching_sha2_password over a non-TLS link, add GET_SOURCE_PUBLIC_KEY=1",
+      "The privilege is still named REPLICATION SLAVE"
+    ],
+    "relatedCommands": [
+      "mysql-show-replica-status",
+      "mysql-binary-logs"
+    ]
+  },
+  {
+    "id": "mysql-binary-logs",
+    "name": "SHOW BINARY LOG STATUS",
+    "description": "Inspect and purge binary logs on a source server (replaces SHOW MASTER STATUS)",
+    "category": "Replication",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "SHOW BINARY LOG STATUS;",
+        "description": "Current binary log file, position and executed GTID set"
+      },
+      {
+        "command": "SHOW BINARY LOGS;",
+        "description": "List binary log files and their sizes"
+      },
+      {
+        "command": "PURGE BINARY LOGS BEFORE NOW() - INTERVAL 7 DAY;",
+        "description": "Delete binary logs older than 7 days"
+      },
+      {
+        "command": "SET PERSIST binlog_expire_logs_seconds = 604800;",
+        "description": "Expire binary logs automatically after 7 days"
+      }
+    ],
+    "notes": [
+      "SHOW MASTER STATUS, SHOW MASTER LOGS, PURGE MASTER LOGS and RESET MASTER were removed in MySQL 8.4; RESET MASTER is now RESET BINARY LOGS AND GTIDS",
+      "WARNING: don't purge logs that a replica (or point-in-time recovery) still needs; check SHOW REPLICA STATUS on every replica first",
+      "WARNING: RESET BINARY LOGS AND GTIDS deletes every binary log and clears GTID history"
+    ],
+    "relatedCommands": [
+      "mysql-show-replica-status",
+      "mysql-change-replication-source",
+      "mysqldump"
     ]
   },
   {
@@ -738,6 +897,10 @@
       {
         "flag": "--set-gtid-purged=OFF",
         "description": "Omit GTID statements, useful when restoring onto a server with different GTIDs"
+      },
+      {
+        "flag": "--source-data=2",
+        "description": "Record the binary log position as a comment (replaces the deprecated --master-data)"
       }
     ],
     "examples": [
@@ -765,11 +928,12 @@
     "notes": [
       "--single-transaction only gives a consistent snapshot for InnoDB tables; MyISAM tables can still change during the dump.",
       "Without --databases, the dump has no CREATE DATABASE/USE, so you must name the target database when restoring.",
-      "For large databases, consider MySQL Shell's util.dumpInstance(), which is parallel and much faster. mysqlpump was removed in MySQL 8.4."
+      "For large databases, consider MySQL Shell's util.dumpInstance(), which is parallel and much faster. mysqlpump was removed in MySQL 8.4; use mysqldump or MySQL Shell instead."
     ],
     "relatedCommands": [
       "mysql-restore",
-      "mysqlsh"
+      "mysqlsh",
+      "mysql-show-replica-status"
     ]
   },
   {
@@ -794,11 +958,45 @@
     ],
     "notes": [
       "Create the target database first if the dump was made without --databases.",
-      "Restoring overwrites tables that exist in the dump (they include DROP TABLE IF EXISTS by default)."
+      "WARNING: restoring overwrites tables that exist in the dump (it includes DROP TABLE IF EXISTS by default)"
     ],
     "relatedCommands": [
       "mysqldump",
       "mysql-create-database",
+      "mysql-execute"
+    ]
+  },
+  {
+    "id": "mysql-load-data",
+    "name": "LOAD DATA",
+    "description": "Bulk-import a CSV or TSV file into a table",
+    "category": "Backup & Restore",
+    "technologyId": "mysql",
+    "examples": [
+      {
+        "command": "LOAD DATA LOCAL INFILE 'users.csv' INTO TABLE users FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n' IGNORE 1 LINES (name, email, created_at);",
+        "description": "Import a CSV with a header row from the client machine"
+      },
+      {
+        "command": "mysql --local-infile=1 -u root -p myapp",
+        "description": "Start the client with LOCAL file loading allowed"
+      },
+      {
+        "command": "SET PERSIST local_infile = ON;",
+        "description": "Allow LOCAL loading on the server"
+      },
+      {
+        "command": "SHOW VARIABLES LIKE 'local_infile';",
+        "description": "Check whether the server allows LOCAL loading"
+      }
+    ],
+    "notes": [
+      "LOCAL reads the file from the client; without LOCAL the file must be on the server and inside secure_file_priv",
+      "local_infile is OFF by default; both server and client must allow it",
+      "Much faster than row-by-row INSERTs for large files; use LINES TERMINATED BY '\\r\\n' for Windows files"
+    ],
+    "relatedCommands": [
+      "mysql-restore",
       "mysql-execute"
     ]
   },
@@ -820,6 +1018,10 @@
       {
         "command": "util.loadDump(\"/backups/full\", {threads: 8})",
         "description": "Load a dump created by dumpInstance/dumpSchemas (JS mode)"
+      },
+      {
+        "command": "mysqlsh -- util check-for-server-upgrade root@localhost:3306 --target-version=9.7",
+        "description": "Check an instance for problems before upgrading to the next LTS (e.g. 8.4 to 9.7)"
       }
     ],
     "notes": [
@@ -943,7 +1145,8 @@
       }
     ],
     "notes": [
-      "The service is called mysql on Debian/Ubuntu and mysqld on RHEL, Fedora and Oracle Linux."
+      "The service is called mysql on Debian/Ubuntu and mysqld on RHEL, Fedora and Oracle Linux.",
+      "mysql_upgrade was removed in 8.4: the server upgrades the data dictionary and system tables automatically on startup"
     ],
     "relatedCommands": [
       "mysqladmin"

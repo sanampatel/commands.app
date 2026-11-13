@@ -74,7 +74,8 @@
       "pg-dump",
       "pg-restore",
       "createdb",
-      "pg-isready"
+      "pg-isready",
+      "postgresql-psql-conninfo"
     ]
   },
   {
@@ -213,6 +214,68 @@
     ]
   },
   {
+    "id": "postgresql-uuidv7",
+    "name": "uuidv7()",
+    "description": "Generate time-ordered UUIDs for primary keys (PostgreSQL 18+)",
+    "category": "Database Management",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "CREATE TABLE orders (id uuid PRIMARY KEY DEFAULT uuidv7(), total numeric);",
+        "description": "Use a time-ordered UUID as the default primary key"
+      },
+      {
+        "command": "SELECT uuidv7();",
+        "description": "Generate a version 7 UUID"
+      },
+      {
+        "command": "SELECT uuid_extract_timestamp(id) FROM orders LIMIT 5;",
+        "description": "Read the creation timestamp embedded in v7 UUIDs"
+      },
+      {
+        "command": "SELECT gen_random_uuid();",
+        "description": "Random version 4 UUID (uuidv4() is an alias in 18+)"
+      }
+    ],
+    "notes": [
+      "v7 UUIDs sort roughly by creation time, so B-tree inserts stay local and indexes bloat less than with random v4 UUIDs",
+      "The timestamp is visible in the value; use v4 if IDs must not reveal creation time"
+    ],
+    "relatedCommands": [
+      "createdb",
+      "postgresql-generated-columns"
+    ]
+  },
+  {
+    "id": "postgresql-generated-columns",
+    "name": "GENERATED ALWAYS AS",
+    "description": "Define computed columns: virtual (default in PostgreSQL 18+) or stored",
+    "category": "Database Management",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "ALTER TABLE products ADD COLUMN price_with_tax numeric GENERATED ALWAYS AS (price * 1.2) VIRTUAL;",
+        "description": "Computed on read, uses no storage (PostgreSQL 18+)"
+      },
+      {
+        "command": "ALTER TABLE users ADD COLUMN email_lower text GENERATED ALWAYS AS (lower(email)) STORED;",
+        "description": "Computed on write and stored like a normal column"
+      },
+      {
+        "command": "CREATE TABLE people (height_cm numeric, height_in numeric GENERATED ALWAYS AS (height_cm / 2.54));",
+        "description": "No keyword: VIRTUAL on 18+, an error on older versions (which only support STORED)"
+      }
+    ],
+    "notes": [
+      "Expressions may only use immutable functions and the current row; no subqueries or other generated columns",
+      "Virtual columns can only use built-in functions and types; use STORED for user-defined functions or when you need to index the column"
+    ],
+    "relatedCommands": [
+      "postgresql-uuidv7",
+      "psql-describe"
+    ]
+  },
+  {
     "id": "pg-dump",
     "name": "pg_dump",
     "description": "Backup a PostgreSQL database",
@@ -229,11 +292,11 @@
       },
       {
         "flag": "--schema-only",
-        "description": "Dump only schema, no data"
+        "description": "Dump only schema: no data or statistics"
       },
       {
         "flag": "--data-only",
-        "description": "Dump only data, no schema"
+        "description": "Dump only data: no schema or statistics"
       },
       {
         "flag": "-t",
@@ -258,6 +321,18 @@
       {
         "flag": "--filter=FILE",
         "description": "Include/exclude objects listed in a file (PostgreSQL 17+)"
+      },
+      {
+        "flag": "-Z",
+        "description": "Compression method/level, e.g. -Z zstd or -Z gzip:9 (custom/directory formats default to gzip)"
+      },
+      {
+        "flag": "--statistics",
+        "description": "Also dump optimizer statistics (PostgreSQL 18+; off by default)"
+      },
+      {
+        "flag": "--no-policies",
+        "description": "Skip row-level security policies (PostgreSQL 18+)"
       }
     ],
     "examples": [
@@ -288,6 +363,14 @@
       {
         "command": "pg_dump --schema-only mydb > schema.sql",
         "description": "Dump schema without data"
+      },
+      {
+        "command": "pg_dump -Fd -j 4 -Z zstd -d mydb -f mydb_dir",
+        "description": "Parallel directory dump compressed with zstd"
+      },
+      {
+        "command": "pg_dump -Fc --statistics -d mydb -f mydb.dump",
+        "description": "Include planner statistics so the restored copy needs no immediate ANALYZE (PostgreSQL 18+)"
       }
     ],
     "notes": [
@@ -295,11 +378,13 @@
       "Use pg_dumpall to backup all databases",
       "Plain SQL dumps (the default) are restored with psql, not pg_restore",
       "Use the pg_dump from the newest PostgreSQL version involved; it can dump older servers but not newer ones",
-      "pg_dump doesn't include roles; dump them separately with pg_dumpall --globals-only"
+      "pg_dump doesn't include roles; dump them separately with pg_dumpall --globals-only",
+      "Statistics are not included by default; without --statistics, run ANALYZE (or vacuumdb --analyze-only) after restoring"
     ],
     "relatedCommands": [
       "pg-restore",
-      "pg-dumpall"
+      "pg-dumpall",
+      "postgresql-pg-upgrade"
     ]
   },
   {
@@ -407,10 +492,14 @@
       {
         "command": "pg_dumpall --globals-only > globals.sql",
         "description": "Backup only roles and tablespaces"
+      },
+      {
+        "command": "psql -X -f all_databases.sql postgres",
+        "description": "Restore a pg_dumpall file"
       }
     ],
     "notes": [
-      "Output is always plain SQL format",
+      "Output is always plain SQL format; restore it with psql -f",
       "Includes all databases, roles, and tablespaces"
     ],
     "relatedCommands": [
@@ -520,7 +609,8 @@
       }
     ],
     "notes": [
-      "Equivalent to CREATE ROLE with LOGIN"
+      "Equivalent to CREATE ROLE with LOGIN",
+      "Passwords are hashed with SCRAM-SHA-256 by default; MD5 passwords are deprecated as of PostgreSQL 18"
     ],
     "relatedCommands": [
       "dropuser",
@@ -847,6 +937,127 @@
     ]
   },
   {
+    "id": "postgresql-psql-conninfo",
+    "name": "\\conninfo",
+    "description": "Show details about the current psql connection",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\conninfo",
+        "description": "Show database, user, host, port, SSL and server details"
+      },
+      {
+        "command": "SELECT current_user, current_database(), inet_server_addr(), inet_server_port();",
+        "description": "SQL equivalent for scripts"
+      }
+    ],
+    "notes": [
+      "PostgreSQL 18's psql prints a table that also includes protocol version, SSL/GSSAPI details and whether you're a superuser; older versions print a single sentence",
+      "Client User shows who connected; Superuser reflects the current role, which can differ after SET ROLE"
+    ],
+    "relatedCommands": [
+      "psql",
+      "psql-connect-db"
+    ]
+  },
+  {
+    "id": "postgresql-psql-watch",
+    "name": "\\watch",
+    "description": "Re-run the current query repeatedly at an interval",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "SELECT count(*) FROM pg_stat_activity WHERE state = 'active' \\watch 5",
+        "description": "Re-run the query every 5 seconds until Ctrl+C"
+      },
+      {
+        "command": "SELECT now(), count(*) FROM jobs WHERE status = 'queued' \\watch i=2 c=10",
+        "description": "Run every 2 seconds, 10 times"
+      },
+      {
+        "command": "SELECT * FROM jobs WHERE status = 'running' \\watch m=1",
+        "description": "Stop as soon as the query returns fewer than 1 row"
+      },
+      {
+        "command": "\\set WATCH_INTERVAL 10",
+        "description": "Change the default interval (PostgreSQL 18+)"
+      }
+    ],
+    "notes": [
+      "Default interval is 2 seconds; with an empty query buffer it re-runs the last query",
+      "The i= and c= options need psql 16+; m= needs psql 17+"
+    ],
+    "relatedCommands": [
+      "pg-stat-activity",
+      "psql-timing"
+    ]
+  },
+  {
+    "id": "postgresql-psql-list-extensions",
+    "name": "\\dx",
+    "description": "List installed extensions",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\dx",
+        "description": "List installed extensions and versions"
+      },
+      {
+        "command": "\\dx+ pg_stat_statements",
+        "description": "List every object that belongs to an extension"
+      },
+      {
+        "command": "SELECT name, default_version, installed_version FROM pg_available_extensions ORDER BY name;",
+        "description": "List extensions available to install"
+      },
+      {
+        "command": "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;",
+        "description": "Install an extension in the current database"
+      }
+    ],
+    "notes": [
+      "Append x (e.g. \\dxx) for expanded output in PostgreSQL 18+ psql; this works for most list commands",
+      "Extensions are per database: install them in each database that needs them"
+    ],
+    "relatedCommands": [
+      "psql-describe",
+      "psql-list-schemas"
+    ]
+  },
+  {
+    "id": "postgresql-psql-pipeline",
+    "name": "\\startpipeline",
+    "description": "Send several queries without waiting for each result (psql pipeline mode, PostgreSQL 18+)",
+    "category": "psql Commands",
+    "technologyId": "postgresql",
+    "examples": [
+      {
+        "command": "\\startpipeline\nINSERT INTO events(kind) VALUES ('a');\nINSERT INTO events(kind) VALUES ('b');\n\\endpipeline",
+        "description": "Send two inserts in one round trip and read all results at the end"
+      },
+      {
+        "command": "\\startpipeline\nSELECT $1 \\bind 42 \\sendpipeline\n\\flushrequest\n\\getresults\n\\endpipeline",
+        "description": "Queue a parameterized query, then fetch results mid-pipeline"
+      },
+      {
+        "command": "\\set PROMPT1 '%/%P%R%# '",
+        "description": "Show the pipeline status (off/on/abort) in the prompt"
+      }
+    ],
+    "notes": [
+      "\\syncpipeline sends a sync point without ending the pipeline; \\getresults [n] reads pending results",
+      "\\g, \\gx and COPY can't be used inside a pipeline",
+      "Mainly useful for testing pipelined workloads and reducing round trips over high-latency links"
+    ],
+    "relatedCommands": [
+      "psql",
+      "psql-execute-file"
+    ]
+  },
+  {
     "id": "pg-vacuum",
     "name": "vacuumdb",
     "description": "Garbage-collect and analyze PostgreSQL database",
@@ -868,6 +1079,18 @@
       {
         "flag": "-j",
         "description": "Number of parallel jobs"
+      },
+      {
+        "flag": "-Z, --analyze-only",
+        "description": "Only update optimizer statistics, don't vacuum"
+      },
+      {
+        "flag": "--analyze-in-stages",
+        "description": "Analyze in 3 progressively thorough stages to get usable stats fast"
+      },
+      {
+        "flag": "--missing-stats-only",
+        "description": "Only analyze relations missing statistics (PostgreSQL 18+; with --analyze-only or --analyze-in-stages)"
       }
     ],
     "examples": [
@@ -882,16 +1105,26 @@
       {
         "command": "vacuumdb -f mydb",
         "description": "Full vacuum for maximum space recovery"
+      },
+      {
+        "command": "vacuumdb --all --analyze-in-stages --missing-stats-only -j 4",
+        "description": "After pg_upgrade: quickly generate any statistics that weren't carried over (PostgreSQL 18+)"
+      },
+      {
+        "command": "vacuumdb --all --analyze-only -j 4",
+        "description": "Refresh statistics on every database without vacuuming"
       }
     ],
     "notes": [
       "Regular vacuum is non-blocking",
       "Full vacuum requires exclusive lock",
       "WARNING: -f (VACUUM FULL) rewrites tables under an ACCESS EXCLUSIVE lock, blocking reads and writes",
-      "Autovacuum normally handles routine vacuuming; run vacuumdb -z after big imports or a pg_upgrade"
+      "Autovacuum normally handles routine vacuuming; run vacuumdb --analyze-only after big imports or restores"
     ],
     "relatedCommands": [
-      "pg-reindex"
+      "pg-reindex",
+      "pg-vacuum-analyze",
+      "postgresql-pg-upgrade"
     ]
   },
   {
@@ -930,6 +1163,81 @@
     ],
     "relatedCommands": [
       "pg-vacuum"
+    ]
+  },
+  {
+    "id": "postgresql-pg-upgrade",
+    "name": "pg_upgrade",
+    "description": "Upgrade a cluster to a new PostgreSQL major version in place, without dump and restore",
+    "category": "Maintenance",
+    "technologyId": "postgresql",
+    "flags": [
+      {
+        "flag": "-b, --old-bindir",
+        "description": "Old version's bin directory"
+      },
+      {
+        "flag": "-B, --new-bindir",
+        "description": "New version's bin directory (defaults to pg_upgrade's own)"
+      },
+      {
+        "flag": "-d, --old-datadir",
+        "description": "Old cluster data/config directory"
+      },
+      {
+        "flag": "-D, --new-datadir",
+        "description": "New (freshly initdb'd) cluster data/config directory"
+      },
+      {
+        "flag": "-c, --check",
+        "description": "Only check compatibility; don't change any data"
+      },
+      {
+        "flag": "-j, --jobs",
+        "description": "Parallel jobs"
+      },
+      {
+        "flag": "-k, --link",
+        "description": "Hard-link files instead of copying (fast; old cluster unusable once the new one starts)"
+      },
+      {
+        "flag": "--clone",
+        "description": "Clone files with reflinks (fast, old cluster stays intact; needs Btrfs/XFS/APFS)"
+      },
+      {
+        "flag": "--swap",
+        "description": "Move the old data directories into the new cluster (PostgreSQL 18+; potentially fastest, destroys the old cluster)"
+      },
+      {
+        "flag": "--no-statistics",
+        "description": "Don't carry optimizer statistics over (PostgreSQL 18+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pg_upgrade -b /usr/lib/postgresql/17/bin -B /usr/lib/postgresql/18/bin -d /var/lib/postgresql/17/main -D /var/lib/postgresql/18/main --check",
+        "description": "Dry-run compatibility check before upgrading 17 to 18"
+      },
+      {
+        "command": "pg_upgrade -b /usr/lib/postgresql/17/bin -B /usr/lib/postgresql/18/bin -d /var/lib/postgresql/17/main -D /var/lib/postgresql/18/main --link -j 4",
+        "description": "Upgrade using hard links and 4 parallel jobs"
+      },
+      {
+        "command": "vacuumdb --all --analyze-in-stages --missing-stats-only",
+        "description": "Afterwards, generate any statistics that weren't carried over"
+      }
+    ],
+    "notes": [
+      "Both clusters must be stopped; initdb the new cluster first with matching locale/encoding settings",
+      "Run as the postgres OS user; add the same mode flag (e.g. --link) to --check so mode-specific checks run",
+      "PostgreSQL 18+ preserves most optimizer statistics (not extended statistics); older versions need a full vacuumdb --all --analyze-in-stages afterwards",
+      "WARNING: with --link or --swap the old cluster can't be safely used after the upgrade; take a backup first",
+      "Debian/Ubuntu packages wrap this as pg_upgradecluster"
+    ],
+    "relatedCommands": [
+      "pg-vacuum",
+      "pg-dumpall",
+      "pg-ctl"
     ]
   },
   {
@@ -977,7 +1285,7 @@
     "notes": [
       "Requires appropriate permissions",
       "Use -m immediate only as last resort",
-      "On packaged installs, use the service manager instead, e.g. sudo systemctl restart postgresql or brew services restart postgresql@17"
+      "On packaged installs, use the service manager instead, e.g. sudo systemctl restart postgresql or brew services restart postgresql@18"
     ],
     "relatedCommands": [
       "psql"
@@ -992,11 +1300,23 @@
     "flags": [
       {
         "flag": "BUFFERS",
-        "description": "Show shared buffer hits/reads (included by default with ANALYZE in PostgreSQL 18+)"
+        "description": "Show shared buffer hits/reads (automatically included with ANALYZE in PostgreSQL 18+)"
       },
       {
         "flag": "VERBOSE",
         "description": "Show output columns and more detail"
+      },
+      {
+        "flag": "SETTINGS",
+        "description": "Show planner-related settings changed from their defaults"
+      },
+      {
+        "flag": "SERIALIZE",
+        "description": "Also measure the cost of converting result rows for the client (PostgreSQL 17+, needs ANALYZE)"
+      },
+      {
+        "flag": "GENERIC_PLAN",
+        "description": "Plan a query containing $1, $2 placeholders without running it (PostgreSQL 16+)"
       },
       {
         "flag": "FORMAT JSON",
@@ -1006,15 +1326,23 @@
     "examples": [
       {
         "command": "EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 42;",
-        "description": "Show the real plan and timing"
+        "description": "Show the real plan and timing (includes buffer usage on PostgreSQL 18+)"
       },
       {
         "command": "EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM orders WHERE created_at > now() - interval '1 day';",
-        "description": "Include buffer usage (PostgreSQL 17 and earlier)"
+        "description": "Include buffer usage on PostgreSQL 17 and earlier"
       },
       {
         "command": "EXPLAIN SELECT * FROM orders WHERE customer_id = 42;",
         "description": "Estimated plan only, without running the query"
+      },
+      {
+        "command": "EXPLAIN (GENERIC_PLAN) SELECT * FROM orders WHERE customer_id = $1;",
+        "description": "Plan a parameterized query copied from application logs"
+      },
+      {
+        "command": "EXPLAIN (ANALYZE, FORMAT JSON) SELECT * FROM orders WHERE customer_id = 42;",
+        "description": "JSON plan to paste into a visualizer"
       },
       {
         "command": "BEGIN; EXPLAIN ANALYZE DELETE FROM sessions WHERE expires_at < now(); ROLLBACK;",
@@ -1023,7 +1351,8 @@
     ],
     "notes": [
       "WARNING: ANALYZE actually executes the statement; wrap INSERT/UPDATE/DELETE in a transaction and roll back",
-      "Compare estimated vs actual rows to spot stale statistics"
+      "Compare estimated vs actual rows to spot stale statistics",
+      "PostgreSQL 18+ adds BUFFERS output automatically with ANALYZE; use EXPLAIN (ANALYZE, BUFFERS OFF) to hide it"
     ],
     "relatedCommands": [
       "pg-vacuum-analyze",

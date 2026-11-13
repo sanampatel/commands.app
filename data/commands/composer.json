@@ -21,6 +21,10 @@
       {
         "flag": "--stability <stable|dev|...>",
         "description": "Minimum stability for the root package"
+      },
+      {
+        "flag": "--require <pkg:ver>",
+        "description": "Composer 2.10+: require extra packages while creating the project (repeatable)"
       }
     ],
     "examples": [
@@ -35,6 +39,10 @@
       {
         "command": "composer create-project laravel/laravel my-app --no-install",
         "description": "Scaffold without running install"
+      },
+      {
+        "command": "composer create-project laravel/laravel my-app --require laravel/sanctum:^4.0",
+        "description": "Create a project and add a package in one step"
       }
     ],
     "relatedCommands": [
@@ -134,7 +142,8 @@
     ],
     "notes": [
       "Without composer.lock, install behaves like update and creates the lock file",
-      "Commit composer.lock for applications so every environment gets the same versions"
+      "Commit composer.lock for applications so every environment gets the same versions",
+      "Composer 2.10+: packages flagged as malware are blocked at install time by default, and a failed dist download no longer falls back to a git source checkout"
     ],
     "relatedCommands": [
       "composer-update",
@@ -168,6 +177,10 @@
       {
         "flag": "--sort-packages",
         "description": "Keep packages sorted in composer.json"
+      },
+      {
+        "flag": "--no-cooldown",
+        "description": "Composer 2.11+: ignore the cooldown policy for this run"
       }
     ],
     "examples": [
@@ -184,9 +197,12 @@
         "description": "Require a specific version constraint"
       },
       {
-        "command": "composer require laravel/framework:^12.0 -W",
+        "command": "composer require laravel/framework:^13.0 -W",
         "description": "Upgrade a framework, allowing dependents to move too"
       }
+    ],
+    "notes": [
+      "Composer 2.9+: versions with known security advisories are blocked during require/update by default (see config.policy)"
     ],
     "relatedCommands": [
       "composer-remove",
@@ -247,6 +263,18 @@
         "description": "Also update dependencies including those that are root requirements"
       },
       {
+        "flag": "-m, --minimal-changes",
+        "description": "Composer 2.9+: only change what is needed to satisfy modified constraints"
+      },
+      {
+        "flag": "--patch-only",
+        "description": "Only allow patch-level updates"
+      },
+      {
+        "flag": "--bump-after-update",
+        "description": "Run composer bump after updating"
+      },
+      {
         "flag": "--lock",
         "description": "Only refresh the lock file hash without updating packages"
       },
@@ -261,6 +289,10 @@
       {
         "flag": "--prefer-lowest",
         "description": "Install the lowest allowed versions (for testing libraries)"
+      },
+      {
+        "flag": "--no-cooldown",
+        "description": "Composer 2.11+: ignore the cooldown policy for this run"
       },
       {
         "flag": "-i, --interactive",
@@ -283,11 +315,16 @@
       {
         "command": "composer update --lock",
         "description": "Fix 'lock file is not up to date' after manual composer.json edits"
+      },
+      {
+        "command": "composer update --patch-only",
+        "description": "Apply only patch releases"
       }
     ],
     "notes": [
       "Alias: composer u / upgrade",
-      "Running a bare update on production is risky; update locally, commit composer.lock, then run install on servers"
+      "Running a bare update on production is risky; update locally, commit composer.lock, then run install on servers",
+      "Composer 2.9+: updates refuse versions with known security advisories by default; --no-blocking disables all policy blocking for one run"
     ],
     "relatedCommands": [
       "composer-install",
@@ -307,12 +344,20 @@
         "description": "Only show packages directly required by the root"
       },
       {
-        "flag": "-m, --minor-only",
-        "description": "Only show minor/patch updates (semver-compatible)"
+        "flag": "-M, --major-only",
+        "description": "Only show packages with major updates"
       },
       {
-        "flag": "--major-only",
-        "description": "Only show major updates"
+        "flag": "-m, --minor-only",
+        "description": "Only show packages with minor (semver-compatible) updates"
+      },
+      {
+        "flag": "-p, --patch-only",
+        "description": "Only show packages with patch updates"
+      },
+      {
+        "flag": "-A, --sort-by-age",
+        "description": "Show the installed version's age, oldest first"
       },
       {
         "flag": "--strict",
@@ -335,6 +380,10 @@
       {
         "command": "composer outdated --strict --direct",
         "description": "Fail CI when direct deps are outdated"
+      },
+      {
+        "command": "composer outdated -D --sort-by-age",
+        "description": "Find the stalest direct dependencies"
       }
     ],
     "relatedCommands": [
@@ -354,8 +403,8 @@
         "description": "Show the dependency tree"
       },
       {
-        "flag": "-a, --all",
-        "description": "Show all available packages from repositories"
+        "flag": "--all",
+        "description": "List all packages, installed and available"
       },
       {
         "flag": "-D, --direct",
@@ -368,6 +417,10 @@
       {
         "flag": "-p, --platform",
         "description": "Show platform packages (PHP, extensions)"
+      },
+      {
+        "flag": "--locked",
+        "description": "List packages from composer.lock"
       }
     ],
     "examples": [
@@ -410,6 +463,10 @@
       {
         "flag": "-t, --tree",
         "description": "Print results as a nested tree"
+      },
+      {
+        "flag": "--locked",
+        "description": "Read dependency information from composer.lock"
       }
     ],
     "examples": [
@@ -448,12 +505,12 @@
     ],
     "examples": [
       {
-        "command": "composer why-not laravel/framework 12.0",
-        "description": "See what blocks upgrading to Laravel 12"
+        "command": "composer why-not laravel/framework 13.0",
+        "description": "See what blocks upgrading to Laravel 13"
       },
       {
-        "command": "composer why-not php 8.4",
-        "description": "Check which packages are incompatible with PHP 8.4"
+        "command": "composer why-not php 8.5",
+        "description": "Check which packages are incompatible with PHP 8.5"
       }
     ],
     "notes": [
@@ -478,6 +535,10 @@
       {
         "flag": "--no-dev",
         "description": "Exclude dev dependencies"
+      },
+      {
+        "flag": "--locked",
+        "description": "Composer 2.9+: read from composer.lock instead of vendor/"
       }
     ],
     "examples": [
@@ -516,6 +577,10 @@
       {
         "flag": "--no-dev",
         "description": "Exclude autoload-dev rules"
+      },
+      {
+        "flag": "--strict-psr",
+        "description": "Fail if PSR-4/PSR-0 mapping errors exist (requires -o)"
       }
     ],
     "examples": [
@@ -530,11 +595,45 @@
       {
         "command": "composer dump-autoload --classmap-authoritative --no-dev",
         "description": "Fastest production autoloader"
+      },
+      {
+        "command": "composer dump-autoload -o --strict-psr",
+        "description": "CI check for classes that don't match their PSR-4 path"
       }
     ],
     "notes": [
       "Alias: composer dumpautoload",
       "Run after editing the autoload section or adding files to a classmap directory"
+    ],
+    "relatedCommands": [
+      "composer-install"
+    ]
+  },
+  {
+    "id": "composer-reinstall",
+    "name": "composer reinstall",
+    "description": "Uninstall and reinstall packages, e.g. to undo local edits in vendor/.",
+    "category": "Dependencies",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--type <type>",
+        "description": "Reinstall all packages of a type"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer reinstall monolog/monolog",
+        "description": "Restore a package to its pristine state"
+      },
+      {
+        "command": "composer reinstall \"symfony/*\"",
+        "description": "Wildcards are supported"
+      },
+      {
+        "command": "composer reinstall --type=composer-plugin",
+        "description": "Reinstall all Composer plugins"
+      }
     ],
     "relatedCommands": [
       "composer-install"
@@ -576,6 +675,41 @@
     ]
   },
   {
+    "id": "composer-check-platform-reqs",
+    "name": "composer check-platform-reqs",
+    "description": "Check that the PHP version and extensions match what the installed packages require.",
+    "category": "Maintenance",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--no-dev",
+        "description": "Ignore require-dev packages"
+      },
+      {
+        "flag": "--lock",
+        "description": "Check against composer.lock instead of installed packages"
+      },
+      {
+        "flag": "-f, --format <text|json>",
+        "description": "Output format"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer check-platform-reqs",
+        "description": "Verify the current PHP and extensions"
+      },
+      {
+        "command": "composer check-platform-reqs --lock --no-dev",
+        "description": "Check a production server before running install"
+      }
+    ],
+    "relatedCommands": [
+      "composer-install",
+      "composer-why-not"
+    ]
+  },
+  {
     "id": "composer-audit",
     "name": "composer audit",
     "description": "Check installed packages for reported security vulnerabilities.",
@@ -585,6 +719,10 @@
       {
         "flag": "--no-dev",
         "description": "Only audit production packages"
+      },
+      {
+        "flag": "-D, --direct",
+        "description": "Composer 2.11+: only audit direct dependencies"
       },
       {
         "flag": "-f, --format <table|plain|json|summary>",
@@ -597,6 +735,14 @@
       {
         "flag": "--abandoned <ignore|report|fail>",
         "description": "How to treat abandoned packages"
+      },
+      {
+        "flag": "--ignore-severity <level>",
+        "description": "Ignore advisories of a severity (repeatable)"
+      },
+      {
+        "flag": "--ignore-unreachable",
+        "description": "Composer 2.9+: skip repositories that can't be reached"
       }
     ],
     "examples": [
@@ -607,14 +753,55 @@
       {
         "command": "composer audit --no-dev --format=json",
         "description": "JSON report for production deps"
+      },
+      {
+        "command": "composer audit --locked --abandoned=fail",
+        "description": "CI gate on the lock file, failing on abandoned packages too"
       }
     ],
     "notes": [
-      "Recent Composer versions also block installing packages with known advisories by default; see the audit.block-insecure config"
+      "Composer 2.9+ blocks updates to versions with known advisories by default; 2.10 moved these settings to config.policy (config.audit still works as a fallback)",
+      "Composer 2.10+: the exit code is 0 when the audit passes and 1 when anything fails"
     ],
     "relatedCommands": [
       "composer-outdated",
-      "composer-validate"
+      "composer-validate",
+      "composer-policy"
+    ]
+  },
+  {
+    "id": "composer-policy",
+    "name": "composer config policy",
+    "description": "Configure dependency policies: release cooldown, security advisories, malware and abandoned packages (Composer 2.10+).",
+    "category": "Maintenance",
+    "technologyId": "composer",
+    "examples": [
+      {
+        "command": "composer config policy.cooldown.period \"7 days\"",
+        "description": "Composer 2.11+: don't resolve versions released in the last 7 days"
+      },
+      {
+        "command": "composer update --no-cooldown",
+        "description": "Bypass the cooldown for one run (other policies still apply)"
+      },
+      {
+        "command": "COMPOSER_POLICY_COOLDOWN_PERIOD=0 composer update",
+        "description": "Disable the cooldown via environment variable"
+      },
+      {
+        "command": "composer update --no-blocking",
+        "description": "Disable all policy blocking for one run"
+      }
+    ],
+    "notes": [
+      "Policies live under config.policy in composer.json (cooldown, advisories, malware, abandoned)",
+      "Cooldown is off by default; packages listed under policy.cooldown.ignore bypass it",
+      "WARNING: --no-blocking also allows packages with known vulnerabilities or flagged as malware"
+    ],
+    "relatedCommands": [
+      "composer-audit",
+      "composer-update",
+      "composer-config"
     ]
   },
   {
@@ -660,6 +847,12 @@
     "description": "Delete Composer's download and metadata caches.",
     "category": "Maintenance",
     "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--gc",
+        "description": "Only run garbage collection instead of a full clear"
+      }
+    ],
     "examples": [
       {
         "command": "composer clear-cache",
@@ -694,8 +887,16 @@
         "description": "Force update to the latest 2.x stable"
       },
       {
+        "flag": "--2.2",
+        "description": "Stay on the 2.2 LTS line (for old PHP versions)"
+      },
+      {
         "flag": "--preview / --snapshot",
         "description": "Update to a pre-release or dev build"
+      },
+      {
+        "flag": "--stable",
+        "description": "Switch back to the stable channel"
       }
     ],
     "examples": [
@@ -704,7 +905,7 @@
         "description": "Update to the latest stable version"
       },
       {
-        "command": "composer self-update 2.8.5",
+        "command": "composer self-update 2.11.2",
         "description": "Install a specific version"
       },
       {
@@ -827,7 +1028,7 @@
       },
       {
         "command": "composer config repositories.local path ../my-package",
-        "description": "Add a local path repository"
+        "description": "Add a local path repository (composer repo add is preferred in 2.9+)"
       },
       {
         "command": "composer config -g github-oauth.github.com <token>",
@@ -839,6 +1040,52 @@
     ],
     "relatedCommands": [
       "composer-global-require"
+    ]
+  },
+  {
+    "id": "composer-repository",
+    "name": "composer repository",
+    "description": "Add, remove or list repositories in composer.json (Composer 2.9+).",
+    "category": "Configuration",
+    "technologyId": "composer",
+    "flags": [
+      {
+        "flag": "--before / --after <name>",
+        "description": "Control repository priority"
+      },
+      {
+        "flag": "-g, --global",
+        "description": "Edit the global config instead"
+      }
+    ],
+    "examples": [
+      {
+        "command": "composer repo list",
+        "description": "List configured repositories"
+      },
+      {
+        "command": "composer repo add acme vcs https://github.com/acme/foo",
+        "description": "Add a VCS repository"
+      },
+      {
+        "command": "composer repo add local path ../my-package",
+        "description": "Add a local path repository"
+      },
+      {
+        "command": "composer repo remove acme",
+        "description": "Remove a repository"
+      },
+      {
+        "command": "composer repo disable packagist.org",
+        "description": "Disable Packagist"
+      }
+    ],
+    "notes": [
+      "Alias: composer repo",
+      "Preferred over composer config repositories.* for editing repositories"
+    ],
+    "relatedCommands": [
+      "composer-config"
     ]
   },
   {

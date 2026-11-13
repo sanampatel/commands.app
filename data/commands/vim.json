@@ -53,7 +53,8 @@
       }
     ],
     "notes": [
-      "`vimdiff a b` is the same as `vim -d a b`. Inside Vim, `:e path` opens another file."
+      "`vimdiff a b` is the same as `vim -d a b`. Inside Vim, `:e path` opens another file.",
+      "New to Vim? Run `vimtutor` from the shell, or `:Tutor` inside Vim 9.2+ for the interactive tutorial."
     ],
     "relatedCommands": [
       "vim-write-quit",
@@ -221,6 +222,10 @@
       {
         "command": "Ctrl-o / Ctrl-i",
         "description": "Jump back / forward through the jump list"
+      },
+      {
+        "command": "zz / zt / zb",
+        "description": "Scroll so the cursor line is at the center / top / bottom of the window"
       }
     ],
     "relatedCommands": [
@@ -371,6 +376,206 @@
     ]
   },
   {
+    "id": "vim-indent",
+    "name": ">> / << / =",
+    "description": "Shift lines left or right and auto-indent code.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ">>",
+        "description": "Indent the current line by one 'shiftwidth' (<< outdents; 3>> for three lines)"
+      },
+      {
+        "command": ">ip",
+        "description": "Indent the current paragraph (works with any motion)"
+      },
+      {
+        "command": "gg=G",
+        "description": "Re-indent the whole file using the filetype's indent rules"
+      },
+      {
+        "command": "=i{",
+        "description": "Re-indent the contents of the current {} block"
+      },
+      {
+        "command": ":set expandtab | retab",
+        "description": "Convert existing tabs to spaces (with noexpandtab, :retab! turns runs of spaces into tabs)"
+      }
+    ],
+    "notes": [
+      "In Visual mode, > and < shift the selection; press . to shift again.",
+      "Vim 9.2's :retab -indentonly only touches leading indentation."
+    ],
+    "relatedCommands": [
+      "vim-set",
+      "vim-visual",
+      "vim-comment"
+    ]
+  },
+  {
+    "id": "vim-comment",
+    "name": "gcc / gc{motion}",
+    "description": "Toggle comments on lines with the bundled comment plugin (Vim 9.1+) or Neovim's built-in mapping.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "packadd! comment",
+        "description": "Add to ~/.vimrc to enable the plugin in Vim (built into Neovim 0.10+, no setup needed)"
+      },
+      {
+        "command": "gcc",
+        "description": "Comment or uncomment the current line (3gcc for three lines)"
+      },
+      {
+        "command": "gcip",
+        "description": "Toggle comments on the current paragraph (gc works with any motion or text object)"
+      },
+      {
+        "command": "Vjjgc",
+        "description": "Toggle comments on a visual selection"
+      },
+      {
+        "command": "gC",
+        "description": "Comment from the cursor to the end of the line (Vim plugin only)"
+      }
+    ],
+    "notes": [
+      "Comment markers come from the buffer's 'commentstring', which filetype plugins set (e.g. `# %s` for Python)."
+    ],
+    "relatedCommands": [
+      "vim-visual",
+      "vim-indent"
+    ]
+  },
+  {
+    "id": "vim-case",
+    "name": "~ / gu / gU",
+    "description": "Change the case of characters, words or lines.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "~",
+        "description": "Toggle the case of the character under the cursor and move right"
+      },
+      {
+        "command": "gUiw",
+        "description": "Uppercase the word under the cursor (guiw lowercases)"
+      },
+      {
+        "command": "gUU",
+        "description": "Uppercase the whole line (guu lowercases, g~~ toggles)"
+      },
+      {
+        "command": "U / u",
+        "description": "In Visual mode: uppercase / lowercase the selection"
+      }
+    ],
+    "relatedCommands": [
+      "vim-change",
+      "vim-visual"
+    ]
+  },
+  {
+    "id": "vim-increment",
+    "name": "Ctrl-a / Ctrl-x",
+    "description": "Increment or decrement the number under or after the cursor.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "Ctrl-a",
+        "description": "Add 1 to the next number on the line (Ctrl-x subtracts)"
+      },
+      {
+        "command": "10 Ctrl-a",
+        "description": "Add 10"
+      },
+      {
+        "command": "g Ctrl-a",
+        "description": "In Visual mode: turn repeated numbers into a sequence (1, 2, 3...)"
+      },
+      {
+        "command": ":set nrformats+=alpha",
+        "description": "Also increment single letters"
+      }
+    ],
+    "notes": [
+      "Numbers with a leading 0x are treated as hex; 'nrformats' controls which formats are recognised."
+    ],
+    "relatedCommands": [
+      "vim-visual",
+      "vim-macros"
+    ]
+  },
+  {
+    "id": "vim-join",
+    "name": "J / gJ",
+    "description": "Join lines together.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "J",
+        "description": "Join the next line onto this one with a space (3J joins three lines)"
+      },
+      {
+        "command": "gJ",
+        "description": "Join without inserting or removing spaces"
+      },
+      {
+        "command": ":%j",
+        "description": "Join every line in the file into one"
+      }
+    ],
+    "notes": [
+      "In Visual mode, J joins all selected lines."
+    ],
+    "relatedCommands": [
+      "vim-delete",
+      "vim-visual"
+    ]
+  },
+  {
+    "id": "vim-completion",
+    "name": "Ctrl-n / Ctrl-p / Ctrl-x",
+    "description": "Complete words, lines and file names in Insert mode.",
+    "category": "Editing",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": "Ctrl-n / Ctrl-p",
+        "description": "Complete the word from open buffers (next / previous match)"
+      },
+      {
+        "command": "Ctrl-x Ctrl-f",
+        "description": "Complete a file path"
+      },
+      {
+        "command": "Ctrl-x Ctrl-l",
+        "description": "Complete a whole line"
+      },
+      {
+        "command": "Ctrl-x Ctrl-o",
+        "description": "Omni (language-aware) completion when the filetype supports it"
+      },
+      {
+        "command": ":set autocomplete",
+        "description": "Vim 9.2+: show the completion menu automatically while typing"
+      }
+    ],
+    "notes": [
+      "Ctrl-e cancels the menu and Ctrl-y accepts the selected item.",
+      "Vim 9.2 also adds Ctrl-x Ctrl-r to complete words from registers."
+    ],
+    "relatedCommands": [
+      "vim-modes",
+      "vim-set"
+    ]
+  },
+  {
     "id": "vim-search",
     "name": "/pattern / n / N / *",
     "description": "Search forward or backward and step through matches.",
@@ -399,7 +604,8 @@
     ],
     "relatedCommands": [
       "vim-substitute",
-      "vim-global"
+      "vim-global",
+      "vim-quickfix"
     ]
   },
   {
@@ -468,6 +674,43 @@
     ]
   },
   {
+    "id": "vim-quickfix",
+    "name": ":vimgrep / :copen / :cdo",
+    "description": "Search across files and step through results (or compiler errors) with the quickfix list.",
+    "category": "Search & Replace",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":vimgrep /TODO/ **/*.js",
+        "description": "Search all .js files recursively and fill the quickfix list"
+      },
+      {
+        "command": ":copen",
+        "description": "Open the quickfix window (:cclose closes it)"
+      },
+      {
+        "command": ":cnext / :cprev",
+        "description": "Jump to the next / previous match"
+      },
+      {
+        "command": ":cdo s/oldName/newName/g | update",
+        "description": "Run a substitution on every match and save each changed file"
+      },
+      {
+        "command": ":grep -rn 'TODO' src/",
+        "description": "Use the external 'grepprg' (grep or rg) for faster searches"
+      }
+    ],
+    "notes": [
+      "Use :lvimgrep, :lopen and :lnext for a per-window location list instead."
+    ],
+    "relatedCommands": [
+      "vim-search",
+      "vim-substitute",
+      "vim-global"
+    ]
+  },
+  {
     "id": "vim-visual",
     "name": "v / V / Ctrl-v",
     "description": "Select text character-wise, line-wise, or as a rectangular block.",
@@ -532,7 +775,8 @@
       }
     ],
     "notes": [
-      "In Insert mode, Ctrl-r a inserts register a."
+      "In Insert mode, Ctrl-r a inserts register a.",
+      "Check clipboard support with `vim --version | grep clipboard`. Vim 9.2 adds Wayland clipboard support; over SSH, `:packadd osc52` lets yanks reach your local clipboard through the terminal. Neovim uses an external provider (wl-copy, xclip, pbcopy) or OSC 52."
     ],
     "relatedCommands": [
       "vim-yank-put",
@@ -691,6 +935,42 @@
     ]
   },
   {
+    "id": "vim-terminal",
+    "name": ":terminal",
+    "description": "Run a shell or command in a terminal window inside Vim.",
+    "category": "Buffers, Windows & Tabs",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":terminal",
+        "description": "Open a shell in a horizontal split"
+      },
+      {
+        "command": ":vertical terminal",
+        "description": "Open the terminal in a vertical split"
+      },
+      {
+        "command": ":terminal npm test",
+        "description": "Run a single command; the window stays open showing the output"
+      },
+      {
+        "command": "Ctrl-w N",
+        "description": "Switch to Terminal-Normal mode to scroll and copy (i or a returns to the job)"
+      },
+      {
+        "command": "Ctrl-w : / Ctrl-w w",
+        "description": "Run an Ex command / move to another window from the terminal"
+      }
+    ],
+    "notes": [
+      "Ctrl-\\ Ctrl-n also leaves Terminal mode and is the key that works in Neovim, where :terminal opens in the current window and you press i to start typing."
+    ],
+    "relatedCommands": [
+      "vim-shell",
+      "vim-splits"
+    ]
+  },
+  {
     "id": "vim-set",
     "name": ":set number / :set paste",
     "description": "Change editor options for the current session.",
@@ -720,7 +1000,8 @@
     ],
     "notes": [
       "Put options in ~/.vimrc to make them permanent.",
-      "'paste' is unnecessary in Vim 8+ and Neovim with terminals supporting bracketed paste (Neovim marks it obsolete)."
+      "'paste' is rarely needed: Vim 8+ and Neovim handle bracketed paste from modern terminals automatically, and Neovim marks the option obsolete.",
+      "Vim 9.2 turns on ruler and showcmd, and uses backspace=indent,eol,start by default even without defaults.vim."
     ],
     "relatedCommands": [
       "vim-shell"
@@ -752,7 +1033,8 @@
     ],
     "relatedCommands": [
       "vim-sort",
-      "vim-set"
+      "vim-set",
+      "vim-terminal"
     ]
   },
   {
@@ -810,6 +1092,73 @@
     ],
     "relatedCommands": [
       "vim-set"
+    ]
+  },
+  {
+    "id": "vim-spell",
+    "name": ":set spell / ]s / z=",
+    "description": "Check spelling and fix misspelled words.",
+    "category": "Options & Tools",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":setlocal spell spelllang=en_us",
+        "description": "Turn on spell checking for the current buffer"
+      },
+      {
+        "command": "]s / [s",
+        "description": "Jump to the next / previous misspelled word"
+      },
+      {
+        "command": "z=",
+        "description": "Show spelling suggestions for the word under the cursor"
+      },
+      {
+        "command": "zg",
+        "description": "Add the word to your personal word list (zw marks it as wrong)"
+      }
+    ],
+    "notes": [
+      "Vim offers to download missing spell files the first time you use a language."
+    ],
+    "relatedCommands": [
+      "vim-set"
+    ]
+  },
+  {
+    "id": "vim-help",
+    "name": ":help",
+    "description": "Open Vim's built-in documentation.",
+    "category": "Options & Tools",
+    "technologyId": "vim",
+    "examples": [
+      {
+        "command": ":help :substitute",
+        "description": "Help for an Ex command (Tab completes topics)"
+      },
+      {
+        "command": ":h CTRL-W",
+        "description": "Help for a key; prefix i_ for Insert mode keys, e.g. :h i_CTRL-R"
+      },
+      {
+        "command": ":h 'tabstop'",
+        "description": "Help for an option (quote the name)"
+      },
+      {
+        "command": ":helpgrep foldmethod",
+        "description": "Full-text search across all help files (results in the quickfix list)"
+      },
+      {
+        "command": "Ctrl-] / Ctrl-o",
+        "description": "Follow a link in help / jump back"
+      }
+    ],
+    "notes": [
+      "`:Tutor` (Vim 9.2+, Neovim) opens the interactive tutorial."
+    ],
+    "relatedCommands": [
+      "vim-set",
+      "vim-quickfix"
     ]
   }
 ]

@@ -34,6 +34,9 @@
         "description": "Create a library project"
       }
     ],
+    "notes": [
+      "New packages default to the latest edition (2024 since Rust 1.85) and get a git repository unless created inside an existing one"
+    ],
     "relatedCommands": [
       "cargo-init",
       "cargo-build"
@@ -64,6 +67,9 @@
         "command": "cargo init --lib --name my_lib",
         "description": "Initialize as a library with an explicit name"
       }
+    ],
+    "notes": [
+      "Since Cargo 1.95, cargo init refuses to run directly in your home directory"
     ],
     "relatedCommands": [
       "cargo-new"
@@ -363,7 +369,8 @@
     "relatedCommands": [
       "cargo-remove",
       "cargo-update",
-      "cargo-tree"
+      "cargo-tree",
+      "rust-cargo-info"
     ]
   },
   {
@@ -404,10 +411,6 @@
     "technologyId": "rust",
     "flags": [
       {
-        "flag": "-p, --package",
-        "description": "Update only the specified package"
-      },
-      {
         "flag": "--precise",
         "description": "Update a package to an exact version",
         "example": "cargo update -p serde --precise 1.0.200"
@@ -415,6 +418,14 @@
       {
         "flag": "--dry-run",
         "description": "Show what would change without writing"
+      },
+      {
+        "flag": "--recursive",
+        "description": "With a package spec, also force its dependencies to update"
+      },
+      {
+        "flag": "-w, --workspace",
+        "description": "Only update packages defined in the workspace (e.g. after bumping a version)"
       }
     ],
     "examples": [
@@ -423,16 +434,17 @@
         "description": "Update all dependencies within Cargo.toml constraints"
       },
       {
-        "command": "cargo update -p serde",
-        "description": "Update a single dependency"
+        "command": "cargo update serde",
+        "description": "Update only one dependency (and its deps if needed)"
       },
       {
-        "command": "cargo update -p regex --precise 1.10.0",
+        "command": "cargo update regex --precise 1.10.0",
         "description": "Pin a dependency to an exact version"
       }
     ],
     "notes": [
-      "cargo update only changes Cargo.lock; to cross a semver-incompatible version, edit Cargo.toml or use cargo add crate@<version>"
+      "cargo update only changes Cargo.lock; to cross a semver-incompatible version, edit Cargo.toml or use cargo add crate@<version>",
+      "Current Cargo takes package specs as positional arguments (cargo update serde); many older guides use cargo update -p serde"
     ],
     "relatedCommands": [
       "cargo-add",
@@ -480,11 +492,102 @@
       {
         "command": "cargo tree --depth 1",
         "description": "Show only direct dependencies"
+      },
+      {
+        "command": "cargo tree --depth workspace",
+        "description": "Show only workspace members and their direct dependencies"
       }
     ],
     "relatedCommands": [
       "cargo-update",
       "cargo-add"
+    ]
+  },
+  {
+    "id": "rust-cargo-info",
+    "name": "cargo info",
+    "description": "Show information about a package: version, features, dependencies and links",
+    "category": "Dependencies",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--registry",
+        "description": "Look the package up in a specific registry"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo info serde",
+        "description": "Inspect the latest serde on crates.io (or the version in your lockfile)"
+      },
+      {
+        "command": "cargo info serde@1.0.0",
+        "description": "Inspect a specific version"
+      }
+    ],
+    "relatedCommands": [
+      "cargo-add",
+      "rust-cargo-search"
+    ]
+  },
+  {
+    "id": "rust-cargo-search",
+    "name": "cargo search",
+    "description": "Search crates.io for crates matching a query",
+    "category": "Dependencies",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--limit",
+        "description": "Maximum number of results (default 10, max 100)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo search serde",
+        "description": "Find crates by name or description"
+      },
+      {
+        "command": "cargo search http --limit 20",
+        "description": "Show more results"
+      }
+    ],
+    "relatedCommands": [
+      "rust-cargo-info",
+      "cargo-add"
+    ]
+  },
+  {
+    "id": "rust-cargo-vendor",
+    "name": "cargo vendor",
+    "description": "Copy all dependency sources into a local directory for offline or audited builds",
+    "category": "Dependencies",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-s, --sync",
+        "description": "Also vendor the dependencies of another Cargo.toml"
+      },
+      {
+        "flag": "--versioned-dirs",
+        "description": "Always include the version in vendored directory names"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo vendor",
+        "description": "Vendor everything into ./vendor"
+      },
+      {
+        "command": "cargo vendor third-party/vendor",
+        "description": "Vendor into a custom directory"
+      }
+    ],
+    "notes": [
+      "Prints the [source] configuration to add to .cargo/config.toml so builds use the vendored copies"
+    ],
+    "relatedCommands": [
+      "cargo-update"
     ]
   },
   {
@@ -522,7 +625,8 @@
       }
     ],
     "notes": [
-      "Install with rustup component add clippy if it is missing"
+      "Install with rustup component add clippy if it is missing",
+      "Since Rust 1.89, cargo clippy --fix only touches default targets (like cargo check); add --all-targets to include tests, benches and examples"
     ],
     "relatedCommands": [
       "cargo-fmt",
@@ -581,6 +685,10 @@
       {
         "flag": "--allow-staged",
         "description": "Allow running with staged changes"
+      },
+      {
+        "flag": "--all-targets",
+        "description": "Fix all targets (tests, benches, examples); since Rust 1.89 only default targets are fixed otherwise"
       }
     ],
     "examples": [
@@ -594,7 +702,9 @@
       }
     ],
     "notes": [
-      "cargo fix rewrites source files; commit first so you can review the diff"
+      "cargo fix rewrites source files; commit first so you can review the diff",
+      "To migrate to the 2024 edition: run cargo fix --edition, then set edition = \"2024\" in Cargo.toml",
+      "--allow-dirty implies --allow-staged since Rust 1.86"
     ],
     "relatedCommands": [
       "cargo-clippy"
@@ -652,6 +762,10 @@
       {
         "flag": "--allow-dirty",
         "description": "Allow publishing with uncommitted changes"
+      },
+      {
+        "flag": "--workspace",
+        "description": "Publish all publishable workspace members in dependency order (Rust 1.90+)"
       }
     ],
     "examples": [
@@ -666,14 +780,92 @@
       {
         "command": "cargo publish",
         "description": "Upload the crate"
+      },
+      {
+        "command": "cargo publish --workspace",
+        "description": "Publish every workspace crate, even ones that depend on each other (Rust 1.90+)"
       }
     ],
     "notes": [
-      "Published versions are permanent; they can be yanked (cargo yank --version x.y.z) but never deleted or overwritten",
-      "Cargo.toml must include description and license (or license-file)"
+      "Published versions are permanent; they can be yanked (cargo yank my-crate@x.y.z) but never deleted or overwritten",
+      "Cargo.toml must include description and license (or license-file)",
+      "The --token flag is soft-deprecated; use cargo login or the CARGO_REGISTRY_TOKEN environment variable"
     ],
     "relatedCommands": [
-      "cargo-doc"
+      "cargo-doc",
+      "rust-cargo-package",
+      "rust-cargo-yank"
+    ]
+  },
+  {
+    "id": "rust-cargo-package",
+    "name": "cargo package",
+    "description": "Assemble the .crate file that would be published and verify that it builds",
+    "category": "Publishing",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "-l, --list",
+        "description": "List the files that would be included, without building"
+      },
+      {
+        "flag": "--no-verify",
+        "description": "Skip building the packaged crate"
+      },
+      {
+        "flag": "--allow-dirty",
+        "description": "Allow uncommitted changes"
+      },
+      {
+        "flag": "--workspace",
+        "description": "Package all workspace members"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo package --list",
+        "description": "Check exactly which files will ship"
+      },
+      {
+        "command": "cargo package",
+        "description": "Create target/package/<name>-<version>.crate and test-build it"
+      }
+    ],
+    "notes": [
+      "Use exclude or include in [package] to control which files are packaged"
+    ],
+    "relatedCommands": [
+      "cargo-publish"
+    ]
+  },
+  {
+    "id": "rust-cargo-yank",
+    "name": "cargo yank",
+    "description": "Mark a published version so new projects can no longer depend on it",
+    "category": "Publishing",
+    "technologyId": "rust",
+    "flags": [
+      {
+        "flag": "--undo",
+        "description": "Un-yank a previously yanked version"
+      }
+    ],
+    "examples": [
+      {
+        "command": "cargo yank my-crate@1.0.7",
+        "description": "Yank a version"
+      },
+      {
+        "command": "cargo yank my-crate@1.0.7 --undo",
+        "description": "Restore a yanked version"
+      }
+    ],
+    "notes": [
+      "Yanking does not delete code; existing lockfiles that already use the version keep working",
+      "If you published secrets, rotate them; yanking does not remove the crate from crates.io"
+    ],
+    "relatedCommands": [
+      "cargo-publish"
     ]
   },
   {
@@ -685,7 +877,7 @@
     "flags": [
       {
         "flag": "--locked",
-        "description": "Use the crate's Cargo.lock for reproducible installs"
+        "description": "Use the crate's packaged Cargo.lock; a no-op since Rust 1.100, where this is the default"
       },
       {
         "flag": "--git",
@@ -710,8 +902,8 @@
         "description": "Install a CLI tool from crates.io"
       },
       {
-        "command": "cargo install --locked cargo-watch",
-        "description": "Install using the published lockfile"
+        "command": "cargo install ripgrep@14.1.1",
+        "description": "Install a specific version"
       },
       {
         "command": "cargo install --path .",
@@ -720,10 +912,15 @@
       {
         "command": "cargo uninstall ripgrep",
         "description": "Remove an installed binary"
+      },
+      {
+        "command": "cargo install --list",
+        "description": "List installed binaries and their versions"
       }
     ],
     "notes": [
-      "cargo install compiles from source; it is for binaries only, not for adding library dependencies (use cargo add)"
+      "cargo install compiles from source; it is for binaries only, not for adding library dependencies (use cargo add)",
+      "Since Rust 1.100, cargo install uses the lockfile shipped in the published crate by default, so --locked is no longer needed"
     ],
     "relatedCommands": [
       "cargo-add"
@@ -747,6 +944,14 @@
       {
         "flag": "--doc",
         "description": "Clean only generated docs"
+      },
+      {
+        "flag": "--workspace",
+        "description": "Clean only artifacts of workspace members (Rust 1.93+)"
+      },
+      {
+        "flag": "-n, --dry-run",
+        "description": "Show what would be deleted without deleting it"
       }
     ],
     "examples": [
@@ -757,6 +962,14 @@
       {
         "command": "cargo clean -p my-crate",
         "description": "Remove artifacts for one package"
+      },
+      {
+        "command": "cargo clean --dry-run",
+        "description": "Preview what would be removed"
+      },
+      {
+        "command": "cargo clean --workspace",
+        "description": "Remove only your workspace crates' build output, keeping dependencies"
       }
     ],
     "notes": [
@@ -782,9 +995,60 @@
         "description": "Update only the stable toolchain"
       }
     ],
+    "notes": [
+      "Run rustup check to see whether updates are available without installing them"
+    ],
     "relatedCommands": [
       "rustup-toolchain",
-      "rustup-show"
+      "rustup-show",
+      "rust-rustup-check",
+      "rust-rustup-self"
+    ]
+  },
+  {
+    "id": "rust-rustup-check",
+    "name": "rustup check",
+    "description": "Check for available toolchain and rustup updates without installing them",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup check",
+        "description": "List installed toolchains with available updates"
+      }
+    ],
+    "notes": [
+      "Since rustup 1.29, exits with code 100 if any update is available and 0 otherwise, which is handy in scripts"
+    ],
+    "relatedCommands": [
+      "rustup-update"
+    ]
+  },
+  {
+    "id": "rust-rustup-self",
+    "name": "rustup self",
+    "description": "Update or uninstall rustup itself",
+    "category": "Toolchains",
+    "technologyId": "rust",
+    "examples": [
+      {
+        "command": "rustup self update",
+        "description": "Update rustup to the latest version (does not update toolchains)"
+      },
+      {
+        "command": "rustup set auto-self-update disable",
+        "description": "Stop rustup update from also updating rustup"
+      },
+      {
+        "command": "rustup self uninstall",
+        "description": "Remove rustup and all installed toolchains"
+      }
+    ],
+    "notes": [
+      "WARNING: rustup self uninstall deletes every toolchain and the cargo home bin directory"
+    ],
+    "relatedCommands": [
+      "rustup-update"
     ]
   },
   {
@@ -814,6 +1078,10 @@
         "command": "rustup toolchain install",
         "description": "Install the toolchain pinned in rust-toolchain.toml"
       }
+    ],
+    "notes": [
+      "rustup toolchain install with no arguments installs the toolchain pinned by rust-toolchain.toml (or the default)",
+      "Set RUSTUP_AUTO_INSTALL=0 to stop rustup from installing a missing active toolchain automatically"
     ],
     "relatedCommands": [
       "rustup-default",

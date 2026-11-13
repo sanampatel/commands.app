@@ -215,6 +215,10 @@
       {
         "flag": "-a",
         "description": "Archive mode: copy recursively and preserve permissions, ownership, timestamps and symlinks"
+      },
+      {
+        "flag": "--update=none",
+        "description": "Never overwrite existing files, silently (GNU coreutils 9.3+; --update=none-fail reports them and exits non-zero)"
       }
     ],
     "examples": [
@@ -236,7 +240,8 @@
       }
     ],
     "notes": [
-      "cp overwrites existing destination files silently unless you pass -i or -n"
+      "cp overwrites existing destination files silently unless you pass -i, -n or --update=none",
+      "The exit status of -n changed between GNU coreutils releases (non-zero in 9.2-9.4, zero again since 9.5) and differs on macOS; in scripts prefer --update=none or --update=none-fail"
     ],
     "relatedCommands": [
       "mv",
@@ -277,6 +282,10 @@
         "command": "mv -i *.txt documents/",
         "description": "Move all .txt files with confirmation"
       }
+    ],
+    "notes": [
+      "mv overwrites an existing destination file without asking unless you pass -i or -n",
+      "In GNU coreutils 9.3+, --update=none skips existing files and --update=none-fail skips them with an error, which is more predictable than -n in scripts"
     ],
     "relatedCommands": [
       "cp",
@@ -676,6 +685,49 @@
     ]
   },
   {
+    "id": "linux-stat",
+    "name": "stat",
+    "description": "Show detailed file metadata: size, permissions, owner and timestamps",
+    "category": "File Management",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-c FORMAT",
+        "description": "Print only the given fields (GNU), e.g. %a octal permissions, %U owner, %s size, %y modification time"
+      },
+      {
+        "flag": "-L",
+        "description": "Follow symbolic links"
+      },
+      {
+        "flag": "-f",
+        "description": "Show file system status instead of file status"
+      }
+    ],
+    "examples": [
+      {
+        "command": "stat config.yaml",
+        "description": "Show all metadata for a file"
+      },
+      {
+        "command": "stat -c '%a %U:%G %n' /var/www/*",
+        "description": "Print octal permissions and owner for each file"
+      },
+      {
+        "command": "stat -c %s backup.tar.gz",
+        "description": "Print the size in bytes (handy in scripts)"
+      }
+    ],
+    "notes": [
+      "macOS/BSD stat uses different syntax: stat -f '%Lp %Su' file"
+    ],
+    "relatedCommands": [
+      "ls",
+      "chmod",
+      "du"
+    ]
+  },
+  {
     "id": "cat",
     "name": "cat",
     "description": "Concatenate and display file contents",
@@ -889,6 +941,10 @@
         "description": "Use extended regular expressions (e.g. alternation with |)"
       },
       {
+        "flag": "-F",
+        "description": "Treat the pattern as a fixed string, not a regex"
+      },
+      {
         "flag": "-l",
         "description": "Print only the names of files that contain a match"
       },
@@ -933,7 +989,8 @@
     ],
     "notes": [
       "Supports regular expressions for complex pattern matching",
-      "Use quotes around patterns with spaces or special characters"
+      "Use quotes around patterns with spaces or special characters",
+      "egrep and fgrep are obsolescent and GNU grep 3.8+ prints a warning; use grep -E and grep -F instead"
     ],
     "relatedCommands": [
       "awk",
@@ -1719,7 +1776,8 @@
     ],
     "notes": [
       "Always edit /etc/sudoers with visudo; a syntax error can lock you out of sudo",
-      "Shell redirection is not elevated: use 'sudo tee' to write root-owned files"
+      "Shell redirection is not elevated: use 'sudo tee' to write root-owned files",
+      "Ubuntu 25.10+ uses sudo-rs (a Rust rewrite) as sudo. Common options work, but -E is not supported; use --preserve-env=VAR1,VAR2 instead"
     ],
     "relatedCommands": [
       "whoami",
@@ -2029,7 +2087,8 @@
     ],
     "relatedCommands": [
       "du",
-      "free"
+      "free",
+      "linux-lsblk"
     ]
   },
   {
@@ -2243,6 +2302,158 @@
     ]
   },
   {
+    "id": "linux-lsblk",
+    "name": "lsblk",
+    "description": "List block devices (disks, partitions, LVM volumes) as a tree",
+    "category": "System Info",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-f",
+        "description": "Show file system type, label, UUID and usage"
+      },
+      {
+        "flag": "-o list",
+        "description": "Choose columns, e.g. NAME,SIZE,TYPE,MOUNTPOINTS"
+      },
+      {
+        "flag": "-p",
+        "description": "Print full device paths"
+      },
+      {
+        "flag": "-J",
+        "description": "JSON output"
+      }
+    ],
+    "examples": [
+      {
+        "command": "lsblk",
+        "description": "Show disks, partitions and where they are mounted"
+      },
+      {
+        "command": "lsblk -f",
+        "description": "Show file systems and UUIDs (for /etc/fstab)"
+      },
+      {
+        "command": "lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS,MODEL",
+        "description": "Custom columns including the disk model"
+      }
+    ],
+    "notes": [
+      "Part of util-linux; Linux only (macOS: diskutil list)",
+      "Use the UUID rather than /dev/sdX names in /etc/fstab, since device names can change between boots"
+    ],
+    "relatedCommands": [
+      "df",
+      "linux-mount",
+      "du"
+    ]
+  },
+  {
+    "id": "linux-mount",
+    "name": "mount / findmnt",
+    "description": "Mount and unmount file systems and inspect what is mounted where",
+    "category": "System Info",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "findmnt",
+        "description": "Show all mounts as a tree"
+      },
+      {
+        "command": "findmnt -T /var/lib/docker",
+        "description": "Show which mount a path lives on"
+      },
+      {
+        "command": "sudo mount /dev/sdb1 /mnt/data",
+        "description": "Mount a partition on an existing directory"
+      },
+      {
+        "command": "sudo umount /mnt/data",
+        "description": "Unmount it"
+      },
+      {
+        "command": "sudo findmnt --verify",
+        "description": "Check /etc/fstab for errors before rebooting"
+      },
+      {
+        "command": "sudo mount -a",
+        "description": "Mount everything in /etc/fstab that is not yet mounted"
+      }
+    ],
+    "notes": [
+      "\"target is busy\" on umount means a process still uses it; find it with lsof +D /mnt/data or fuser -vm /mnt/data",
+      "WARNING: a broken /etc/fstab entry can stop the system from booting; run findmnt --verify after editing (add nofail for optional disks)"
+    ],
+    "relatedCommands": [
+      "linux-lsblk",
+      "df",
+      "lsof"
+    ]
+  },
+  {
+    "id": "linux-hostnamectl",
+    "name": "hostnamectl",
+    "description": "Show or change the hostname and basic OS information on systemd systems",
+    "category": "System Info",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "hostnamectl",
+        "description": "Show hostname, OS, kernel, architecture and hardware info"
+      },
+      {
+        "command": "sudo hostnamectl hostname web-01",
+        "description": "Set the hostname persistently"
+      },
+      {
+        "command": "hostnamectl hostname",
+        "description": "Print just the hostname"
+      }
+    ],
+    "notes": [
+      "Older guides use 'hostnamectl set-hostname NAME'; the 'hostname' verb was added in systemd 249",
+      "Also update /etc/hosts if it maps the old name to 127.0.1.1"
+    ],
+    "relatedCommands": [
+      "uname",
+      "linux-timedatectl"
+    ]
+  },
+  {
+    "id": "linux-timedatectl",
+    "name": "timedatectl",
+    "description": "Show or set the system clock, time zone and NTP synchronization",
+    "category": "System Info",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "timedatectl",
+        "description": "Show local time, UTC, time zone and whether the clock is synchronized"
+      },
+      {
+        "command": "timedatectl list-timezones | grep Europe",
+        "description": "Find a time zone name"
+      },
+      {
+        "command": "sudo timedatectl set-timezone Europe/Berlin",
+        "description": "Change the time zone"
+      },
+      {
+        "command": "sudo timedatectl set-ntp true",
+        "description": "Enable network time synchronization"
+      },
+      {
+        "command": "timedatectl timesync-status",
+        "description": "Show NTP server and offset details (systemd-timesyncd only)"
+      }
+    ],
+    "relatedCommands": [
+      "linux-hostnamectl",
+      "systemctl"
+    ]
+  },
+  {
     "id": "curl",
     "name": "curl",
     "description": "Transfer data from or to a server using various protocols",
@@ -2360,6 +2571,9 @@
         "description": "Resume interrupted download"
       }
     ],
+    "notes": [
+      "On Fedora 40+ the wget command is provided by wget2, which is mostly compatible (FTP and WARC options are not supported)"
+    ],
     "relatedCommands": [
       "curl",
       "scp",
@@ -2445,6 +2659,10 @@
       {
         "flag": "-i keyfile",
         "description": "Use specific private key"
+      },
+      {
+        "flag": "-O",
+        "description": "Use the legacy SCP protocol for old servers without SFTP"
       }
     ],
     "examples": [
@@ -2462,7 +2680,7 @@
       }
     ],
     "notes": [
-      "Recent OpenSSH versions use the SFTP protocol under the hood for scp",
+      "Since OpenSSH 9.0, scp uses the SFTP protocol under the hood; add -O for servers that only support the legacy SCP protocol",
       "For large or repeated transfers prefer rsync, which can resume and skip unchanged files"
     ],
     "relatedCommands": [
@@ -2616,7 +2834,7 @@
       }
     ],
     "notes": [
-      "Replaces the deprecated ifconfig and route commands (net-tools)",
+      "Replaces the deprecated ifconfig, route and arp commands (net-tools): ifconfig -> ip a, route -n -> ip route, arp -n -> ip neigh",
       "Changes made with ip are not persistent across reboots; use your distro's network config (netplan, NetworkManager)",
       "Linux only; not available on macOS"
     ],
@@ -2821,8 +3039,7 @@
     "examples": [
       {
         "command": "dig example.com +short",
-        "description": "Get A records only",
-        "output": "93.184.215.14"
+        "description": "Get A records only"
       },
       {
         "command": "dig example.com MX",
@@ -2849,7 +3066,8 @@
     "relatedCommands": [
       "nslookup",
       "ping",
-      "traceroute"
+      "traceroute",
+      "linux-resolvectl"
     ]
   },
   {
@@ -2879,6 +3097,40 @@
     "relatedCommands": [
       "dig",
       "ping"
+    ]
+  },
+  {
+    "id": "linux-resolvectl",
+    "name": "resolvectl",
+    "description": "Query DNS and inspect or flush the systemd-resolved cache",
+    "category": "Networking",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "resolvectl status",
+        "description": "Show which DNS servers each interface uses"
+      },
+      {
+        "command": "resolvectl query example.com",
+        "description": "Resolve a name through the system resolver (what applications see)"
+      },
+      {
+        "command": "sudo resolvectl flush-caches",
+        "description": "Clear the local DNS cache"
+      },
+      {
+        "command": "resolvectl statistics",
+        "description": "Show cache hits, misses and DNSSEC status"
+      }
+    ],
+    "notes": [
+      "Only works when systemd-resolved is in use (default on Ubuntu and Fedora); /etc/resolv.conf then points at the 127.0.0.53 stub resolver",
+      "dig queries DNS servers directly and bypasses this cache"
+    ],
+    "relatedCommands": [
+      "dig",
+      "nslookup",
+      "ip"
     ]
   },
   {
@@ -3602,6 +3854,22 @@
       {
         "command": "systemctl --failed",
         "description": "Show failed units"
+      },
+      {
+        "command": "systemctl cat nginx",
+        "description": "Show the unit file and any drop-in overrides"
+      },
+      {
+        "command": "sudo systemctl edit nginx",
+        "description": "Create a drop-in override instead of editing the vendor unit file"
+      },
+      {
+        "command": "systemctl list-timers",
+        "description": "List systemd timers and when they next run"
+      },
+      {
+        "command": "systemctl is-active nginx",
+        "description": "Print active/inactive (exit status usable in scripts)"
       }
     ],
     "notes": [
@@ -3690,7 +3958,8 @@
     "relatedCommands": [
       "systemctl",
       "service",
-      "tail"
+      "tail",
+      "linux-dmesg"
     ]
   },
   {
@@ -3773,6 +4042,151 @@
     "relatedCommands": [
       "systemctl",
       "journalctl"
+    ]
+  },
+  {
+    "id": "linux-dmesg",
+    "name": "dmesg",
+    "description": "Print kernel messages: hardware, drivers, OOM kills and disk errors",
+    "category": "Services & Logs",
+    "technologyId": "linux",
+    "flags": [
+      {
+        "flag": "-T",
+        "description": "Human-readable timestamps"
+      },
+      {
+        "flag": "-H",
+        "description": "Human-friendly output with a pager and colours"
+      },
+      {
+        "flag": "-w",
+        "description": "Follow new messages"
+      },
+      {
+        "flag": "-l level",
+        "description": "Filter by level, e.g. err,warn"
+      }
+    ],
+    "examples": [
+      {
+        "command": "sudo dmesg -T | tail -50",
+        "description": "Recent kernel messages with readable times"
+      },
+      {
+        "command": "sudo dmesg -T -l err,warn",
+        "description": "Only errors and warnings"
+      },
+      {
+        "command": "sudo dmesg -T | grep -i -E 'oom|killed process'",
+        "description": "Check whether the OOM killer stopped a process"
+      },
+      {
+        "command": "sudo dmesg -w",
+        "description": "Watch messages live (e.g. while plugging in a USB device)"
+      }
+    ],
+    "notes": [
+      "Many distros restrict dmesg to root (kernel.dmesg_restrict=1), hence sudo",
+      "journalctl -k shows the same kernel messages, including from previous boots with -b -1"
+    ],
+    "relatedCommands": [
+      "journalctl",
+      "free"
+    ]
+  },
+  {
+    "id": "linux-apt",
+    "name": "apt",
+    "description": "Install, upgrade and remove packages on Debian and Ubuntu",
+    "category": "Package Management",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "sudo apt update && sudo apt upgrade",
+        "description": "Refresh package lists, then install available upgrades"
+      },
+      {
+        "command": "sudo apt install nginx",
+        "description": "Install a package"
+      },
+      {
+        "command": "sudo apt remove nginx",
+        "description": "Remove a package but keep its system config files (purge removes those too)"
+      },
+      {
+        "command": "sudo apt autoremove",
+        "description": "Remove dependencies that are no longer needed"
+      },
+      {
+        "command": "apt search ripgrep",
+        "description": "Search available packages"
+      },
+      {
+        "command": "apt show nginx",
+        "description": "Show version, size, dependencies and description"
+      },
+      {
+        "command": "apt list --installed | grep php",
+        "description": "List installed packages"
+      },
+      {
+        "command": "apt list --upgradable",
+        "description": "See what would be upgraded"
+      }
+    ],
+    "notes": [
+      "apt is meant for interactive use; in scripts and Dockerfiles use apt-get, whose output format is stable",
+      "full-upgrade (dist-upgrade in apt-get) may remove packages to resolve dependency changes; review the list before confirming"
+    ],
+    "relatedCommands": [
+      "linux-dnf",
+      "sudo"
+    ]
+  },
+  {
+    "id": "linux-dnf",
+    "name": "dnf",
+    "description": "Install, upgrade and remove packages on Fedora, RHEL, Rocky and AlmaLinux",
+    "category": "Package Management",
+    "technologyId": "linux",
+    "examples": [
+      {
+        "command": "sudo dnf upgrade",
+        "description": "Upgrade all packages (metadata refreshes automatically)"
+      },
+      {
+        "command": "sudo dnf install nginx",
+        "description": "Install a package"
+      },
+      {
+        "command": "sudo dnf remove nginx",
+        "description": "Remove a package"
+      },
+      {
+        "command": "dnf search ripgrep",
+        "description": "Search available packages"
+      },
+      {
+        "command": "dnf provides /usr/bin/dig",
+        "description": "Find which package ships a file or command"
+      },
+      {
+        "command": "dnf list --installed | grep php",
+        "description": "List installed packages"
+      },
+      {
+        "command": "sudo dnf history undo last",
+        "description": "Roll back the last transaction"
+      }
+    ],
+    "notes": [
+      "Fedora 41+ uses DNF5 as dnf; RHEL-based distros may still ship DNF 4, where these commands work the same way",
+      "yum is a compatibility alias for dnf on modern systems"
+    ],
+    "relatedCommands": [
+      "linux-apt",
+      "sudo"
     ]
   },
   {

@@ -66,7 +66,7 @@
       {
         "command": "nginx -v",
         "description": "Print the version",
-        "output": "nginx version: nginx/1.28.0"
+        "output": "nginx version: nginx/1.30.6"
       },
       {
         "command": "nginx -V 2>&1 | tr ' ' '\\n' | grep module",
@@ -78,7 +78,8 @@
       }
     ],
     "notes": [
-      "nginx prints version info to stderr, so redirect 2>&1 before piping."
+      "nginx prints version info to stderr, so redirect 2>&1 before piping.",
+      "As of November 2026 the stable branch is 1.30.x and mainline is 1.31.x; nginx.org recommends mainline for most users."
     ],
     "relatedCommands": [
       "nginx-test"
@@ -102,6 +103,14 @@
       {
         "flag": "-g",
         "description": "Set global directives from the command line"
+      },
+      {
+        "flag": "-e",
+        "description": "Use an alternative error log file, or stderr (1.19.5+)"
+      },
+      {
+        "flag": "-q",
+        "description": "Suppress non-error messages during configuration testing (with -t)"
       }
     ],
     "examples": [
@@ -116,6 +125,14 @@
       {
         "command": "nginx -g 'daemon off;'",
         "description": "Run in the foreground (common in Docker containers)"
+      },
+      {
+        "command": "sudo nginx -t -q",
+        "description": "Test the config, printing output only if there is an error"
+      },
+      {
+        "command": "nginx -e stderr -g 'daemon off;'",
+        "description": "Run in the foreground and send early startup errors to stderr"
       }
     ],
     "relatedCommands": [
@@ -368,6 +385,10 @@
       {
         "command": "upstream app_servers {\n    server 10.0.0.11:3000;\n    server 10.0.0.12:3000;\n}\n\nserver {\n    location / {\n        proxy_pass http://app_servers;\n    }\n}",
         "description": "Load balance across several backends (round robin)"
+      },
+      {
+        "command": "location / {\n    proxy_pass https://backend.example.com;\n    proxy_http_version 2;\n}",
+        "description": "Proxy to the backend over HTTP/2 (nginx 1.29.4+, requires ngx_http_v2_module)"
       }
     ],
     "notes": [
@@ -392,7 +413,8 @@
       }
     ],
     "notes": [
-      "Without proxy_http_version 1.1 and the Upgrade/Connection headers, WebSocket handshakes fail."
+      "Without the Upgrade/Connection headers, WebSocket handshakes fail.",
+      "proxy_http_version 1.1 is the default since nginx 1.29.7 (so 1.30 stable); keep it explicit for older versions, which defaulted to 1.0."
     ],
     "relatedCommands": [
       "nginx-reverse-proxy"
@@ -444,10 +466,66 @@
       }
     ],
     "notes": [
-      "The standalone http2 directive requires nginx 1.25.1+; older versions use listen 443 ssl http2;.",
-      "Use fullchain.pem, not cert.pem, or some clients will fail to verify the chain."
+      "The standalone http2 directive requires nginx 1.25.1+; the old listen 443 ssl http2; form is deprecated and logs a warning.",
+      "Use fullchain.pem, not cert.pem, or some clients will fail to verify the chain.",
+      "Since 1.23.4 the default ssl_protocols is already TLSv1.2 TLSv1.3."
     ],
     "relatedCommands": [
+      "nginx-https-redirect",
+      "nginx-http3",
+      "nginx-acme"
+    ]
+  },
+  {
+    "id": "nginx-http3",
+    "name": "listen ... quic",
+    "description": "Serve HTTP/3 over QUIC alongside regular HTTPS.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "server {\n    listen 443 quic reuseport;\n    listen 443 ssl;\n    http2 on;\n    server_name example.com;\n\n    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n\n    location / {\n        # advertise HTTP/3 to browsers\n        add_header Alt-Svc 'h3=\":443\"; ma=86400';\n    }\n}",
+        "description": "HTTPS with HTTP/2 over TCP and HTTP/3 over UDP on the same port"
+      },
+      {
+        "command": "nginx -V 2>&1 | grep -o with-http_v3_module",
+        "description": "Check that your nginx build includes the HTTP/3 module"
+      }
+    ],
+    "notes": [
+      "Requires nginx 1.25.0+ built with --with-http_v3_module and OpenSSL 1.1.1+ (0-RTT needs OpenSSL 3.5.1+).",
+      "reuseport may only be set on one listen ... quic per address:port.",
+      "Open UDP port 443 in your firewall; QUIC does not use TCP.",
+      "The module is still marked experimental in the official docs."
+    ],
+    "relatedCommands": [
+      "nginx-ssl",
+      "nginx-version"
+    ]
+  },
+  {
+    "id": "nginx-acme",
+    "name": "acme_certificate",
+    "description": "Obtain and renew TLS certificates automatically with the official ACME module (e.g. Let's Encrypt) without certbot.",
+    "category": "Config Snippets",
+    "technologyId": "nginx",
+    "examples": [
+      {
+        "command": "resolver 127.0.0.53;\n\nacme_issuer letsencrypt {\n    uri         https://acme-v02.api.letsencrypt.org/directory;\n    contact     admin@example.com;\n    state_path  /var/cache/nginx/acme-letsencrypt;\n    accept_terms_of_service;\n}\n\nserver {\n    listen 443 ssl;\n    server_name example.com;\n\n    acme_certificate letsencrypt;\n    ssl_certificate       $acme_certificate;\n    ssl_certificate_key   $acme_certificate_key;\n    ssl_certificate_cache max=2;\n}\n\nserver {\n    # port 80 is needed for HTTP-01 challenges\n    listen 80;\n    location / { return 404; }\n}",
+        "description": "Issue a certificate for server_name and serve it from memory"
+      },
+      {
+        "command": "load_module modules/ngx_http_acme_module.so;",
+        "description": "Load the dynamic module at the top of nginx.conf"
+      }
+    ],
+    "notes": [
+      "ngx_http_acme_module is a dynamic module, not part of the core build: install the nginx-module-acme package from nginx.org repos or build it from github.com/nginx/nginx-acme.",
+      "A resolver directive is required so nginx can reach the ACME server.",
+      "acme_issuer and acme_shared_zone go in the http block; acme_certificate goes in a server block."
+    ],
+    "relatedCommands": [
+      "nginx-ssl",
       "nginx-https-redirect"
     ]
   },
@@ -513,7 +591,7 @@
     ],
     "notes": [
       "Only use long or immutable caching for files with content hashes in their names.",
-      "add_header in a location replaces all add_header directives inherited from the server block."
+      "add_header in a location replaces all add_header directives inherited from the server block. On nginx 1.29.3+ (1.30 stable), add_header_inherit merge; appends the inherited headers instead."
     ],
     "relatedCommands": [
       "nginx-gzip"

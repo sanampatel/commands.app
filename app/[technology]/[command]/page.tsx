@@ -77,7 +77,7 @@ export default async function CommandPage({ params }: CommandPageProps) {
         // JSON.stringify output is safe here apart from "<", which we escape to avoid closing the tag.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <article className="mx-auto max-w-4xl space-y-8">
+      <article className="mx-auto max-w-4xl space-y-8 break-words">
         <nav aria-label="Breadcrumb" className="text-muted-foreground flex flex-wrap items-center gap-1 text-sm">
           <Link href="/" className="hover:text-foreground">
             Home

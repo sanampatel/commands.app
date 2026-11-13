@@ -97,6 +97,9 @@
         "description": "Health check suitable for scripts"
       }
     ],
+    "notes": [
+      "Since mongosh 2.2, non-interactive runs (--eval, --file) are quiet by default; add --no-quiet to see the banner"
+    ],
     "relatedCommands": [
       "mongosh-connect"
     ]
@@ -172,7 +175,8 @@
     ],
     "relatedCommands": [
       "mongo-use",
-      "mongo-drop"
+      "mongo-drop",
+      "mongodb-schema-validation"
     ]
   },
   {
@@ -212,12 +216,42 @@
       }
     ],
     "notes": [
-      "DESTRUCTIVE: data and indexes are deleted immediately with no confirmation. Always check the output of db first.",
+      "WARNING: data and indexes are deleted immediately with no confirmation. Always check the output of db first.",
       "Back up with mongodump before dropping anything in production."
     ],
     "relatedCommands": [
       "mongodump",
       "mongo-use"
+    ]
+  },
+  {
+    "id": "mongodb-schema-validation",
+    "name": "$jsonSchema validator",
+    "description": "Enforce document structure on a collection with JSON Schema validation",
+    "category": "Databases & Collections",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.createCollection(\"users\", { validator: { $jsonSchema: { bsonType: \"object\", required: [\"email\", \"createdAt\"], properties: { email: { bsonType: \"string\" }, createdAt: { bsonType: \"date\" } } } } })",
+        "description": "Create a collection that rejects documents missing email or createdAt"
+      },
+      {
+        "command": "db.runCommand({ collMod: \"users\", validator: { $jsonSchema: { bsonType: \"object\", required: [\"email\"] } }, validationLevel: \"moderate\", validationAction: \"warn\" })",
+        "description": "Add validation to an existing collection, logging violations instead of rejecting"
+      },
+      {
+        "command": "db.getCollectionInfos({ name: \"users\" })[0].options.validator",
+        "description": "Show the current validator"
+      }
+    ],
+    "notes": [
+      "validationLevel: strict (default) checks all inserts and updates; moderate skips updates to documents that were already invalid",
+      "validationAction: error (default) rejects invalid writes; warn allows them and logs a warning",
+      "Existing documents aren't checked when you add a validator; query with { $nor: [ { $jsonSchema: ... } ] } to find violators"
+    ],
+    "relatedCommands": [
+      "mongo-show-collections",
+      "mongo-insert"
     ]
   },
   {
@@ -251,7 +285,8 @@
     "relatedCommands": [
       "mongo-find-one",
       "mongo-count",
-      "mongo-explain"
+      "mongo-explain",
+      "mongodb-find-one-and-update"
     ]
   },
   {
@@ -334,7 +369,8 @@
     ],
     "relatedCommands": [
       "mongo-find",
-      "mongo-delete"
+      "mongo-delete",
+      "mongodb-find-one-and-update"
     ]
   },
   {
@@ -354,12 +390,47 @@
       }
     ],
     "notes": [
-      "DESTRUCTIVE: deleteMany({}) removes every document in the collection. Run the same filter with countDocuments() first.",
+      "WARNING: deleteMany({}) removes every document in the collection. Run the same filter with countDocuments() first.",
       "To expire documents automatically, use a TTL index instead of scheduled deletes."
     ],
     "relatedCommands": [
       "mongo-count",
       "mongo-create-index"
+    ]
+  },
+  {
+    "id": "mongodb-find-one-and-update",
+    "name": "db.collection.findOneAndUpdate()",
+    "description": "Atomically update one document and return it (before or after the change)",
+    "category": "CRUD",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.counters.findOneAndUpdate({ _id: \"invoice\" }, { $inc: { seq: 1 } }, { upsert: true, returnDocument: \"after\" })",
+        "description": "Atomic sequence generator: returns the incremented value"
+      },
+      {
+        "command": "db.jobs.findOneAndUpdate({ status: \"queued\" }, { $set: { status: \"running\", startedAt: new Date() } }, { sort: { priority: -1, createdAt: 1 }, returnDocument: \"after\" })",
+        "description": "Claim the highest-priority queued job"
+      },
+      {
+        "command": "db.users.findOneAndDelete({ email: \"user@example.com\" })",
+        "description": "Delete a document and return what was deleted"
+      },
+      {
+        "command": "db.users.findOneAndReplace({ _id: ObjectId(\"<object-id>\") }, { name: \"Ada\", email: \"ada@example.com\" })",
+        "description": "Replace a whole document and return the original"
+      }
+    ],
+    "notes": [
+      "Returns the original document by default; pass returnDocument: \"after\" (or returnNewDocument: true) for the updated one",
+      "sort decides which document is modified when several match",
+      "With upsert: true, put a unique index on the filter fields to avoid duplicate inserts under concurrency"
+    ],
+    "relatedCommands": [
+      "mongo-update",
+      "mongo-find-one",
+      "mongo-delete"
     ]
   },
   {
@@ -411,7 +482,8 @@
     ],
     "notes": [
       "Put $match and $sort early so the pipeline can use indexes.",
-      "Stages are limited to 100 MB of RAM unless you pass { allowDiskUse: true } (default true from MongoDB 6.0)."
+      "Stages are limited to 100 MB of RAM unless you pass { allowDiskUse: true } (default true from MongoDB 6.0).",
+      "MongoDB 9.0 also caps memory per operation (by default the greater of 1 GB or 20% of RAM); exceeding it fails with ExceededMemoryLimit"
     ],
     "relatedCommands": [
       "mongo-find",
@@ -571,10 +643,142 @@
       {
         "command": "db.serverStatus().connections",
         "description": "Show current and available connection counts"
+      },
+      {
+        "command": "db.getSiblingDB(\"admin\").aggregate([{ $currentOp: { allUsers: true } }, { $match: { secs_running: { $gt: 5 } } }])",
+        "description": "Aggregation-stage equivalent that can be filtered and projected further"
       }
     ],
     "relatedCommands": [
-      "mongo-stats"
+      "mongo-stats",
+      "mongodb-profiler",
+      "mongodb-mongostat"
+    ]
+  },
+  {
+    "id": "mongodb-profiler",
+    "name": "db.setProfilingLevel()",
+    "description": "Record slow operations in the database profiler to find queries that need indexes",
+    "category": "Users & Admin",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.setProfilingLevel(1, { slowms: 100 })",
+        "description": "Profile operations slower than 100 ms in the current database"
+      },
+      {
+        "command": "db.setProfilingLevel(1, { filter: { op: \"query\", millis: { $gt: 2000 } } })",
+        "description": "Only profile queries slower than 2 seconds"
+      },
+      {
+        "command": "db.system.profile.find().sort({ ts: -1 }).limit(5)",
+        "description": "Show the 5 most recent profiled operations"
+      },
+      {
+        "command": "db.getProfilingStatus()",
+        "description": "Show the current level and threshold"
+      },
+      {
+        "command": "db.setProfilingLevel(0)",
+        "description": "Turn the profiler off"
+      }
+    ],
+    "notes": [
+      "Level 0 = off, 1 = slow ops only, 2 = everything (expensive; avoid in production)",
+      "Since MongoDB 8.0, slowness is measured by workingMillis, which excludes time spent waiting for locks and flow control",
+      "Settings reset on restart; set operationProfiling.mode in mongod.conf to persist them",
+      "Not available on mongos or Atlas M0/Flex clusters"
+    ],
+    "relatedCommands": [
+      "mongo-explain",
+      "mongo-current-op",
+      "mongo-create-index"
+    ]
+  },
+  {
+    "id": "mongodb-set-fcv",
+    "name": "setFeatureCompatibilityVersion",
+    "description": "Check or set the feature compatibility version (FCV), the last step of a major-version upgrade",
+    "category": "Users & Admin",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })",
+        "description": "Show the current FCV"
+      },
+      {
+        "command": "db.adminCommand({ setFeatureCompatibilityVersion: \"9.0\", confirm: true })",
+        "description": "Enable 9.0 features after every member runs 9.0 binaries"
+      },
+      {
+        "command": "db.adminCommand({ setFeatureCompatibilityVersion: \"9.0\", confirm: true, dryRun: true })",
+        "description": "Check for incompatible data without changing anything (8.3+)"
+      }
+    ],
+    "notes": [
+      "Upgrade binaries one major version at a time, then raise the FCV; a lower FCV keeps the option to downgrade binaries",
+      "confirm: true is required (MongoDB 7.0+)",
+      "WARNING: once new-version features are used, downgrading the FCV can fail with CannotDowngrade; wait through a burn-in period before raising it",
+      "Run on the primary or on mongos; getParameter doesn't work through mongos"
+    ],
+    "relatedCommands": [
+      "mongo-rs-status",
+      "mongo-rs-admin"
+    ]
+  },
+  {
+    "id": "mongodb-mongostat",
+    "name": "mongostat / mongotop",
+    "description": "Live per-second server stats (mongostat) and per-collection read/write time (mongotop)",
+    "category": "Users & Admin",
+    "technologyId": "mongodb",
+    "flags": [
+      {
+        "flag": "--uri",
+        "description": "Connection string"
+      },
+      {
+        "flag": "-n, --rowcount",
+        "description": "Stop after N rows"
+      },
+      {
+        "flag": "--discover",
+        "description": "Report every member of a replica set or every shard via mongos"
+      },
+      {
+        "flag": "--json",
+        "description": "JSON output"
+      },
+      {
+        "flag": "-o",
+        "description": "Choose output fields from serverStatus"
+      }
+    ],
+    "examples": [
+      {
+        "command": "mongostat --uri=\"mongodb://localhost:27017\"",
+        "description": "Inserts, queries, updates, cache usage and connections every second"
+      },
+      {
+        "command": "mongostat --uri=\"mongodb://localhost:27017\" -n 10 5",
+        "description": "10 rows, averaged over 5-second intervals"
+      },
+      {
+        "command": "mongostat --discover --host=\"rs0/mongo1.example.com:27017\"",
+        "description": "Watch every replica set member at once"
+      },
+      {
+        "command": "mongotop --uri=\"mongodb://localhost:27017\" 5",
+        "description": "Time spent reading and writing each collection, every 5 seconds"
+      }
+    ],
+    "notes": [
+      "Part of the MongoDB Database Tools, installed separately from the server and mongosh; run from the OS shell, not mongosh",
+      "Avoid passwords on the command line; let the tool prompt or use --config with a YAML file"
+    ],
+    "relatedCommands": [
+      "mongo-current-op",
+      "mongodb-profiler"
     ]
   },
   {
@@ -687,7 +891,7 @@
       }
     ],
     "notes": [
-      "--drop is DESTRUCTIVE: existing collections in the target are deleted before restore.",
+      "WARNING: --drop deletes existing collections in the target before restoring",
       "Without --drop, documents with an existing _id are skipped, not overwritten.",
       "Prefer --nsInclude over the deprecated --db/--collection options."
     ],
@@ -744,7 +948,7 @@
       },
       {
         "flag": "--mode",
-        "description": "insert (default), upsert or merge"
+        "description": "insert (default), upsert, merge or delete"
       }
     ],
     "examples": [
@@ -762,7 +966,7 @@
       }
     ],
     "notes": [
-      "--drop deletes the existing collection first."
+      "WARNING: --drop deletes the existing collection first"
     ],
     "relatedCommands": [
       "mongoexport"
@@ -828,7 +1032,38 @@
       "rs.stepDown() causes a brief window with no primary; writes will fail until a new one is elected."
     ],
     "relatedCommands": [
-      "mongo-rs-status"
+      "mongo-rs-status",
+      "mongodb-set-fcv"
+    ]
+  },
+  {
+    "id": "mongodb-watch",
+    "name": "db.collection.watch()",
+    "description": "Open a change stream to react to inserts, updates and deletes in real time",
+    "category": "Replica Sets",
+    "technologyId": "mongodb",
+    "examples": [
+      {
+        "command": "const cs = db.orders.watch([{ $match: { operationType: \"insert\" } }])\nwhile (!cs.isClosed()) { if (cs.hasNext()) printjson(cs.next()) }",
+        "description": "Print new orders as they are inserted"
+      },
+      {
+        "command": "db.orders.watch([], { fullDocument: \"updateLookup\" })",
+        "description": "Include the current full document with update events"
+      },
+      {
+        "command": "db.watch()",
+        "description": "Watch every collection in the current database"
+      }
+    ],
+    "notes": [
+      "Requires a replica set or sharded cluster (a single-node replica set works for development)",
+      "Store each event's _id (resume token) and pass it as resumeAfter/startAfter to continue after a restart; mongosh doesn't auto-resume",
+      "For pre-change documents, enable changeStreamPreAndPostImages on the collection and use fullDocumentBeforeChange"
+    ],
+    "relatedCommands": [
+      "mongo-rs-status",
+      "mongo-find"
     ]
   }
 ]

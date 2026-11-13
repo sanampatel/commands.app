@@ -11,6 +11,14 @@
         "description": "Yarn 2+: fail if yarn.lock would change (use in CI)"
       },
       {
+        "flag": "--immutable-cache",
+        "description": "Yarn 2+: also fail if the cache would change"
+      },
+      {
+        "flag": "--mode=skip-build",
+        "description": "Yarn 2+: install without running build scripts"
+      },
+      {
         "flag": "--frozen-lockfile",
         "description": "Yarn Classic: fail if yarn.lock needs updating (Berry: --immutable)"
       },
@@ -39,10 +47,14 @@
     ],
     "notes": [
       "Check your version with yarn --version: 1.x is Classic, 2.x-4.x is Berry",
-      "--frozen-lockfile is still accepted by Berry with a deprecation warning"
+      "--frozen-lockfile is still accepted by Berry as a deprecated alias of --immutable",
+      "Yarn 4.14+: third-party build scripts no longer run by default (enableScripts: false); allow a package with dependenciesMeta.<pkg>.built: true in package.json",
+      "Yarn 4.15+: versions published less than 1 day ago are not installed by default (npmMinimalAgeGate: 1d); exempt packages with npmPreapprovedPackages"
     ],
     "relatedCommands": [
-      "yarn-add"
+      "yarn-add",
+      "yarn-rebuild",
+      "yarn-config"
     ]
   },
   {
@@ -53,12 +65,8 @@
     "technologyId": "yarn",
     "flags": [
       {
-        "flag": "-D",
+        "flag": "-D, --dev",
         "description": "Add to devDependencies"
-      },
-      {
-        "flag": "-g",
-        "description": "Yarn Classic only: install globally (use yarn dlx in Berry)"
       },
       {
         "flag": "-E, --exact",
@@ -67,6 +75,18 @@
       {
         "flag": "-P, --peer",
         "description": "Add as a peerDependency"
+      },
+      {
+        "flag": "-O, --optional",
+        "description": "Add as an optionalDependency"
+      },
+      {
+        "flag": "--no-time-gate",
+        "description": "Yarn 4.15+: skip the minimum release age check for this command"
+      },
+      {
+        "flag": "-g",
+        "description": "Yarn Classic only: install globally (use yarn dlx in Berry)"
       }
     ],
     "examples": [
@@ -124,7 +144,7 @@
       }
     ],
     "notes": [
-      "DEPRECATED in modern Yarn: Classic (1.x) only, removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn up' instead."
+      "LEGACY: Yarn Classic (1.x) only; removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn up' instead."
     ],
     "relatedCommands": [
       "yarn-outdated",
@@ -176,7 +196,7 @@
       }
     ],
     "notes": [
-      "DEPRECATED in modern Yarn: Classic (1.x) only, removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn dlx <pkg>' for one-off runs, or install the tool with npm -g."
+      "LEGACY: Yarn Classic (1.x) only; removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn dlx <pkg>' for one-off runs, or install the tool with npm -g."
     ],
     "relatedCommands": [
       "yarn-dlx"
@@ -191,19 +211,23 @@
     "examples": [
       {
         "command": "yarn cache clean",
-        "description": "Clear cache"
-      },
-      {
-        "command": "yarn cache dir",
-        "description": "Show cache directory"
-      },
-      {
-        "command": "yarn cache list",
-        "description": "List cached packages"
+        "description": "Clear the cache"
       },
       {
         "command": "yarn cache clean --all",
-        "description": "Yarn 2+: also clear the global mirror"
+        "description": "Yarn 2+: clear both the global cache and the project's local cache"
+      },
+      {
+        "command": "yarn cache clean --mirror",
+        "description": "Yarn 2+: clear only the global cache"
+      },
+      {
+        "command": "yarn cache dir",
+        "description": "Yarn Classic: show cache directory"
+      },
+      {
+        "command": "yarn cache list",
+        "description": "Yarn Classic: list cached packages"
       }
     ],
     "notes": [
@@ -226,10 +250,14 @@
       {
         "command": "yarn why lodash -R",
         "description": "Yarn 2+: show the full recursive dependency chain"
+      },
+      {
+        "command": "yarn why lodash@^3",
+        "description": "Yarn 2+: explain why a specific version range is present"
       }
     ],
     "notes": [
-      "Helpful for understanding dependencies"
+      "Yarn 2+: --peers also shows matching peer dependencies"
     ],
     "relatedCommands": [
       "yarn-info"
@@ -243,22 +271,34 @@
     "technologyId": "yarn",
     "flags": [
       {
+        "flag": "-p, --private",
+        "description": "Yarn 2+: create a private package"
+      },
+      {
+        "flag": "-w, --workspace",
+        "description": "Yarn 2+: create a private workspace root with a packages/ folder"
+      },
+      {
         "flag": "-y",
-        "description": "Skip questions, use defaults"
+        "description": "Yarn Classic: skip questions, use defaults"
       }
     ],
     "examples": [
       {
         "command": "yarn init",
-        "description": "Initialize project interactively"
+        "description": "Initialize project (Yarn 2+ creates package.json without prompts)"
+      },
+      {
+        "command": "yarn init -w",
+        "description": "Yarn 2+: initialize a monorepo root"
       },
       {
         "command": "yarn init -y",
-        "description": "Initialize with defaults"
+        "description": "Yarn Classic: initialize with defaults"
       }
     ],
     "notes": [
-      "Yarn 2+: yarn init creates package.json without prompts; -y is only needed for Classic",
+      "Yarn 2+: yarn init also creates .editorconfig and initializes a git repository",
       "yarn init -2 (Classic) bootstraps a project with the latest Berry release"
     ],
     "relatedCommands": []
@@ -276,7 +316,7 @@
       }
     ],
     "notes": [
-      "DEPRECATED in modern Yarn: Classic (1.x) only, removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn upgrade-interactive', which shows outdated packages in Yarn 4."
+      "LEGACY: Yarn Classic (1.x) only; removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn upgrade-interactive', which shows outdated packages in Yarn 4."
     ],
     "relatedCommands": [
       "yarn-upgrade",
@@ -330,6 +370,10 @@
       {
         "flag": "-E, --exact",
         "description": "Pin the exact version"
+      },
+      {
+        "flag": "--no-time-gate",
+        "description": "Yarn 4.15+: skip the minimum release age check for this command"
       }
     ],
     "examples": [
@@ -351,7 +395,7 @@
       }
     ],
     "notes": [
-      "Replaces Yarn Classic's 'yarn upgrade'"
+      "Replaces Yarn Classic's 'yarn upgrade --latest'; it upgrades every workspace at once"
     ],
     "relatedCommands": [
       "yarn-upgrade-interactive",
@@ -361,29 +405,33 @@
   {
     "id": "yarn-link",
     "name": "yarn link",
-    "description": "Create symlink for local development",
+    "description": "Link a local package into the project for development",
     "category": "Development",
     "technologyId": "yarn",
     "examples": [
       {
+        "command": "yarn link ../my-lib",
+        "description": "Yarn 2+: link a local package by path (adds a portal: resolution)"
+      },
+      {
+        "command": "yarn link ~/code/my-monorepo --all",
+        "description": "Yarn 2+: link every workspace of another project"
+      },
+      {
+        "command": "yarn unlink --all",
+        "description": "Yarn 2+: remove all links"
+      },
+      {
         "command": "yarn link",
-        "description": "Create symlink to current package"
+        "description": "Yarn Classic: register the current package as linkable"
       },
       {
         "command": "yarn link package-name",
-        "description": "Link to local package"
-      },
-      {
-        "command": "yarn unlink",
-        "description": "Unlink package"
-      },
-      {
-        "command": "yarn link ../my-lib",
-        "description": "Yarn 2+: link a local package by path (adds a portal: resolution)"
+        "description": "Yarn Classic: use a registered package"
       }
     ],
     "notes": [
-      "Yarn Classic uses global link registration (yarn link, then yarn link <name>); Yarn 2+ links by path"
+      "Yarn Classic uses global link registration (yarn link, then yarn link <name>); Yarn 2+ links by path and writes a resolutions entry"
     ],
     "relatedCommands": [
       "yarn-unlink"
@@ -409,12 +457,12 @@
         "description": "Run a script in one workspace"
       },
       {
-        "command": "yarn workspaces info",
-        "description": "Show workspace tree"
+        "command": "yarn workspaces focus web",
+        "description": "Yarn 2+: install only one workspace and its dependencies"
       },
       {
-        "command": "yarn workspace package-name add dependency",
-        "description": "Add dependency to specific workspace"
+        "command": "yarn workspaces info",
+        "description": "Yarn Classic: show workspace tree"
       }
     ],
     "notes": [
@@ -487,7 +535,7 @@
       }
     ],
     "notes": [
-      "DEPRECATED in modern Yarn: Classic (1.x) only, removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn install --check-cache' or 'yarn constraints' instead."
+      "LEGACY: Yarn Classic (1.x) only; removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn install --check-cache' or 'yarn constraints' instead."
     ],
     "relatedCommands": []
   },
@@ -499,25 +547,30 @@
     "technologyId": "yarn",
     "examples": [
       {
-        "command": "yarn config set <key> <value>",
-        "description": "Set a config value"
+        "command": "yarn config",
+        "description": "Yarn 2+: show all settings"
       },
       {
-        "command": "yarn config get <key>",
-        "description": "Get a config value"
-      },
-      {
-        "command": "yarn config list",
-        "description": "Display current configuration"
+        "command": "yarn config get npmMinimalAgeGate",
+        "description": "Yarn 2+: read a setting"
       },
       {
         "command": "yarn config set nodeLinker node-modules",
         "description": "Yarn 2+: use a node_modules folder instead of Plug'n'Play"
+      },
+      {
+        "command": "yarn config get enableScripts --why",
+        "description": "Yarn 2+: show where a setting comes from"
+      },
+      {
+        "command": "yarn config list",
+        "description": "Yarn Classic: display current configuration"
       }
     ],
     "notes": [
       "Yarn Classic reads .yarnrc; Yarn 2+ reads .yarnrc.yml with camelCase keys",
-      "Yarn 2+: 'yarn config' with no args lists settings ('config list' is Classic)"
+      "Yarn 2+: 'yarn config' with no args lists settings ('config list' is Classic)",
+      "Use -H/--home with set/unset to write to your home .yarnrc.yml instead of the project"
     ],
     "relatedCommands": []
   },
@@ -530,15 +583,19 @@
     "examples": [
       {
         "command": "yarn info react",
-        "description": "Show info about React package"
-      },
-      {
-        "command": "yarn info react version",
-        "description": "Show specific field"
+        "description": "Yarn 2+: show the installed react; Classic: query the registry"
       },
       {
         "command": "yarn npm info react --fields versions",
         "description": "Yarn 2+: query registry metadata"
+      },
+      {
+        "command": "yarn info -AR --name-only",
+        "description": "Yarn 2+: list every package in the project"
+      },
+      {
+        "command": "yarn info react version",
+        "description": "Yarn Classic: show a specific registry field"
       }
     ],
     "notes": [
@@ -565,7 +622,7 @@
       }
     ],
     "notes": [
-      "DEPRECATED in modern Yarn: Classic (1.x) only, removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn set version' (or Corepack's packageManager field)."
+      "LEGACY: Yarn Classic (1.x) only; removed in Yarn 2+ (Berry, current is 4.x). Use 'yarn set version' (or the packageManager field)."
     ],
     "relatedCommands": [
       "yarn-set-version"
@@ -583,7 +640,7 @@
         "description": "Use the latest stable Yarn (writes packageManager in package.json)"
       },
       {
-        "command": "yarn set version 4.9.2",
+        "command": "yarn set version 4.18.1",
         "description": "Pin an exact release"
       },
       {
@@ -593,7 +650,7 @@
     ],
     "notes": [
       "Replaces Yarn Classic's 'yarn policies set-version'",
-      "Commit package.json (packageManager) and any .yarn/releases file it creates"
+      "Writes the packageManager field; commit package.json and any .yarn/releases file it creates"
     ],
     "relatedCommands": [
       "yarn-corepack-enable",
@@ -621,10 +678,42 @@
       }
     ],
     "notes": [
-      "Corepack is the recommended way to install Yarn 2+; installing yarn from npm gives you Classic 1.x"
+      "Node.js 25+ no longer ships Corepack; install it with npm install -g corepack first",
+      "Installing yarn from npm (npm i -g yarn) gives you Classic 1.x; Corepack picks the version from packageManager"
     ],
     "relatedCommands": [
       "yarn-set-version"
+    ]
+  },
+  {
+    "id": "yarn-plugin",
+    "name": "yarn plugin",
+    "description": "Manage Yarn plugins (Yarn 2+)",
+    "category": "Configuration",
+    "technologyId": "yarn",
+    "examples": [
+      {
+        "command": "yarn plugin list",
+        "description": "List official plugins"
+      },
+      {
+        "command": "yarn plugin runtime",
+        "description": "List active plugins"
+      },
+      {
+        "command": "yarn plugin import exec",
+        "description": "Install an official plugin"
+      },
+      {
+        "command": "yarn plugin remove @yarnpkg/plugin-exec",
+        "description": "Remove a plugin"
+      }
+    ],
+    "notes": [
+      "Plugins are stored in .yarn/plugins and referenced from .yarnrc.yml; commit both"
+    ],
+    "relatedCommands": [
+      "yarn-config"
     ]
   },
   {
@@ -645,7 +734,7 @@
     ],
     "notes": [
       "Helps reduce node_modules size",
-      "DEPRECATED in modern Yarn: Classic (1.x) only, removed in Yarn 2+ (Berry, current is 4.x). There is no direct replacement."
+      "LEGACY: Yarn Classic (1.x) only; removed in Yarn 2+ (Berry, current is 4.x). There is no direct replacement."
     ],
     "relatedCommands": []
   },
@@ -681,6 +770,77 @@
     ]
   },
   {
+    "id": "yarn-rebuild",
+    "name": "yarn rebuild",
+    "description": "Re-run build scripts of installed packages (Yarn 2+)",
+    "category": "Maintenance",
+    "technologyId": "yarn",
+    "examples": [
+      {
+        "command": "yarn rebuild",
+        "description": "Rebuild all packages"
+      },
+      {
+        "command": "yarn rebuild sharp",
+        "description": "Rebuild one package, e.g. after allowing its build script"
+      }
+    ],
+    "notes": [
+      "Yarn 4.14+ skips third-party build scripts by default; allow one with \"dependenciesMeta\": { \"sharp\": { \"built\": true } } in package.json, then rebuild"
+    ],
+    "relatedCommands": [
+      "yarn-install"
+    ]
+  },
+  {
+    "id": "yarn-patch",
+    "name": "yarn patch",
+    "description": "Patch a dependency and store the patch in the project (Yarn 2+)",
+    "category": "Development",
+    "technologyId": "yarn",
+    "examples": [
+      {
+        "command": "yarn patch lodash",
+        "description": "Extract lodash to a temporary folder for editing (prints the path)"
+      },
+      {
+        "command": "yarn patch-commit -s <patch-folder>",
+        "description": "Save the patch to .yarn/patches and add a patch: resolution"
+      },
+      {
+        "command": "yarn patch lodash -u",
+        "description": "Start editing again from the existing patch"
+      }
+    ],
+    "relatedCommands": [
+      "yarn-install"
+    ]
+  },
+  {
+    "id": "yarn-constraints",
+    "name": "yarn constraints",
+    "description": "Check and fix workspace rules defined in yarn.config.cjs (Yarn 4)",
+    "category": "Monorepo",
+    "technologyId": "yarn",
+    "examples": [
+      {
+        "command": "yarn constraints",
+        "description": "Report unmet constraints (non-zero exit on failure)"
+      },
+      {
+        "command": "yarn constraints --fix",
+        "description": "Automatically fix what can be fixed"
+      }
+    ],
+    "notes": [
+      "Useful for enforcing the same dependency versions or fields across all workspaces"
+    ],
+    "relatedCommands": [
+      "yarn-workspaces",
+      "yarn-dedupe"
+    ]
+  },
+  {
     "id": "yarn-audit",
     "name": "yarn npm audit",
     "description": "Check dependencies for known vulnerabilities",
@@ -698,6 +858,10 @@
       {
         "flag": "--severity <level>",
         "description": "Yarn 2+: minimum severity to report"
+      },
+      {
+        "flag": "--exclude / --ignore <glob>",
+        "description": "Yarn 2+: skip packages or advisory IDs"
       }
     ],
     "examples": [
@@ -706,11 +870,16 @@
         "description": "Yarn 2+: audit the whole tree"
       },
       {
+        "command": "yarn npm audit -AR --severity high",
+        "description": "Yarn 2+: only report high and critical issues"
+      },
+      {
         "command": "yarn audit",
         "description": "Yarn Classic"
       }
     ],
     "notes": [
+      "Exits non-zero when any advisory is found, so it can gate CI",
       "Yarn has no 'audit fix'; upgrade with yarn up or pin a version via 'resolutions' in package.json"
     ],
     "relatedCommands": [
@@ -731,7 +900,7 @@
     ],
     "notes": [
       "Useful when migrating from npm to Yarn",
-      "DEPRECATED in modern Yarn: Classic only. Yarn 2+ imports an existing package-lock.json automatically on the first yarn install"
+      "LEGACY: Classic only. Yarn 2+ imports an existing package-lock.json automatically on the first yarn install"
     ],
     "relatedCommands": [
       "yarn-install"
@@ -754,7 +923,7 @@
       }
     ],
     "notes": [
-      "DEPRECATED in modern Yarn: Classic (1.x) only, removed in Yarn 2+ (Berry, current is 4.x). Use a third-party plugin or tool such as license-checker."
+      "LEGACY: Yarn Classic (1.x) only; removed in Yarn 2+ (Berry, current is 4.x). Use a third-party plugin or tool such as license-checker."
     ],
     "relatedCommands": []
   },
@@ -767,15 +936,19 @@
     "examples": [
       {
         "command": "yarn pack",
-        "description": "Create tarball"
+        "description": "Create a tarball (Yarn 2+: package.tgz)"
+      },
+      {
+        "command": "yarn pack --dry-run",
+        "description": "Yarn 2+: list the files that would be included"
+      },
+      {
+        "command": "yarn pack --out %s-%v.tgz",
+        "description": "Yarn 2+: custom output path (%s = name, %v = version)"
       },
       {
         "command": "yarn pack --filename my-package.tgz",
-        "description": "Create with custom filename"
-      },
-      {
-        "command": "yarn pack --out my-package.tgz",
-        "description": "Yarn 2+: custom output path (--filename is Classic)"
+        "description": "Yarn Classic: custom file name"
       }
     ],
     "notes": [
@@ -791,8 +964,16 @@
     "technologyId": "yarn",
     "examples": [
       {
+        "command": "yarn unlink ../my-lib",
+        "description": "Yarn 2+: remove a link created with yarn link"
+      },
+      {
+        "command": "yarn unlink --all",
+        "description": "Yarn 2+: remove all links"
+      },
+      {
         "command": "yarn unlink my-package",
-        "description": "Unlink a package"
+        "description": "Yarn Classic: unlink a registered package"
       }
     ],
     "relatedCommands": [
@@ -807,24 +988,24 @@
     "technologyId": "yarn",
     "examples": [
       {
-        "command": "yarn version --patch",
-        "description": "Bump patch version"
-      },
-      {
-        "command": "yarn version --minor",
-        "description": "Bump minor version"
-      },
-      {
-        "command": "yarn version --major",
-        "description": "Bump major version"
-      },
-      {
         "command": "yarn version patch",
         "description": "Yarn 2+: bump the patch version"
       },
       {
         "command": "yarn version 2.0.0",
         "description": "Yarn 2+: set an exact version"
+      },
+      {
+        "command": "yarn version minor --deferred",
+        "description": "Yarn 2+: record a bump to apply later with yarn version apply"
+      },
+      {
+        "command": "yarn version --patch",
+        "description": "Yarn Classic: bump patch version"
+      },
+      {
+        "command": "yarn version --minor",
+        "description": "Yarn Classic: bump minor version"
       }
     ],
     "notes": [
@@ -847,6 +1028,18 @@
       {
         "flag": "--tag <tag>",
         "description": "Publish under a dist-tag"
+      },
+      {
+        "flag": "--provenance",
+        "description": "Generate provenance (GitHub Actions / GitLab CI)"
+      },
+      {
+        "flag": "-n, --dry-run",
+        "description": "Show what would be published"
+      },
+      {
+        "flag": "--staged",
+        "description": "Stage the version for later approval instead of publishing"
       }
     ],
     "examples": [
@@ -857,6 +1050,10 @@
       {
         "command": "yarn npm publish --tag beta",
         "description": "Publish a prerelease"
+      },
+      {
+        "command": "yarn npm publish --dry-run",
+        "description": "Preview the publish"
       },
       {
         "command": "yarn npm login",
@@ -872,6 +1069,62 @@
     ]
   },
   {
+    "id": "yarn-npm-login",
+    "name": "yarn npm login",
+    "description": "Authenticate with the npm registry (Yarn 2+)",
+    "category": "Publishing",
+    "technologyId": "yarn",
+    "examples": [
+      {
+        "command": "yarn npm login",
+        "description": "Log in to the default registry"
+      },
+      {
+        "command": "yarn npm login --scope my-scope",
+        "description": "Log in to the registry configured for @my-scope"
+      },
+      {
+        "command": "yarn npm whoami",
+        "description": "Show the authenticated user"
+      },
+      {
+        "command": "yarn npm logout",
+        "description": "Remove stored credentials"
+      }
+    ],
+    "notes": [
+      "Tokens are written to the .yarnrc.yml in your home folder, never the project",
+      "Yarn Classic uses 'yarn login' instead"
+    ],
+    "relatedCommands": [
+      "yarn-npm-publish"
+    ]
+  },
+  {
+    "id": "yarn-npm-tag",
+    "name": "yarn npm tag",
+    "description": "Manage dist-tags of a published package (Yarn 2+)",
+    "category": "Publishing",
+    "technologyId": "yarn",
+    "examples": [
+      {
+        "command": "yarn npm tag list my-package",
+        "description": "List dist-tags"
+      },
+      {
+        "command": "yarn npm tag add my-package@2.0.0 latest",
+        "description": "Point a tag at a version"
+      },
+      {
+        "command": "yarn npm tag remove my-package beta",
+        "description": "Remove a tag"
+      }
+    ],
+    "relatedCommands": [
+      "yarn-npm-publish"
+    ]
+  },
+  {
     "id": "yarn-dlx",
     "name": "yarn dlx",
     "description": "Run a package binary without installing (like npx)",
@@ -879,20 +1132,19 @@
     "technologyId": "yarn",
     "examples": [
       {
-        "command": "yarn dlx create-react-app my-app",
-        "description": "Run create-react-app without installing"
+        "command": "yarn dlx create-vite my-app",
+        "description": "Scaffold a project with a one-off package"
       },
       {
         "command": "yarn dlx eslint --version",
         "description": "Run eslint without installing"
       },
       {
-        "command": "yarn dlx create-vite my-app",
-        "description": "Scaffold a project with a one-off package"
+        "command": "yarn dlx -p typescript tsc --version",
+        "description": "Run a binary from a differently named package"
       }
     ],
     "notes": [
-      "Available in Yarn 2+ (Berry)",
       "Yarn 2+ only; the Classic equivalent is npx",
       "Use -p to add extra packages to the temporary environment"
     ],

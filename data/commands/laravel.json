@@ -158,6 +158,12 @@
     "description": "Enable event broadcasting (config, routes/channels.php, optional Reverb and Echo setup)",
     "category": "Project Setup",
     "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--reverb / --pusher / --ably",
+        "description": "Pick the broadcasting driver"
+      }
+    ],
     "examples": [
       {
         "command": "php artisan install:broadcasting",
@@ -173,12 +179,6 @@
     ],
     "relatedCommands": [
       "artisan-reverb-start"
-    ],
-    "flags": [
-      {
-        "flag": "--reverb / --pusher / --ably",
-        "description": "Pick the broadcasting driver"
-      }
     ]
   },
   {
@@ -1824,6 +1824,12 @@
     "description": "Flush all failed queue jobs",
     "category": "Queue",
     "technologyId": "laravel",
+    "flags": [
+      {
+        "flag": "--hours=",
+        "description": "Only delete failed jobs older than this"
+      }
+    ],
     "examples": [
       {
         "command": "php artisan queue:flush",
@@ -1840,12 +1846,6 @@
     ],
     "relatedCommands": [
       "artisan-queue-failed"
-    ],
-    "flags": [
-      {
-        "flag": "--hours=",
-        "description": "Only delete failed jobs older than this"
-      }
     ]
   },
   {

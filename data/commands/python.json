@@ -37,6 +37,18 @@
       {
         "flag": "--no-cache-dir",
         "description": "Don't use pip's cache (smaller Docker images)"
+      },
+      {
+        "flag": "--group <[path:]group>",
+        "description": "Install a PEP 735 dependency group from pyproject.toml (pip 25.1+)"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Resolve and report what would be installed without installing"
+      },
+      {
+        "flag": "--uploaded-prior-to <date|PnD>",
+        "description": "Only consider files uploaded before a date or e.g. P3D (3 days ago)"
       }
     ],
     "examples": [
@@ -67,18 +79,24 @@
       {
         "command": "pip install --no-cache-dir -r requirements.txt",
         "description": "Install for a Docker image without keeping the cache"
+      },
+      {
+        "command": "pip install --group dev",
+        "description": "Install the [dependency-groups] dev group from ./pyproject.toml"
       }
     ],
     "notes": [
       "Prefer 'python -m pip' so packages go to the interpreter you expect",
       "On many Linux distros and Homebrew Python, installing into the system interpreter fails with 'externally-managed-environment' (PEP 668); use a virtual environment or pipx",
-      "--user does nothing inside a virtual environment"
+      "--user does nothing inside a virtual environment",
+      "Since pip 25.3, editable installs no longer fall back to setup.py develop; the project needs a build backend that supports PEP 660 (current setuptools does)"
     ],
     "relatedCommands": [
       "python-pip-uninstall",
       "python-module-pip",
       "python-venv",
-      "python-pip-freeze"
+      "python-pip-freeze",
+      "python-pip-lock"
     ]
   },
   {
@@ -107,6 +125,14 @@
       {
         "flag": "--outdated",
         "description": "List outdated packages"
+      },
+      {
+        "flag": "--format",
+        "description": "columns (default), freeze, or json"
+      },
+      {
+        "flag": "--not-required",
+        "description": "List only packages that nothing else depends on"
       }
     ],
     "examples": [
@@ -117,6 +143,14 @@
       {
         "command": "pip list --outdated",
         "description": "List outdated packages"
+      },
+      {
+        "command": "pip list --not-required",
+        "description": "Show top-level packages only"
+      },
+      {
+        "command": "pip list --format=json",
+        "description": "Machine-readable output"
       }
     ],
     "relatedCommands": [
@@ -149,6 +183,28 @@
     "description": "Create a virtual environment",
     "category": "Environment",
     "technologyId": "python",
+    "flags": [
+      {
+        "flag": "--clear",
+        "description": "Delete the contents of an existing environment before creating it"
+      },
+      {
+        "flag": "--upgrade-deps",
+        "description": "Upgrade pip in the new environment to the latest version"
+      },
+      {
+        "flag": "--prompt",
+        "description": "Custom prompt prefix shown when the environment is active"
+      },
+      {
+        "flag": "--system-site-packages",
+        "description": "Give the environment access to the system site-packages"
+      },
+      {
+        "flag": "--without-scm-ignore-files",
+        "description": "Don't create the .gitignore inside the environment"
+      }
+    ],
     "examples": [
       {
         "command": "python3 -m venv .venv",
@@ -188,7 +244,7 @@
       "fish: source .venv/bin/activate.fish; csh/tcsh: source .venv/bin/activate.csh",
       "PowerShell may block the script; run Set-ExecutionPolicy -Scope CurrentUser RemoteSigned once",
       "You can skip activation and call the venv's interpreter directly: .venv/bin/python (Windows: .venv\\Scripts\\python.exe)",
-      "Add .venv/ to .gitignore; don't commit or copy virtual environments between machines"
+      "Since Python 3.13, venv writes a .gitignore inside the environment so Git ignores it automatically; never copy virtual environments between machines"
     ],
     "relatedCommands": [
       "python-pip-install",
@@ -221,6 +277,14 @@
       {
         "flag": "-u",
         "description": "Unbuffered stdout/stderr (useful in Docker logs)"
+      },
+      {
+        "flag": "-X importtime",
+        "description": "Print how long each import takes (=2 also lists already-loaded modules, 3.14+)"
+      },
+      {
+        "flag": "-X gil=0",
+        "description": "Run with the GIL disabled (free-threaded builds only)"
       }
     ],
     "examples": [
@@ -236,6 +300,9 @@
         "command": "python -c 'print(\"Hello\")'",
         "description": "Execute Python command"
       }
+    ],
+    "notes": [
+      "Since Python 3.14, -c automatically dedents its code argument"
     ],
     "relatedCommands": [
       "python-venv",
@@ -263,6 +330,37 @@
     ],
     "relatedCommands": [
       "python-pip-list"
+    ]
+  },
+  {
+    "id": "python-pip-index",
+    "name": "pip index versions",
+    "description": "List the versions of a package available on the package index",
+    "category": "Information",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "--json",
+        "description": "Machine-readable output"
+      },
+      {
+        "flag": "--pre",
+        "description": "Include pre-release versions"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python -m pip index versions requests",
+        "description": "Show available and installed versions"
+      },
+      {
+        "command": "python -m pip index versions django --json",
+        "description": "Get the version list as JSON"
+      }
+    ],
+    "relatedCommands": [
+      "python-pip-show",
+      "python-pip-install"
     ]
   },
   {
@@ -389,15 +487,43 @@
       {
         "command": "python -m pdb -c continue script.py",
         "description": "Run until an exception, then drop into the debugger"
+      },
+      {
+        "command": "python -m pdb -p 1234",
+        "description": "Attach to a running Python process by PID (3.14+)"
       }
     ],
     "notes": [
       "Interactive debugger with breakpoints",
       "Use 'n' to step, 'c' to continue, 'q' to quit",
-      "Call breakpoint() in code to stop at that line"
+      "Call breakpoint() in code to stop at that line",
+      "Remote attach (-p) may need elevated privileges, and a process blocked in I/O only stops once it next executes Python code"
     ],
     "relatedCommands": [
       "python-run"
+    ]
+  },
+  {
+    "id": "python-asyncio-ps",
+    "name": "python -m asyncio ps",
+    "description": "Inspect asyncio tasks in a running Python process (Python 3.14+)",
+    "category": "Debugging",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "python -m asyncio ps 12345",
+        "description": "List all tasks with their names and coroutine stacks"
+      },
+      {
+        "command": "python -m asyncio pstree 12345",
+        "description": "Show tasks as an await tree"
+      }
+    ],
+    "notes": [
+      "Attaching to another process may need elevated privileges"
+    ],
+    "relatedCommands": [
+      "python-pdb"
     ]
   },
   {
@@ -465,10 +591,81 @@
       {
         "command": "python -m pstats profile.out",
         "description": "Browse saved profile data interactively"
+      },
+      {
+        "command": "python -m profiling.tracing -s cumtime script.py",
+        "description": "Same profiler under its new name (3.15+)"
       }
+    ],
+    "notes": [
+      "Python 3.15 moved cProfile to profiling.tracing (cProfile stays as an alias); the pure-Python profile module is deprecated for removal in 3.17",
+      "For low-overhead profiling of running processes, see python -m profiling.sampling (3.15+)"
     ],
     "relatedCommands": [
       "python-timeit",
+      "python-pdb",
+      "python-profiling-sampling"
+    ]
+  },
+  {
+    "id": "python-profiling-sampling",
+    "name": "python -m profiling.sampling",
+    "description": "Low-overhead sampling profiler that can run a script or attach to a live process (Python 3.15+)",
+    "category": "Debugging",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "--flamegraph",
+        "description": "Write an interactive HTML flame graph"
+      },
+      {
+        "flag": "-o FILE",
+        "description": "Output file"
+      },
+      {
+        "flag": "--mode wall|cpu|gil|exception",
+        "description": "What to sample (default wall-clock time)"
+      },
+      {
+        "flag": "-d SECONDS",
+        "description": "Sampling duration"
+      },
+      {
+        "flag": "-a",
+        "description": "Sample all threads, not just the main thread"
+      },
+      {
+        "flag": "--live",
+        "description": "Real-time top-like TUI"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python -m profiling.sampling run script.py",
+        "description": "Profile a script from start to finish"
+      },
+      {
+        "command": "python -m profiling.sampling run --flamegraph -o profile.html script.py",
+        "description": "Generate a flame graph"
+      },
+      {
+        "command": "python -m profiling.sampling attach --live 12345",
+        "description": "Watch a running process live"
+      },
+      {
+        "command": "python -m profiling.sampling dump 12345",
+        "description": "Print the current stack of every thread (useful for hung processes)"
+      },
+      {
+        "command": "python -m profiling.sampling run -m mypackage.module",
+        "description": "Profile a module run with -m"
+      }
+    ],
+    "notes": [
+      "Attaching to another process may require root on macOS, or a relaxed ptrace_scope / sudo on Linux"
+    ],
+    "relatedCommands": [
+      "python-cprofile",
       "python-pdb"
     ]
   },
@@ -486,10 +683,53 @@
       {
         "command": "python3 --version",
         "description": "Show Python 3 version"
+      },
+      {
+        "command": "python -VV",
+        "description": "Show detailed build info; free-threaded builds report 'free-threading build'"
       }
+    ],
+    "notes": [
+      "Free-threaded (no-GIL) builds are officially supported since Python 3.14 but remain an optional, separately installed build"
     ],
     "relatedCommands": [
       "python-pip-version"
+    ]
+  },
+  {
+    "id": "python-py-install-manager",
+    "name": "py install (Windows)",
+    "description": "Install and manage Python runtimes on Windows with the Python install manager",
+    "category": "Environment",
+    "technologyId": "python",
+    "examples": [
+      {
+        "command": "py install 3.14",
+        "description": "Install a Python version"
+      },
+      {
+        "command": "py list",
+        "description": "List installed runtimes and show the default"
+      },
+      {
+        "command": "py -V:3.14 script.py",
+        "description": "Run a script with a specific installed version"
+      },
+      {
+        "command": "py uninstall 3.13",
+        "description": "Remove a runtime"
+      },
+      {
+        "command": "py help",
+        "description": "List all install manager commands"
+      }
+    ],
+    "notes": [
+      "The install manager (also available as pymanager) is now the standard way to install Python on Windows; the full installer and the legacy py launcher are deprecated"
+    ],
+    "relatedCommands": [
+      "python-version",
+      "python-venv"
     ]
   },
   {
@@ -559,6 +799,18 @@
       {
         "flag": "-d, --directory DIR",
         "description": "Serve this directory instead of the current one"
+      },
+      {
+        "flag": "--tls-cert FILE",
+        "description": "Serve over HTTPS with this certificate chain (3.14+); add --tls-key for a separate key file"
+      },
+      {
+        "flag": "-H, --header NAME VALUE",
+        "description": "Add a custom response header; repeatable (3.15+)"
+      },
+      {
+        "flag": "--content-type TYPE",
+        "description": "Default Content-Type for unknown file extensions (3.15+)"
       }
     ],
     "examples": [
@@ -573,12 +825,17 @@
       {
         "command": "python -m http.server 8080 --bind 127.0.0.1 --directory dist",
         "description": "Serve ./dist only on localhost"
+      },
+      {
+        "command": "python -m http.server 8443 --tls-cert cert.pem --tls-key key.pem",
+        "description": "Serve over HTTPS (3.14+)"
       }
     ],
     "notes": [
       "Serves files from current directory",
       "Useful for quick testing",
-      "Not for production: no security hardening"
+      "Not for production: no security hardening",
+      "The --cgi option was removed in Python 3.15"
     ],
     "relatedCommands": [
       "python-run"
@@ -586,7 +843,7 @@
   },
   {
     "id": "python-json-tool",
-    "name": "python -m json.tool",
+    "name": "python -m json",
     "description": "Validate and pretty-print JSON",
     "category": "Development",
     "technologyId": "python",
@@ -606,20 +863,25 @@
     ],
     "examples": [
       {
-        "command": "python -m json.tool data.json",
-        "description": "Pretty-print a JSON file"
+        "command": "python -m json data.json",
+        "description": "Pretty-print a JSON file (3.14+)"
       },
       {
-        "command": "curl -s https://api.example.com/items | python -m json.tool",
+        "command": "curl -s https://api.example.com/items | python -m json",
         "description": "Pretty-print an API response"
       },
       {
-        "command": "python -m json.tool --sort-keys in.json out.json",
+        "command": "python -m json --sort-keys in.json out.json",
         "description": "Sort keys and write to a file"
+      },
+      {
+        "command": "python -m json.tool data.json",
+        "description": "Older spelling; needed on Python 3.13 and earlier"
       }
     ],
     "notes": [
-      "Exits non-zero with the line and column on invalid JSON, so it also works as a quick validator"
+      "Exits non-zero with the line and column on invalid JSON, so it also works as a quick validator",
+      "Python 3.14 added python -m json and soft-deprecated python -m json.tool (it still works)"
     ],
     "relatedCommands": [
       "python-run"
@@ -670,6 +932,45 @@
     ],
     "relatedCommands": [
       "python-pip-install"
+    ]
+  },
+  {
+    "id": "python-pip-lock",
+    "name": "pip lock",
+    "description": "Resolve requirements and write a standard pylock.toml lockfile (PEP 751)",
+    "category": "Package Management",
+    "technologyId": "python",
+    "flags": [
+      {
+        "flag": "-o, --output <path>",
+        "description": "Lockfile name (default pylock.toml); - for stdout"
+      },
+      {
+        "flag": "-r <file>",
+        "description": "Lock the requirements listed in a file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "python -m pip lock -e .",
+        "description": "Lock the project in the current directory to pylock.toml"
+      },
+      {
+        "command": "python -m pip lock -r requirements.txt -o pylock.toml",
+        "description": "Lock a requirements file"
+      },
+      {
+        "command": "python -m pip install -r pylock.toml",
+        "description": "Install from the lockfile (experimental)"
+      }
+    ],
+    "notes": [
+      "Experimental: the command and pylock.toml support may change between pip releases",
+      "The lockfile is only valid for the Python version and platform it was created on"
+    ],
+    "relatedCommands": [
+      "python-pip-install",
+      "python-pip-freeze"
     ]
   }
 ]

@@ -17,7 +17,7 @@
     ],
     "notes": [
       "The module path should match where the code will be hosted if others will import it",
-      "The go directive in go.mod is set to the version of the running toolchain"
+      "Since Go 1.26, go mod init writes a go directive one minor version below the running toolchain (e.g. Go 1.27.x writes go 1.26.0) so new modules stay compatible with supported releases; raise it afterwards with go get go@<version>"
     ],
     "relatedCommands": [
       "go-mod-tidy",
@@ -56,12 +56,14 @@
       }
     ],
     "notes": [
-      "Run after adding or removing imports; commit both go.mod and go.sum"
+      "Run after adding or removing imports; commit both go.mod and go.sum",
+      "For modules declaring go 1.27 or later, go mod tidy merges scattered require blocks into at most two: one for direct and one for indirect dependencies"
     ],
     "relatedCommands": [
       "go-mod-init",
       "go-mod-download",
-      "go-get"
+      "go-get",
+      "go-mod-verify"
     ]
   },
   {
@@ -182,6 +184,26 @@
     ]
   },
   {
+    "id": "go-mod-verify",
+    "name": "go mod verify",
+    "description": "Check that downloaded dependencies in the module cache have not been modified",
+    "category": "Modules",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go mod verify",
+        "description": "Verify every dependency against the hashes recorded when it was downloaded"
+      }
+    ],
+    "notes": [
+      "Prints 'all modules verified' on success and exits non-zero if any module was changed"
+    ],
+    "relatedCommands": [
+      "go-mod-download",
+      "go-mod-tidy"
+    ]
+  },
+  {
     "id": "go-mod-edit",
     "name": "go mod edit",
     "description": "Edit go.mod from scripts or the command line",
@@ -209,6 +231,10 @@
       {
         "flag": "-json",
         "description": "Print go.mod as JSON instead of editing"
+      },
+      {
+        "flag": "-ignore=path",
+        "description": "Add an ignore directive (Go 1.25+) so ./... and all skip that directory; -dropignore removes it"
       }
     ],
     "examples": [
@@ -221,8 +247,12 @@
         "description": "Remove the local replacement"
       },
       {
-        "command": "go mod edit -go=1.24",
+        "command": "go mod edit -go=1.26",
         "description": "Bump the minimum Go version"
+      },
+      {
+        "command": "go mod edit -ignore=./node_modules",
+        "description": "Make package patterns like ./... skip a directory (Go 1.25+)"
       }
     ],
     "notes": [
@@ -275,8 +305,16 @@
         "description": "Remove a dependency"
       },
       {
-        "command": "go get go@1.24.0",
-        "description": "Raise the minimum go version for the module"
+        "command": "go get go@latest",
+        "description": "Raise the module's minimum Go version to the latest release"
+      },
+      {
+        "command": "go get toolchain@patch",
+        "description": "Move the toolchain line to the latest patch of the current Go release"
+      },
+      {
+        "command": "go get tool",
+        "description": "Upgrade every tool declared with a tool directive in go.mod"
       }
     ],
     "notes": [
@@ -307,6 +345,10 @@
       {
         "command": "go install ./cmd/server",
         "description": "Build and install a binary from the current module"
+      },
+      {
+        "command": "go install tool",
+        "description": "Install all tools declared in go.mod into GOBIN"
       }
     ],
     "notes": [
@@ -352,6 +394,10 @@
       {
         "flag": "-trimpath",
         "description": "Remove local file system paths from the binary (reproducible builds)"
+      },
+      {
+        "flag": "-json",
+        "description": "Report build output and failures as structured JSON (Go 1.24+)"
       }
     ],
     "examples": [
@@ -487,6 +533,14 @@
       {
         "flag": "-json",
         "description": "Emit test events as JSON"
+      },
+      {
+        "flag": "-skip",
+        "description": "Skip tests matching a regular expression"
+      },
+      {
+        "flag": "-shuffle",
+        "description": "Randomize test and benchmark execution order (on, off, or a seed)"
       }
     ],
     "examples": [
@@ -518,7 +572,8 @@
     "notes": [
       "-fuzz accepts only one package and must match exactly one fuzz target",
       "Failing fuzz inputs are saved to testdata/fuzz/ and replayed on normal go test runs",
-      "Successful test results are cached; use -count=1 to force a re-run"
+      "Successful test results are cached; use -count=1 to force a re-run",
+      "Since Go 1.27, go test also runs the stdversion vet check, which flags standard library symbols newer than the module's go version"
     ],
     "relatedCommands": [
       "go-tool-cover",
@@ -570,6 +625,20 @@
     "description": "Report likely mistakes in code, such as bad Printf formats or unreachable code",
     "category": "Code Quality",
     "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-json",
+        "description": "Emit diagnostics as JSON"
+      },
+      {
+        "flag": "-fix",
+        "description": "Apply each diagnostic's first suggested fix instead of printing it"
+      },
+      {
+        "flag": "-diff",
+        "description": "Print suggested fixes as a unified diff; exits non-zero if the diff is not empty"
+      }
+    ],
     "examples": [
       {
         "command": "go vet ./...",
@@ -578,15 +647,61 @@
       {
         "command": "go vet -printf=false ./...",
         "description": "Disable a specific analyzer"
+      },
+      {
+        "command": "go tool vet help",
+        "description": "List the available analyzers and their flags"
       }
     ],
     "notes": [
       "go test runs a subset of vet checks automatically",
-      "For broader linting use a separate tool such as staticcheck or golangci-lint"
+      "For broader linting use a separate tool such as staticcheck or golangci-lint",
+      "Recent analyzers include waitgroup and hostport (Go 1.25); in Go 1.27 printf also flags %w with a pointer to an error type"
     ],
     "relatedCommands": [
       "go-fmt",
-      "go-test"
+      "go-test",
+      "go-fix"
+    ]
+  },
+  {
+    "id": "go-fix",
+    "name": "go fix",
+    "description": "Modernize code to current Go idioms and APIs using analyzer-driven fixes",
+    "category": "Code Quality",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-diff",
+        "description": "Print the changes as a unified diff instead of applying them; exits non-zero if the diff is not empty"
+      },
+      {
+        "flag": "-fixtool=prog",
+        "description": "Use a different analysis tool with alternative or additional fixers"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go fix ./...",
+        "description": "Apply all modernizers to every package in the module"
+      },
+      {
+        "command": "go fix -diff ./...",
+        "description": "Preview the changes without rewriting files"
+      },
+      {
+        "command": "go tool fix help",
+        "description": "List the available fixers"
+      }
+    ],
+    "notes": [
+      "Go 1.26 rebuilt go fix on the go vet analysis framework; the old historical fixers were removed",
+      "Also performs source-level inlining of functions marked with //go:fix inline, which helps automate API migrations",
+      "go fix rewrites source files; commit first so you can review the diff"
+    ],
+    "relatedCommands": [
+      "go-vet",
+      "go-fmt"
     ]
   },
   {
@@ -646,6 +761,9 @@
         "command": "test -z \"$(gofmt -l .)\"",
         "description": "Fail a CI step if any file is unformatted"
       }
+    ],
+    "notes": [
+      "Go 1.27 fixed gofmt's column-alignment logic, so reformatting with 1.27 may produce small whitespace changes in previously formatted files"
     ],
     "relatedCommands": [
       "go-fmt"
@@ -884,6 +1002,14 @@
       {
         "flag": "-u",
         "description": "Include unexported symbols"
+      },
+      {
+        "flag": "-http",
+        "description": "Serve HTML documentation locally and open it in a browser (Go 1.25+)"
+      },
+      {
+        "flag": "-ex",
+        "description": "Include executable examples (Go 1.27+)"
       }
     ],
     "examples": [
@@ -898,7 +1024,18 @@
       {
         "command": "go doc -src strings.Builder",
         "description": "Show the source of a type"
+      },
+      {
+        "command": "go doc -http net/http",
+        "description": "Browse the package docs in a local web server (Go 1.25+)"
+      },
+      {
+        "command": "go doc example.com/pkg@v1.2.3",
+        "description": "Show docs for a specific module version (Go 1.27+)"
       }
+    ],
+    "notes": [
+      "go tool doc was removed in Go 1.26; go doc accepts the same flags and arguments"
     ],
     "relatedCommands": [
       "go-list"
@@ -914,6 +1051,10 @@
       {
         "flag": "-m",
         "description": "Also print embedded module/build information of a binary"
+      },
+      {
+        "flag": "-json",
+        "description": "With -m, print the embedded build info as JSON (Go 1.25+)"
       }
     ],
     "examples": [
@@ -924,10 +1065,45 @@
       {
         "command": "go version -m ./bin/server",
         "description": "Show the Go version and dependency versions baked into a binary"
+      },
+      {
+        "command": "go version -m -json ./bin/server",
+        "description": "Print a binary's module and build settings as JSON"
       }
     ],
     "notes": [
       "Since Go 1.21 the go command may automatically download a newer toolchain if go.mod's toolchain/go line requires it (controlled by GOTOOLCHAIN)"
+    ],
+    "relatedCommands": [
+      "go-env"
+    ]
+  },
+  {
+    "id": "go-telemetry",
+    "name": "go telemetry",
+    "description": "View or change the Go toolchain's telemetry mode",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "examples": [
+      {
+        "command": "go telemetry",
+        "description": "Show the current mode (off, local, or on)"
+      },
+      {
+        "command": "go telemetry off",
+        "description": "Stop collecting and uploading telemetry data"
+      },
+      {
+        "command": "go telemetry local",
+        "description": "Collect counters locally but never upload them"
+      },
+      {
+        "command": "go telemetry on",
+        "description": "Collect and periodically upload telemetry data"
+      }
+    ],
+    "notes": [
+      "The local data directory is shown by go env GOTELEMETRYDIR"
     ],
     "relatedCommands": [
       "go-env"
@@ -951,10 +1127,15 @@
       {
         "command": "go tool stringer -type=Color",
         "description": "Run a tool declared with a tool directive"
+      },
+      {
+        "command": "go tool -n stringer",
+        "description": "Print the command that would run without executing it"
       }
     ],
     "notes": [
-      "Tool directives (Go 1.24+) replace the old tools.go blank-import pattern"
+      "Tool directives (Go 1.24+) replace the old tools.go blank-import pattern",
+      "Since Go 1.25 the distribution ships fewer prebuilt tool binaries; tools not used by build or test are built on demand by go tool"
     ],
     "relatedCommands": [
       "go-tool-pprof",
@@ -994,11 +1175,42 @@
       }
     ],
     "notes": [
-      "Live endpoints require importing _ \"net/http/pprof\" and serving it; do not expose it publicly"
+      "Live endpoints require importing _ \"net/http/pprof\" and serving it; do not expose it publicly",
+      "Since Go 1.26 the -http web UI opens in the flame graph view; the old graph view is under View > Graph"
     ],
     "relatedCommands": [
       "go-test",
       "go-tool"
+    ]
+  },
+  {
+    "id": "go-tool-trace",
+    "name": "go tool trace",
+    "description": "Visualize an execution trace of goroutines, syscalls, GC and scheduler events",
+    "category": "Environment & Tooling",
+    "technologyId": "go",
+    "flags": [
+      {
+        "flag": "-http",
+        "description": "Address for the web UI; a bare port such as :6060 listens on localhost only (Go 1.27+)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "go test -trace=trace.out ./pkg && go tool trace trace.out",
+        "description": "Record a trace from tests and open the viewer"
+      },
+      {
+        "command": "go tool trace -http=:6060 trace.out",
+        "description": "Serve the trace viewer on a fixed port"
+      }
+    ],
+    "notes": [
+      "To listen on all interfaces, pass an explicit address such as -http=0.0.0.0:6060"
+    ],
+    "relatedCommands": [
+      "go-tool-pprof",
+      "go-test"
     ]
   },
   {

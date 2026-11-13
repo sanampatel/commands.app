@@ -45,6 +45,22 @@
       {
         "flag": "-r / -i",
         "description": "Repeat a command N times with an interval of i seconds"
+      },
+      {
+        "flag": "--askpass",
+        "description": "Prompt for the password with masked input"
+      },
+      {
+        "flag": "-c",
+        "description": "Cluster mode: follow MOVED/ASK redirections"
+      },
+      {
+        "flag": "-3",
+        "description": "Use the RESP3 protocol"
+      },
+      {
+        "flag": "--rdb <file>",
+        "description": "Download an RDB snapshot from the server to a local file"
       }
     ],
     "examples": [
@@ -75,6 +91,14 @@
       {
         "command": "redis-cli -r -1 -i 1 INFO clients | grep connected_clients",
         "description": "Print connected clients every second"
+      },
+      {
+        "command": "redis-cli -c -h node1.example.com -p 7000",
+        "description": "Connect to a Redis Cluster node and follow redirects"
+      },
+      {
+        "command": "redis-cli --rdb /backups/dump.rdb",
+        "description": "Take a remote RDB backup to a local file"
       }
     ],
     "notes": [
@@ -86,7 +110,8 @@
       "redis-ping",
       "redis-info",
       "redis-cli-bigkeys",
-      "redis-cli-latency"
+      "redis-cli-latency",
+      "redis-acl-setuser"
     ]
   },
   {
@@ -571,7 +596,9 @@
     "relatedCommands": [
       "redis-hget",
       "redis-hgetall",
-      "redis-hdel"
+      "redis-hdel",
+      "redis-hsetex",
+      "redis-hexpire"
     ]
   },
   {
@@ -695,6 +722,132 @@
     "relatedCommands": [
       "redis-hset",
       "redis-incr"
+    ]
+  },
+  {
+    "id": "redis-hexpire",
+    "name": "HEXPIRE",
+    "description": "Set a TTL on individual hash fields (Redis 7.4+)",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HEXPIRE session:abc 1800 FIELDS 1 csrf_token",
+        "description": "Expire one field after 30 minutes"
+      },
+      {
+        "command": "HEXPIRE user:1 3600 FIELDS 2 otp otp_attempts",
+        "description": "Expire several fields at once"
+      },
+      {
+        "command": "HEXPIRE user:1 600 NX FIELDS 1 otp",
+        "description": "Only set the TTL if the field has none (also XX, GT, LT)"
+      },
+      {
+        "command": "HTTL user:1 FIELDS 2 otp otp_attempts",
+        "description": "Remaining TTL per field in seconds (HPTTL for milliseconds)"
+      },
+      {
+        "command": "HPERSIST user:1 FIELDS 1 otp",
+        "description": "Remove a field's TTL"
+      }
+    ],
+    "notes": [
+      "Returns one code per field: 1 set, 0 condition not met, 2 field deleted (TTL 0 or time in the past), -2 no such field",
+      "HTTL returns -1 for fields without a TTL and -2 for missing fields",
+      "HSET or HDEL of a field clears its TTL; HPEXPIRE, HEXPIREAT and HPEXPIREAT take milliseconds or absolute times"
+    ],
+    "relatedCommands": [
+      "redis-hsetex",
+      "redis-hgetex",
+      "redis-expire",
+      "redis-hset"
+    ]
+  },
+  {
+    "id": "redis-hsetex",
+    "name": "HSETEX",
+    "description": "Set hash fields and their expiration in one atomic command (Redis 8.0+)",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "EX / PX",
+        "description": "TTL in seconds / milliseconds"
+      },
+      {
+        "flag": "EXAT / PXAT",
+        "description": "Expire at a Unix time in seconds / milliseconds"
+      },
+      {
+        "flag": "KEEPTTL",
+        "description": "Keep the fields' existing TTL"
+      },
+      {
+        "flag": "FNX",
+        "description": "Only set if none of the fields exist"
+      },
+      {
+        "flag": "FXX",
+        "description": "Only set if all of the fields already exist"
+      },
+      {
+        "flag": "FIELDS numfields",
+        "description": "Number of field/value pairs that follow"
+      }
+    ],
+    "examples": [
+      {
+        "command": "HSETEX user:1 EX 300 FIELDS 1 otp \"493021\"",
+        "description": "Store a one-time code that expires in 5 minutes"
+      },
+      {
+        "command": "HSETEX cart:42 EX 3600 FIELDS 2 item:1 \"2\" item:7 \"1\"",
+        "description": "Set several fields with a 1 hour TTL"
+      },
+      {
+        "command": "HSETEX user:1 FNX EX 60 FIELDS 1 lock \"worker-1\"",
+        "description": "Per-field lock: only set if the field doesn't exist"
+      }
+    ],
+    "notes": [
+      "Returns 1 if all fields were set, 0 if none were (FNX/FXX condition failed)",
+      "Only one of EX, PX, EXAT, PXAT or KEEPTTL can be given"
+    ],
+    "relatedCommands": [
+      "redis-hexpire",
+      "redis-hgetex",
+      "redis-hset"
+    ]
+  },
+  {
+    "id": "redis-hgetex",
+    "name": "HGETEX / HGETDEL",
+    "description": "Get hash fields while setting or removing their TTL, or get and delete them (Redis 8.0+)",
+    "category": "Hashes",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "HGETEX session:abc EX 1800 FIELDS 1 user_id",
+        "description": "Read a field and slide its expiry to 30 minutes"
+      },
+      {
+        "command": "HGETEX user:1 PERSIST FIELDS 2 otp otp_attempts",
+        "description": "Read fields and remove their TTL"
+      },
+      {
+        "command": "HGETDEL user:1 FIELDS 1 otp",
+        "description": "Read a one-time value and delete it atomically"
+      }
+    ],
+    "notes": [
+      "Missing fields come back as nil",
+      "HGETDEL deletes the key when its last field is removed"
+    ],
+    "relatedCommands": [
+      "redis-hsetex",
+      "redis-hexpire",
+      "redis-hget"
     ]
   },
   {
@@ -1348,6 +1501,247 @@
     ]
   },
   {
+    "id": "redis-json-set",
+    "name": "JSON.SET / JSON.GET",
+    "description": "Store, read and update JSON documents (built into Redis 8+)",
+    "category": "JSON & Search",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "JSON.SET user:1 $ '{\"name\":\"Ada\",\"tags\":[\"admin\"],\"logins\":0}'",
+        "description": "Create a JSON document at the root path"
+      },
+      {
+        "command": "JSON.GET user:1 $.name",
+        "description": "Read a single path"
+      },
+      {
+        "command": "JSON.SET user:1 $.email '\"ada@example.com\"'",
+        "description": "Add or replace a field (string values need JSON quotes)"
+      },
+      {
+        "command": "JSON.NUMINCRBY user:1 $.logins 1",
+        "description": "Increment a number in place"
+      },
+      {
+        "command": "JSON.ARRAPPEND user:1 $.tags '\"editor\"'",
+        "description": "Append to an array"
+      },
+      {
+        "command": "JSON.DEL user:1 $.tags",
+        "description": "Delete a path"
+      }
+    ],
+    "notes": [
+      "New documents must be created at the root ($); NX/XX make JSON.SET conditional",
+      "Before Redis 8 this required the RedisJSON module or Redis Stack",
+      "$ paths return arrays of matches; JSON.GET key with no path returns the whole document"
+    ],
+    "relatedCommands": [
+      "redis-ft-create",
+      "redis-ft-search"
+    ]
+  },
+  {
+    "id": "redis-ft-create",
+    "name": "FT.CREATE",
+    "description": "Create a secondary index over hashes or JSON documents for search and vector queries (Redis 8+)",
+    "category": "JSON & Search",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "FT.CREATE idx:posts ON HASH PREFIX 1 post: SCHEMA title TEXT SORTABLE published_at NUMERIC SORTABLE category TAG",
+        "description": "Index hashes whose keys start with post:"
+      },
+      {
+        "command": "FT.CREATE idx:users ON JSON PREFIX 1 user: SCHEMA $.name AS name TEXT $.tags[*] AS tags TAG $.logins AS logins NUMERIC",
+        "description": "Index JSON documents using JSONPath aliases"
+      },
+      {
+        "command": "FT.CREATE idx:docs ON HASH PREFIX 1 doc: SCHEMA embedding VECTOR HNSW 6 TYPE FLOAT32 DIM 768 DISTANCE_METRIC COSINE",
+        "description": "Vector index for semantic search"
+      },
+      {
+        "command": "FT._LIST",
+        "description": "List indexes"
+      },
+      {
+        "command": "FT.INFO idx:posts",
+        "description": "Show index definition and indexing progress"
+      },
+      {
+        "command": "FT.DROPINDEX idx:posts",
+        "description": "Drop the index but keep the documents"
+      }
+    ],
+    "notes": [
+      "Existing keys matching the prefix are indexed in the background; new writes are indexed automatically",
+      "Before Redis 8 this required the RediSearch module or Redis Stack",
+      "WARNING: FT.DROPINDEX ... DD also deletes the indexed documents"
+    ],
+    "relatedCommands": [
+      "redis-ft-search",
+      "redis-json-set"
+    ]
+  },
+  {
+    "id": "redis-ft-search",
+    "name": "FT.SEARCH",
+    "description": "Query a search index with full-text, numeric, tag and vector (KNN) filters",
+    "category": "JSON & Search",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "FT.SEARCH idx:posts \"redis\"",
+        "description": "Full-text search across TEXT fields"
+      },
+      {
+        "command": "FT.SEARCH idx:posts \"@title:redis @category:{news}\" SORTBY published_at DESC LIMIT 0 10",
+        "description": "Field and tag filter, newest first"
+      },
+      {
+        "command": "FT.SEARCH idx:posts \"@published_at:[1735689600 +inf]\" RETURN 1 title",
+        "description": "Numeric range, returning only the title"
+      },
+      {
+        "command": "FT.SEARCH idx:posts \"*\" LIMIT 0 0",
+        "description": "Count matching documents without returning them"
+      },
+      {
+        "command": "FT.SEARCH idx:docs \"*=>[KNN 5 @embedding $vec AS score]\" PARAMS 2 vec <float32-blob> SORTBY score DIALECT 2",
+        "description": "Top 5 nearest vectors (pass the blob from client code)"
+      }
+    ],
+    "notes": [
+      "LIMIT defaults to 0 10; the first element of the reply is the total match count",
+      "PARAMS requires DIALECT 2 or higher",
+      "Use FT.AGGREGATE for grouping, counting and reshaping results"
+    ],
+    "relatedCommands": [
+      "redis-ft-create",
+      "redis-json-set",
+      "redis-vsim"
+    ]
+  },
+  {
+    "id": "redis-vadd",
+    "name": "VADD",
+    "description": "Add an element and its embedding to a vector set (Redis 8.0+)",
+    "category": "Vector Sets",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "VALUES n",
+        "description": "Vector given as n float values (or FP32 for a little-endian binary blob)"
+      },
+      {
+        "flag": "SETATTR json",
+        "description": "Attach JSON attributes for filtered search"
+      },
+      {
+        "flag": "Q8 / BIN / NOQUANT",
+        "description": "Quantization: int8 (default), binary, or full precision"
+      },
+      {
+        "flag": "REDUCE dim",
+        "description": "Reduce dimensionality with random projection"
+      },
+      {
+        "flag": "M / EF",
+        "description": "HNSW graph links per node (default 16) and build effort (default 200)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "VADD products VALUES 3 0.12 0.88 0.40 sku:123",
+        "description": "Add an element with a 3-dimensional vector"
+      },
+      {
+        "command": "VADD products VALUES 3 0.12 0.88 0.40 sku:123 SETATTR '{\"category\":\"shoes\",\"price\":59}'",
+        "description": "Add with attributes for filtering"
+      },
+      {
+        "command": "VCARD products",
+        "description": "Count elements"
+      },
+      {
+        "command": "VREM products sku:123",
+        "description": "Remove an element"
+      },
+      {
+        "command": "VSETATTR products sku:123 '{\"price\":49}'",
+        "description": "Replace an element's attributes"
+      }
+    ],
+    "notes": [
+      "Vector sets are a sorted-set-like type for similarity search; no index definition is needed (unlike FT.CREATE)",
+      "Every element in a set must have the same dimension (after REDUCE)"
+    ],
+    "relatedCommands": [
+      "redis-vsim",
+      "redis-ft-create"
+    ]
+  },
+  {
+    "id": "redis-vsim",
+    "name": "VSIM",
+    "description": "Find the most similar elements in a vector set, optionally filtered by attributes (Redis 8.0+)",
+    "category": "Vector Sets",
+    "technologyId": "redis",
+    "flags": [
+      {
+        "flag": "ELE / VALUES n",
+        "description": "Query by an existing element, or by a vector"
+      },
+      {
+        "flag": "COUNT n",
+        "description": "Number of results"
+      },
+      {
+        "flag": "WITHSCORES",
+        "description": "Return similarity scores (1 = identical, 0 = opposite)"
+      },
+      {
+        "flag": "WITHATTRIBS",
+        "description": "Return each element's JSON attributes"
+      },
+      {
+        "flag": "FILTER expr",
+        "description": "Filter on attributes, e.g. '.price < 100 and .category == \"shoes\"'"
+      },
+      {
+        "flag": "EF n",
+        "description": "Search effort; higher improves recall at the cost of speed"
+      }
+    ],
+    "examples": [
+      {
+        "command": "VSIM products ELE sku:123 COUNT 5 WITHSCORES",
+        "description": "5 elements most similar to sku:123, with scores"
+      },
+      {
+        "command": "VSIM products VALUES 3 0.10 0.90 0.35 COUNT 10",
+        "description": "Nearest neighbours of a query vector"
+      },
+      {
+        "command": "VSIM products ELE sku:123 COUNT 10 FILTER '.category == \"shoes\" and .price < 100'",
+        "description": "Similarity search restricted by attributes"
+      },
+      {
+        "command": "VSIM products ELE sku:123 COUNT 10 FILTER '.brand in [\"acme\", \"globex\"]' FILTER-EF 1000",
+        "description": "Rare filter: let the engine inspect more candidates"
+      }
+    ],
+    "notes": [
+      "Filter expressions use dot notation for top-level attribute fields; elements missing the attribute don't match",
+      "TRUTH forces an exact linear scan, useful for measuring recall"
+    ],
+    "relatedCommands": [
+      "redis-vadd",
+      "redis-ft-search"
+    ]
+  },
+  {
     "id": "redis-info",
     "name": "INFO",
     "description": "Get Redis server information",
@@ -1460,6 +1854,48 @@
     "relatedCommands": [
       "redis-config-get",
       "redis-slowlog"
+    ]
+  },
+  {
+    "id": "redis-acl-setuser",
+    "name": "ACL SETUSER",
+    "description": "Create or modify a Redis user with its password, key patterns and allowed commands",
+    "category": "Server",
+    "technologyId": "redis",
+    "examples": [
+      {
+        "command": "ACL SETUSER app on >s3cret-password ~app:* &app:* +@read +@write -@dangerous",
+        "description": "App user limited to app:* keys and channels, no dangerous commands"
+      },
+      {
+        "command": "ACL SETUSER reporting on >another-password ~* +@read",
+        "description": "Read-only user"
+      },
+      {
+        "command": "ACL LIST",
+        "description": "Show all users and their rules"
+      },
+      {
+        "command": "ACL WHOAMI",
+        "description": "Show the current user"
+      },
+      {
+        "command": "ACL DELUSER app",
+        "description": "Delete a user and disconnect its sessions"
+      },
+      {
+        "command": "ACL SAVE",
+        "description": "Write users to the aclfile configured in redis.conf"
+      }
+    ],
+    "notes": [
+      "Rules are applied on top of existing ones; start with reset to define a user from scratch",
+      "Redis 8 adds JSON, search, time series and probabilistic commands to @read/@write, so existing +@read/+@write rules grant more than before; review ACLs when upgrading",
+      "Use placeholders here: real passwords in commands end up in shell history"
+    ],
+    "relatedCommands": [
+      "redis-cli",
+      "redis-config-set"
     ]
   },
   {
@@ -1598,7 +2034,19 @@
       },
       {
         "flag": "--memkeys",
-        "description": "Report the biggest keys by memory usage (newer redis-cli versions)"
+        "description": "Report the biggest keys by memory usage"
+      },
+      {
+        "flag": "--keystats",
+        "description": "Combine --bigkeys and --memkeys with size distribution and a top-N list"
+      },
+      {
+        "flag": "--top <n>",
+        "description": "Number of top keys to show with --keystats (default 10)"
+      },
+      {
+        "flag": "--hotkeys",
+        "description": "Find frequently accessed keys (requires an LFU maxmemory-policy)"
       },
       {
         "flag": "-i secs",
@@ -1617,6 +2065,14 @@
       {
         "command": "redis-cli --bigkeys -i 0.1",
         "description": "Throttle the scan on a busy server"
+      },
+      {
+        "command": "redis-cli --keystats --top 20",
+        "description": "Top 20 keys by size plus per-type distribution"
+      },
+      {
+        "command": "redis-cli --hotkeys",
+        "description": "Find the most frequently accessed keys"
       }
     ],
     "notes": [
@@ -1702,7 +2158,7 @@
     ],
     "notes": [
       "WARNING: irreversible - deletes every key in the selected database",
-      "Often disabled or renamed in production via ACLs"
+      "Often blocked in production with ACLs (-flushdb or -@dangerous) or rename-command"
     ],
     "relatedCommands": [
       "redis-flushall",

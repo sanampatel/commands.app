@@ -5,15 +5,36 @@
     "description": "Initialize a new Git repository",
     "category": "Repository Setup",
     "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-b, --initial-branch=<name>",
+        "description": "Name of the initial branch"
+      },
+      {
+        "flag": "--bare",
+        "description": "Create a bare repository (no working tree), e.g. for a server remote"
+      }
+    ],
     "examples": [
       {
         "command": "git init",
         "description": "Initialize current directory as Git repo"
       },
       {
+        "command": "git init -b main",
+        "description": "Initialize with 'main' as the initial branch"
+      },
+      {
         "command": "git init myproject",
         "description": "Create and initialize new directory"
+      },
+      {
+        "command": "git config set --global init.defaultBranch main",
+        "description": "Use 'main' for every new repository"
       }
+    ],
+    "notes": [
+      "Without -b or init.defaultBranch, Git 2.x still names the first branch 'master' (and prints a hint); Git 3.0 switches the default to 'main'"
     ],
     "relatedCommands": [
       "git-clone"
@@ -25,19 +46,55 @@
     "description": "Clone a repository into a new directory",
     "category": "Repository Setup",
     "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--depth <n>",
+        "description": "Shallow clone with only the last <n> commits"
+      },
+      {
+        "flag": "-b, --branch <name>",
+        "description": "Check out this branch (or tag) instead of the remote's HEAD"
+      },
+      {
+        "flag": "--filter=blob:none",
+        "description": "Partial (blobless) clone: fetch file contents on demand"
+      },
+      {
+        "flag": "--recurse-submodules",
+        "description": "Also clone submodules"
+      },
+      {
+        "flag": "--revision=<rev>",
+        "description": "Fetch only the history leading to one commit or ref and detach HEAD there (Git 2.49+)"
+      }
+    ],
     "examples": [
       {
-        "command": "git clone https://github.com/user/repo.git",
+        "command": "git clone https://github.com/<owner>/<repo>.git",
         "description": "Clone a repository"
       },
       {
-        "command": "git clone https://github.com/user/repo.git mydir",
+        "command": "git clone https://github.com/<owner>/<repo>.git mydir",
         "description": "Clone into specific directory"
+      },
+      {
+        "command": "git clone --depth 1 https://github.com/<owner>/<repo>.git",
+        "description": "Fast shallow clone of just the latest commit"
+      },
+      {
+        "command": "git clone --filter=blob:none https://github.com/<owner>/<repo>.git",
+        "description": "Blobless clone for large repos (full history, file contents fetched lazily)"
+      },
+      {
+        "command": "git clone --depth 1 --revision=v1.2.0 https://github.com/<owner>/<repo>.git",
+        "description": "Grab a single tag or commit without creating branches"
       }
     ],
     "relatedCommands": [
       "git-init",
-      "git-remote"
+      "git-remote",
+      "git-sparse-checkout",
+      "git-backfill"
     ]
   },
   {
@@ -440,10 +497,12 @@
       }
     ],
     "notes": [
-      "Consider using 'git switch' for switching branches"
+      "Prefer 'git switch' for changing branches and 'git restore' for discarding file changes; checkout still does both",
+      "WARNING: 'git checkout -- <file>' discards uncommitted changes in that file permanently"
     ],
     "relatedCommands": [
       "git-switch",
+      "git-restore",
       "git-branch"
     ]
   },
@@ -529,13 +588,15 @@
       }
     ],
     "notes": [
-      "Don't rebase commits that have been pushed to public repos",
-      "Use with caution"
+      "WARNING: rebasing rewrites commits; don't rebase commits others have already pulled, and push afterwards with --force-with-lease",
+      "Use git reflog to get back to the pre-rebase state if something goes wrong"
     ],
     "relatedCommands": [
       "git-merge",
       "git-commit",
-      "git-reflog"
+      "git-reflog",
+      "git-history",
+      "git-range-diff"
     ]
   },
   {
@@ -603,6 +664,9 @@
         "command": "git log -S 'apiKey' --oneline",
         "description": "Find commits that added or removed a string"
       }
+    ],
+    "notes": [
+      "'git whatchanged' is deprecated and refuses to run without --i-still-use-this (Git 2.51+); use 'git log --raw --no-merges' instead"
     ],
     "relatedCommands": [
       "git-show",
@@ -702,10 +766,19 @@
       {
         "command": "git stash apply stash@{2}",
         "description": "Apply a specific stash without removing it"
+      },
+      {
+        "command": "git stash export --to-ref refs/stashes/wip",
+        "description": "Export all stashes to a ref so they can be pushed to another machine (Git 2.51+)"
+      },
+      {
+        "command": "git stash import refs/stashes/wip",
+        "description": "Import stashes previously exported with 'stash export'"
       }
     ],
     "notes": [
-      "Useful for temporarily setting aside changes"
+      "Useful for temporarily setting aside changes",
+      "Set stash.index=true to make pop/apply also restore what was staged (Git 2.52+)"
     ],
     "relatedCommands": []
   },
@@ -740,7 +813,6 @@
       }
     ],
     "notes": [
-      "Use --hard with caution, it permanently deletes changes",
       "WARNING: --hard discards uncommitted work permanently; committed work can usually be recovered with git reflog"
     ],
     "relatedCommands": [
@@ -823,28 +895,50 @@
     "flags": [
       {
         "flag": "--global",
-        "description": "Set configuration globally"
+        "description": "Use the per-user config file (~/.gitconfig)"
       },
       {
-        "flag": "--list",
-        "description": "List all configuration"
+        "flag": "--local",
+        "description": "Use the repository's .git/config (the default when writing)"
+      },
+      {
+        "flag": "--show-origin",
+        "description": "With list/get, show which file each value comes from"
       }
     ],
     "examples": [
       {
-        "command": "git config --global user.name \"Your Name\"",
+        "command": "git config set --global user.name \"Your Name\"",
         "description": "Set global username"
       },
       {
-        "command": "git config --global user.email \"email@example.com\"",
+        "command": "git config set --global user.email \"you@example.com\"",
         "description": "Set global email"
       },
       {
-        "command": "git config --list",
-        "description": "List all configuration"
+        "command": "git config list --show-origin",
+        "description": "List all configuration and where it is set"
+      },
+      {
+        "command": "git config get user.email",
+        "description": "Read a single value"
+      },
+      {
+        "command": "git config unset --global pull.rebase",
+        "description": "Remove a setting"
+      },
+      {
+        "command": "git config edit --global",
+        "description": "Open the global config file in your editor"
       }
     ],
-    "relatedCommands": []
+    "notes": [
+      "Git 2.46 added the list/get/set/unset subcommands; the older 'git config --list', 'git config --get' and 'git config <key> <value>' forms still work but are deprecated in the docs",
+      "Use the old form ('git config --global user.name ...') if you need to support Git older than 2.46"
+    ],
+    "relatedCommands": [
+      "git-init"
+    ]
   },
   {
     "id": "git-show",
@@ -915,7 +1009,8 @@
     ],
     "relatedCommands": [
       "git-log",
-      "git-show"
+      "git-show",
+      "git-last-modified"
     ]
   },
   {
@@ -1071,8 +1166,16 @@
     "technologyId": "git",
     "flags": [
       {
-        "flag": "-c",
+        "flag": "-c <branch>",
         "description": "Create and switch to new branch"
+      },
+      {
+        "flag": "-C <branch>",
+        "description": "Create or reset a branch and switch to it"
+      },
+      {
+        "flag": "--detach",
+        "description": "Switch to a commit or tag in detached HEAD state"
       }
     ],
     "examples": [
@@ -1083,10 +1186,22 @@
       {
         "command": "git switch -c feature-x",
         "description": "Create and switch to new branch"
+      },
+      {
+        "command": "git switch -",
+        "description": "Go back to the previously checked-out branch"
+      },
+      {
+        "command": "git switch feature-y",
+        "description": "Create a local branch tracking origin/feature-y if it exists only on the remote"
+      },
+      {
+        "command": "git switch --detach v1.2.0",
+        "description": "Inspect a tag without creating a branch"
       }
     ],
     "notes": [
-      "Introduced in Git 2.23 as clearer alternative to checkout"
+      "Introduced in Git 2.23 as a clearer alternative to checkout; no longer marked experimental since Git 2.51"
     ],
     "relatedCommands": [
       "git-checkout",
@@ -1096,30 +1211,57 @@
   {
     "id": "git-restore",
     "name": "git restore",
-    "description": "Restore working tree files",
+    "description": "Restore working tree files or unstage changes",
     "category": "Workflow",
     "technologyId": "git",
     "flags": [
       {
         "flag": "--staged",
-        "description": "Unstage files"
+        "description": "Unstage files (restore the index from HEAD)"
+      },
+      {
+        "flag": "--worktree",
+        "description": "Restore the working tree (default when --staged is not given)"
+      },
+      {
+        "flag": "-s, --source=<tree>",
+        "description": "Restore content from a specific commit, branch, or tag"
+      },
+      {
+        "flag": "-p",
+        "description": "Interactively choose hunks to restore"
       }
     ],
     "examples": [
       {
         "command": "git restore file.txt",
-        "description": "Discard changes in file"
+        "description": "Discard unstaged changes in file"
       },
       {
         "command": "git restore --staged file.txt",
         "description": "Unstage file"
+      },
+      {
+        "command": "git restore --staged --worktree file.txt",
+        "description": "Unstage and discard changes in one step"
+      },
+      {
+        "command": "git restore --source=HEAD~2 src/app.ts",
+        "description": "Bring back a file as it was two commits ago"
+      },
+      {
+        "command": "git restore .",
+        "description": "Discard all unstaged changes in the current directory"
       }
     ],
     "notes": [
-      "Introduced in Git 2.23 as clearer alternative to checkout"
+      "Introduced in Git 2.23 as a clearer alternative to 'git checkout -- <file>'; no longer marked experimental since Git 2.51",
+      "WARNING: restoring the working tree discards uncommitted changes permanently"
     ],
     "relatedCommands": [
-      "git-checkout"
+      "git-checkout",
+      "git-reset",
+      "git-switch"
     ]
   },
   {
@@ -1128,10 +1270,32 @@
     "description": "Apply changes from specific commits",
     "category": "Advanced",
     "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-x",
+        "description": "Append '(cherry picked from commit ...)' to the message"
+      },
+      {
+        "flag": "-n, --no-commit",
+        "description": "Apply the changes without committing"
+      },
+      {
+        "flag": "--continue / --abort",
+        "description": "Resume or cancel after resolving conflicts"
+      }
+    ],
     "examples": [
       {
         "command": "git cherry-pick <commit-hash>",
         "description": "Apply specific commit to current branch"
+      },
+      {
+        "command": "git cherry-pick -x a1b2c3d",
+        "description": "Cherry-pick and record the source commit in the message"
+      },
+      {
+        "command": "git cherry-pick main~3..main",
+        "description": "Apply a range of commits (excluding main~3)"
       }
     ],
     "notes": [
@@ -1225,7 +1389,7 @@
     "technologyId": "git",
     "examples": [
       {
-        "command": "git submodule add https://github.com/org/lib.git vendor/lib",
+        "command": "git submodule add https://github.com/<owner>/<lib>.git vendor/lib",
         "description": "Add a submodule"
       },
       {
@@ -1269,6 +1433,10 @@
         "description": "Add another directory"
       },
       {
+        "command": "git sparse-checkout clean",
+        "description": "Delete leftover files outside the sparse-checkout area (Git 2.52+)"
+      },
+      {
         "command": "git sparse-checkout disable",
         "description": "Restore the full working tree"
       }
@@ -1277,7 +1445,8 @@
       "Cone mode (the default) matches whole directories and is much faster than pattern mode"
     ],
     "relatedCommands": [
-      "git-clone"
+      "git-clone",
+      "git-backfill"
     ]
   },
   {
@@ -1298,6 +1467,10 @@
       {
         "command": "git maintenance stop",
         "description": "Stop scheduled maintenance for this repo"
+      },
+      {
+        "command": "git maintenance is-needed --auto",
+        "description": "Exit 0 if maintenance should run, 1 otherwise (Git 2.53+)"
       }
     ],
     "notes": [
@@ -1339,8 +1512,230 @@
     ],
     "notes": [
       "Always run with -n first to preview",
-      "Cannot be undone"
+      "WARNING: deleted untracked files cannot be recovered with Git"
     ],
-    "relatedCommands": []
+    "relatedCommands": [
+      "git-restore",
+      "git-stash"
+    ]
+  },
+  {
+    "id": "git-range-diff",
+    "name": "git range-diff",
+    "description": "Compare two versions of a branch or patch series, e.g. before and after a rebase",
+    "category": "History",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--creation-factor=<n>",
+        "description": "Tune how aggressively commits are paired up (default 60)"
+      },
+      {
+        "flag": "--left-only / --right-only",
+        "description": "Only show commits from one side"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git range-diff main feature@{1} feature",
+        "description": "What changed in feature since before the last rebase onto main"
+      },
+      {
+        "command": "git range-diff ORIG_HEAD...HEAD",
+        "description": "Compare the branch before and after a rebase or amend"
+      },
+      {
+        "command": "git range-diff v1..topic-v1 v2..topic-v2",
+        "description": "Compare two iterations of a patch series"
+      }
+    ],
+    "notes": [
+      "Handy for reviewing force-pushed branches: it pairs up commits and shows the diff between their diffs"
+    ],
+    "relatedCommands": [
+      "git-rebase",
+      "git-diff",
+      "git-log"
+    ]
+  },
+  {
+    "id": "git-history",
+    "name": "git history",
+    "description": "Rewrite individual commits without an interactive rebase (experimental)",
+    "category": "Advanced",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--dry-run",
+        "description": "Print the ref updates without changing anything"
+      },
+      {
+        "flag": "--update-refs=(branches|head)",
+        "description": "Update all descendant branches (default) or only HEAD"
+      },
+      {
+        "flag": "--reedit-message",
+        "description": "With fixup, edit the target commit's message"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git history reword a1b2c3d",
+        "description": "Edit the message of an older commit"
+      },
+      {
+        "command": "git add -p && git history fixup a1b2c3d",
+        "description": "Fold staged changes into an earlier commit"
+      },
+      {
+        "command": "git history split a1b2c3d",
+        "description": "Interactively split a commit into two"
+      },
+      {
+        "command": "git history drop a1b2c3d",
+        "description": "Remove a commit and replay its descendants onto its parent"
+      }
+    ],
+    "notes": [
+      "Experimental: added in Git 2.54 (reword, split), fixup in 2.55, drop in 2.56; behavior may change",
+      "Does not support histories with merges or operations that would conflict; use git rebase -i for those",
+      "WARNING: rewrites history and moves all branches containing the commit; avoid on commits others have pulled"
+    ],
+    "relatedCommands": [
+      "git-rebase",
+      "git-commit",
+      "git-reflog"
+    ]
+  },
+  {
+    "id": "git-last-modified",
+    "name": "git last-modified",
+    "description": "Show the commit that last modified each file or directory (experimental)",
+    "category": "History",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Descend into all subdirectories"
+      },
+      {
+        "flag": "-t, --show-trees",
+        "description": "Also show directory entries when recursing"
+      },
+      {
+        "flag": "--max-depth=<depth>",
+        "description": "Limit how far to descend into subtrees"
+      },
+      {
+        "flag": "-z",
+        "description": "NUL-terminate output lines"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git last-modified",
+        "description": "Last commit for each top-level file and directory"
+      },
+      {
+        "command": "git last-modified -r src/",
+        "description": "Last commit for every file under src/"
+      },
+      {
+        "command": "git last-modified v1.0.0..HEAD -- docs",
+        "description": "Limit the search to a revision range and path"
+      }
+    ],
+    "notes": [
+      "Experimental: added in Git 2.52; output is '<commit-id> TAB <path>' per line"
+    ],
+    "relatedCommands": [
+      "git-log",
+      "git-blame"
+    ]
+  },
+  {
+    "id": "git-backfill",
+    "name": "git backfill",
+    "description": "Download missing file contents in a blobless partial clone in efficient batches (experimental)",
+    "category": "Advanced",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--min-batch-size=<n>",
+        "description": "Minimum number of objects per request (default 50000)"
+      },
+      {
+        "flag": "--[no-]sparse",
+        "description": "Only download blobs inside the current sparse-checkout"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git clone --filter=blob:none https://github.com/<owner>/<repo>.git && cd <repo> && git backfill",
+        "description": "Clone quickly, then fetch all historical file contents in batches"
+      },
+      {
+        "command": "git backfill --sparse",
+        "description": "Only backfill paths in your sparse-checkout"
+      },
+      {
+        "command": "git backfill main~100..main -- src/",
+        "description": "Backfill blobs for a revision range and path (Git 2.54+)"
+      }
+    ],
+    "notes": [
+      "Experimental: added in Git 2.49",
+      "Run it before history-heavy commands like git blame or git log -p in a blobless clone to avoid slow one-by-one downloads"
+    ],
+    "relatedCommands": [
+      "git-clone",
+      "git-sparse-checkout"
+    ]
+  },
+  {
+    "id": "git-repo",
+    "name": "git repo",
+    "description": "Print repository metadata and size statistics (experimental)",
+    "category": "Advanced",
+    "technologyId": "git",
+    "flags": [
+      {
+        "flag": "--all",
+        "description": "With info, print every available key"
+      },
+      {
+        "flag": "--keys",
+        "description": "With info, list the available keys"
+      },
+      {
+        "flag": "-z",
+        "description": "NUL-delimited output (same as --format=nul)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "git repo info layout.bare layout.shallow",
+        "description": "Check whether the repo is bare or shallow"
+      },
+      {
+        "command": "git repo info references.format object.format",
+        "description": "Show the ref storage backend and hash algorithm"
+      },
+      {
+        "command": "git repo info --all",
+        "description": "Print all known metadata as key=value lines"
+      },
+      {
+        "command": "git repo structure",
+        "description": "Table of ref counts, object counts, and object sizes"
+      }
+    ],
+    "notes": [
+      "Experimental: added in Git 2.52; a friendlier alternative to many 'git rev-parse' queries"
+    ],
+    "relatedCommands": [
+      "git-config",
+      "git-maintenance"
+    ]
   }
 ]

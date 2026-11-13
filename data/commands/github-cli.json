@@ -95,22 +95,32 @@
     "description": "Clone a GitHub repository locally.",
     "category": "Repositories",
     "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-u, --upstream-remote-name <name>",
+        "description": "Name of the upstream remote when cloning a fork (default upstream)"
+      },
+      {
+        "flag": "--no-upstream",
+        "description": "Don't add an upstream remote when cloning a fork"
+      }
+    ],
     "examples": [
       {
-        "command": "gh repo clone owner/repo",
+        "command": "gh repo clone <owner>/<repo>",
         "description": "Clone by owner/name"
       },
       {
-        "command": "gh repo clone owner/repo my-dir -- --depth=1",
-        "description": "Shallow clone into a custom directory"
+        "command": "gh repo clone <owner>/<repo> my-dir -- --depth=1",
+        "description": "Shallow clone into a custom directory (flags after -- go to git clone)"
       },
       {
-        "command": "gh repo clone repo",
+        "command": "gh repo clone <repo>",
         "description": "Clone one of your own repos without the owner prefix"
       }
     ],
     "notes": [
-      "Cloning a fork automatically adds the parent repo as the upstream remote"
+      "Cloning a fork automatically adds the parent repo as the upstream remote and makes it the default repo for gh commands"
     ],
     "relatedCommands": [
       "gh-repo-fork",
@@ -194,7 +204,7 @@
     ],
     "examples": [
       {
-        "command": "gh repo fork owner/repo --clone",
+        "command": "gh repo fork <owner>/<repo> --clone",
         "description": "Fork and clone"
       },
       {
@@ -309,6 +319,10 @@
       {
         "flag": "-f, --fill",
         "description": "Use commit messages for title and body"
+      },
+      {
+        "flag": "--fill-first",
+        "description": "Use only the first commit's message for title and body"
       },
       {
         "flag": "-B, --base <branch>",
@@ -466,6 +480,14 @@
       {
         "flag": "-f, --force",
         "description": "Reset the local branch to the latest PR state"
+      },
+      {
+        "flag": "--detach",
+        "description": "Check out with a detached HEAD"
+      },
+      {
+        "flag": "--worktree <path>",
+        "description": "Check out the PR into a separate git worktree"
       }
     ],
     "examples": [
@@ -474,12 +496,21 @@
         "description": "Check out PR #123 (works for forks too)"
       },
       {
+        "command": "gh pr checkout 123 --worktree ../pr-123",
+        "description": "Review a PR in its own worktree without touching your current branch"
+      },
+      {
         "command": "gh pr checkout 123 --force",
         "description": "Discard local branch changes and sync to the PR"
+      },
+      {
+        "command": "gh co 123",
+        "description": "Same thing using the built-in co alias"
       }
     ],
     "notes": [
-      "Alias: gh co (if configured); --force overwrites local commits on that branch"
+      "Aliases: gh pr co, and gh co (default alias)",
+      "WARNING: --force overwrites local commits on that branch"
     ],
     "relatedCommands": [
       "gh-pr-review",
@@ -631,10 +662,14 @@
       {
         "command": "gh pr merge --auto --squash",
         "description": "Enable auto-merge for the current PR"
+      },
+      {
+        "command": "gh pr update-branch 123 --rebase",
+        "description": "Bring a PR branch up to date with its base before merging"
       }
     ],
     "notes": [
-      "--admin bypasses required reviews and checks; use only when your team allows it"
+      "WARNING: --admin bypasses required reviews, checks, and the merge queue; use only when your team allows it"
     ],
     "relatedCommands": [
       "gh-pr-checks",
@@ -662,7 +697,7 @@
       },
       {
         "flag": "-a, --assignee <login>",
-        "description": "Assign (@me for yourself)"
+        "description": "Assign (@me for yourself, @copilot for the Copilot coding agent)"
       },
       {
         "flag": "-T, --template <name>",
@@ -685,6 +720,10 @@
       {
         "command": "gh issue create -a @me -l task -t \"Update docs\"",
         "description": "Create and self-assign"
+      },
+      {
+        "command": "gh issue create -t \"Add dark mode\" -b \"...\" -a @copilot",
+        "description": "Create an issue and hand it to the Copilot coding agent"
       }
     ],
     "relatedCommands": [
@@ -790,8 +829,12 @@
         "description": "Leave a closing comment"
       },
       {
-        "flag": "-r, --reason <completed|not planned>",
+        "flag": "-r, --reason <completed|not planned|duplicate>",
         "description": "Reason for closing"
+      },
+      {
+        "flag": "--duplicate-of <issue>",
+        "description": "Close as a duplicate of another issue (number or URL)"
       }
     ],
     "examples": [
@@ -800,8 +843,12 @@
         "description": "Close issue #42"
       },
       {
-        "command": "gh issue close 42 -r \"not planned\" -c \"Duplicate of #40\"",
+        "command": "gh issue close 42 -r \"not planned\" -c \"Out of scope\"",
         "description": "Close as not planned with a comment"
+      },
+      {
+        "command": "gh issue close 42 --duplicate-of 40",
+        "description": "Close as a duplicate of #40"
       },
       {
         "command": "gh issue reopen 42",
@@ -891,7 +938,8 @@
     ],
     "relatedCommands": [
       "gh-run-list",
-      "gh-run-rerun"
+      "gh-run-rerun",
+      "github-cli-run-download"
     ]
   },
   {
@@ -1056,7 +1104,7 @@
         "description": "Load multiple secrets from a dotenv file"
       },
       {
-        "flag": "-a, --app <actions|codespaces|dependabot>",
+        "flag": "-a, --app <actions|agents|codespaces|dependabot>",
         "description": "Which secret store to use"
       }
     ],
@@ -1082,7 +1130,8 @@
       "Passing --body on the command line can leave the secret in shell history; prefer the prompt or stdin"
     ],
     "relatedCommands": [
-      "gh-workflow-run"
+      "gh-workflow-run",
+      "github-cli-variable-set"
     ]
   },
   {
@@ -1332,7 +1381,7 @@
     "technologyId": "github-cli",
     "examples": [
       {
-        "command": "gh codespace create -R owner/repo",
+        "command": "gh codespace create -R <owner>/<repo>",
         "description": "Create a codespace"
       },
       {
@@ -1381,6 +1430,437 @@
     ],
     "relatedCommands": [
       "gh-api"
+    ]
+  },
+  {
+    "id": "github-cli-pr-edit",
+    "name": "gh pr edit",
+    "description": "Edit a pull request's title, body, base branch, reviewers, labels, and more.",
+    "category": "Pull Requests",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-t, --title <title>",
+        "description": "Set a new title"
+      },
+      {
+        "flag": "-b, --body <text> / -F, --body-file <file>",
+        "description": "Set a new body"
+      },
+      {
+        "flag": "-B, --base <branch>",
+        "description": "Change the base branch"
+      },
+      {
+        "flag": "--add-reviewer / --remove-reviewer <login>",
+        "description": "Request or remove reviewers (@copilot for a Copilot review)"
+      },
+      {
+        "flag": "--add-label / --remove-label <name>",
+        "description": "Add or remove labels"
+      },
+      {
+        "flag": "--add-assignee / --remove-assignee <login>",
+        "description": "Change assignees (@me, @copilot)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh pr edit 123 --title \"Fix login redirect\"",
+        "description": "Rename a PR"
+      },
+      {
+        "command": "gh pr edit --add-reviewer my-org/backend --add-label needs-review",
+        "description": "Request a team review and label the current branch's PR"
+      },
+      {
+        "command": "gh pr edit 123 --add-reviewer @copilot",
+        "description": "Ask Copilot to review a PR"
+      },
+      {
+        "command": "gh pr edit 123 --base release-2.0",
+        "description": "Retarget a PR to another branch"
+      },
+      {
+        "command": "gh pr ready 123",
+        "description": "Mark a draft PR as ready for review"
+      }
+    ],
+    "relatedCommands": [
+      "gh-pr-create",
+      "gh-pr-view",
+      "gh-pr-review"
+    ]
+  },
+  {
+    "id": "github-cli-run-download",
+    "name": "gh run download",
+    "description": "Download artifacts produced by a GitHub Actions workflow run.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-n, --name <name>",
+        "description": "Only download artifacts with this name (repeatable)"
+      },
+      {
+        "flag": "-p, --pattern <glob>",
+        "description": "Only download artifacts matching a glob"
+      },
+      {
+        "flag": "-D, --dir <dir>",
+        "description": "Directory to download into (default .)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh run download 1234567890",
+        "description": "Download all artifacts from a run"
+      },
+      {
+        "command": "gh run download 1234567890 -n coverage-report -D ./reports",
+        "description": "Download one artifact into a folder"
+      },
+      {
+        "command": "gh run download -n build-output",
+        "description": "Download the latest artifact with that name across runs"
+      }
+    ],
+    "relatedCommands": [
+      "gh-run-view",
+      "gh-run-list"
+    ]
+  },
+  {
+    "id": "github-cli-cache",
+    "name": "gh cache",
+    "description": "List and delete GitHub Actions caches.",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-k, --key <prefix>",
+        "description": "list: filter by cache key prefix"
+      },
+      {
+        "flag": "-r, --ref <ref>",
+        "description": "Filter by ref, e.g. refs/heads/main or refs/pull/123/merge"
+      },
+      {
+        "flag": "-S, --sort <created_at|last_accessed_at|size_in_bytes>",
+        "description": "list: sort field"
+      },
+      {
+        "flag": "-a, --all",
+        "description": "delete: delete every cache (optionally only for --ref)"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh cache list",
+        "description": "List caches for the current repo"
+      },
+      {
+        "command": "gh cache list --sort size_in_bytes --limit 10",
+        "description": "Find the biggest caches"
+      },
+      {
+        "command": "gh cache delete <cache-key>",
+        "description": "Delete a cache by key (or id)"
+      },
+      {
+        "command": "gh cache delete --all --ref refs/pull/123/merge",
+        "description": "Clear all caches for a pull request"
+      }
+    ],
+    "notes": [
+      "WARNING: gh cache delete --all removes every cache in the repo, making the next CI runs slower"
+    ],
+    "relatedCommands": [
+      "gh-run-list",
+      "gh-run-rerun"
+    ]
+  },
+  {
+    "id": "github-cli-variable-set",
+    "name": "gh variable set",
+    "description": "Create or update a GitHub Actions configuration variable (non-secret).",
+    "category": "Actions",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-b, --body <value>",
+        "description": "Variable value (otherwise prompted or read from stdin)"
+      },
+      {
+        "flag": "-e, --env <name>",
+        "description": "Set for a deployment environment"
+      },
+      {
+        "flag": "-o, --org <org>",
+        "description": "Set an organization variable"
+      },
+      {
+        "flag": "-f, --env-file <file>",
+        "description": "Load multiple variables from a dotenv file"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh variable set NODE_VERSION --body 24",
+        "description": "Set a repo variable (vars.NODE_VERSION in workflows)"
+      },
+      {
+        "command": "gh variable set API_URL --env staging --body https://staging.example.com",
+        "description": "Set a per-environment variable"
+      },
+      {
+        "command": "gh variable set -f .env.ci",
+        "description": "Import variables from a dotenv file"
+      },
+      {
+        "command": "gh variable list",
+        "description": "List variables and their values"
+      }
+    ],
+    "notes": [
+      "Variable values are visible to anyone with read access to the settings; use gh secret set for credentials"
+    ],
+    "relatedCommands": [
+      "gh-secret-set",
+      "gh-workflow-run"
+    ]
+  },
+  {
+    "id": "github-cli-ruleset",
+    "name": "gh ruleset",
+    "description": "View repository and organization rulesets and the rules that apply to a branch.",
+    "category": "Repositories",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-o, --org <org>",
+        "description": "Work with organization-level rulesets"
+      },
+      {
+        "flag": "-p, --parents",
+        "description": "Include rulesets inherited from higher levels (default true)"
+      },
+      {
+        "flag": "--default",
+        "description": "check: inspect the default branch"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Open in the browser"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh ruleset list",
+        "description": "List rulesets that apply to the current repo"
+      },
+      {
+        "command": "gh ruleset view 42",
+        "description": "Show a ruleset's rules and bypass list"
+      },
+      {
+        "command": "gh ruleset check feature-x",
+        "description": "Which rules would apply to a branch named feature-x"
+      },
+      {
+        "command": "gh ruleset check --default -R <owner>/<repo>",
+        "description": "Rules on another repo's default branch"
+      }
+    ],
+    "notes": [
+      "Alias: gh rs. Listing org rulesets needs the admin:org scope (gh auth refresh -s admin:org)"
+    ],
+    "relatedCommands": [
+      "gh-repo-view",
+      "gh-pr-merge"
+    ]
+  },
+  {
+    "id": "github-cli-attestation-verify",
+    "name": "gh attestation verify",
+    "description": "Verify the build provenance attestation of a file or container image.",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-R, --repo <owner>/<repo>",
+        "description": "Require the artifact to come from this repository"
+      },
+      {
+        "flag": "-o, --owner <org>",
+        "description": "Require the artifact to come from this organization or user"
+      },
+      {
+        "flag": "--signer-workflow <workflow>",
+        "description": "Require a specific signing workflow"
+      },
+      {
+        "flag": "-b, --bundle <file>",
+        "description": "Verify offline against a downloaded attestation bundle"
+      },
+      {
+        "flag": "--format json",
+        "description": "Output the full verification result as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh attestation verify ./app-linux-amd64.tar.gz --repo <owner>/<repo>",
+        "description": "Check a release binary was built by that repo's Actions workflow"
+      },
+      {
+        "command": "gh attestation verify oci://ghcr.io/<owner>/<image>:latest --owner <owner>",
+        "description": "Verify a container image"
+      },
+      {
+        "command": "gh attestation download ./app.tar.gz --repo <owner>/<repo>",
+        "description": "Save attestations for offline verification"
+      }
+    ],
+    "notes": [
+      "Requires either --repo or --owner; by default enforces the SLSA provenance v1 predicate"
+    ],
+    "relatedCommands": [
+      "gh-release-download",
+      "gh-api"
+    ]
+  },
+  {
+    "id": "github-cli-project",
+    "name": "gh project",
+    "description": "Work with GitHub Projects: list, view, and add items.",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--owner <login>",
+        "description": "Project owner (user or org; @me for yourself)"
+      },
+      {
+        "flag": "--format json",
+        "description": "Output JSON"
+      },
+      {
+        "flag": "-w, --web",
+        "description": "Open in the browser"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh project list --owner my-org",
+        "description": "List an organization's projects"
+      },
+      {
+        "command": "gh project view 1 --owner my-org --web",
+        "description": "Open project #1 in the browser"
+      },
+      {
+        "command": "gh project item-add 1 --owner my-org --url https://github.com/<owner>/<repo>/issues/42",
+        "description": "Add an issue to a project"
+      },
+      {
+        "command": "gh project item-list 1 --owner my-org --format json",
+        "description": "Export project items as JSON"
+      }
+    ],
+    "notes": [
+      "Needs the project scope: gh auth refresh -s project"
+    ],
+    "relatedCommands": [
+      "gh-issue-create",
+      "gh-auth-login"
+    ]
+  },
+  {
+    "id": "github-cli-agent-task",
+    "name": "gh agent-task",
+    "description": "Start and follow Copilot coding agent tasks that open pull requests (preview).",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "-b, --base <branch>",
+        "description": "create: base branch for the resulting PR"
+      },
+      {
+        "flag": "-F, --from-file <file>",
+        "description": "create: read the task description from a file (- for stdin)"
+      },
+      {
+        "flag": "--follow",
+        "description": "Stream the agent session logs"
+      },
+      {
+        "flag": "--log",
+        "description": "view: show the session logs"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh agent-task create \"Add input validation to the signup form\"",
+        "description": "Start a task on the current repo"
+      },
+      {
+        "command": "gh agent-task create -F task.md --base develop --follow",
+        "description": "Start from a file against develop and watch progress"
+      },
+      {
+        "command": "gh agent-task list",
+        "description": "List your recent agent tasks"
+      },
+      {
+        "command": "gh agent-task view 123 --log",
+        "description": "Show the session log for the task behind PR #123"
+      }
+    ],
+    "notes": [
+      "Preview: subject to change. Aliases: gh agent, gh agents",
+      "Requires access to Copilot coding agent on the repository"
+    ],
+    "relatedCommands": [
+      "github-cli-copilot",
+      "gh-pr-view"
+    ]
+  },
+  {
+    "id": "github-cli-copilot",
+    "name": "gh copilot",
+    "description": "Run the GitHub Copilot CLI agent, downloading it on first use (preview).",
+    "category": "Advanced",
+    "technologyId": "github-cli",
+    "flags": [
+      {
+        "flag": "--remove",
+        "description": "Remove the Copilot CLI that gh downloaded"
+      }
+    ],
+    "examples": [
+      {
+        "command": "gh copilot",
+        "description": "Download (if needed) and start the interactive Copilot CLI"
+      },
+      {
+        "command": "gh copilot -p \"Summarize this week's commits\" --allow-tool 'shell(git)'",
+        "description": "Run a one-off prompt, allowing it to call git"
+      },
+      {
+        "command": "gh copilot -- --help",
+        "description": "Show the Copilot CLI's own help (args after -- go to Copilot)"
+      }
+    ],
+    "notes": [
+      "The old gh-copilot extension (gh copilot suggest / explain) was deprecated on 2025-10-25; gh copilot now launches the agentic Copilot CLI instead",
+      "Requires a Copilot subscription"
+    ],
+    "relatedCommands": [
+      "github-cli-agent-task",
+      "gh-extension-install"
     ]
   }
 ]

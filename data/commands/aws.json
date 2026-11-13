@@ -37,15 +37,21 @@
       {
         "command": "aws configure list-profiles",
         "description": "List all configured profile names"
+      },
+      {
+        "command": "aws configure export-credentials --profile dev --format env",
+        "description": "Print the resolved temporary credentials as export statements (for tools that only read env vars)"
       }
     ],
     "notes": [
-      "Writes to ~/.aws/credentials and ~/.aws/config. Prefer SSO or short-lived role credentials over long-lived access keys."
+      "Writes to ~/.aws/credentials and ~/.aws/config. Prefer `aws login` (console credentials), IAM Identity Center (`aws configure sso`) or role credentials over long-lived access keys.",
+      "`aws configure mfa-login` creates a profile with temporary credentials from an IAM user plus an MFA code."
     ],
     "relatedCommands": [
       "aws-configure-sso",
       "aws-sts-get-caller-identity",
-      "aws-global-options"
+      "aws-global-options",
+      "aws-login"
     ]
   },
   {
@@ -90,6 +96,10 @@
       {
         "flag": "--use-device-code",
         "description": "Use the device code flow (e.g. on a remote/headless machine)"
+      },
+      {
+        "flag": "--redirect-port",
+        "description": "Use a fixed localhost port for the browser callback (instead of a random one)"
       }
     ],
     "examples": [
@@ -102,8 +112,62 @@
         "description": "Clear cached SSO tokens"
       }
     ],
+    "notes": [
+      "Uses the OAuth 2.0 Authorization Code flow with PKCE by default; pass --use-device-code where the browser callback cannot reach the CLI.",
+      "For IAM users, root or federated console users without IAM Identity Center, use `aws login` instead."
+    ],
     "relatedCommands": [
       "aws-configure-sso",
+      "aws-sts-get-caller-identity",
+      "aws-login"
+    ]
+  },
+  {
+    "id": "aws-login",
+    "name": "aws login",
+    "description": "Sign in to the CLI with your AWS Management Console credentials and get auto-refreshing temporary credentials.",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--profile",
+        "description": "Profile to sign in to (created if it does not exist)"
+      },
+      {
+        "flag": "--remote",
+        "description": "Cross-device flow for SSH/headless hosts: open the URL elsewhere and paste the authorization code"
+      },
+      {
+        "flag": "--redirect-port",
+        "description": "Fixed localhost port for the browser callback"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws login",
+        "description": "Open the browser, pick a console session and configure the default profile"
+      },
+      {
+        "command": "aws login --profile dev",
+        "description": "Sign in to (or create) a named profile"
+      },
+      {
+        "command": "aws login --remote",
+        "description": "Sign in from a machine without a browser"
+      },
+      {
+        "command": "aws logout --all",
+        "description": "Delete cached login credentials for all profiles (or use --profile for one)"
+      }
+    ],
+    "notes": [
+      "Requires AWS CLI 2.32.0 or later and the SignInLocalDevelopmentAccess managed policy on the IAM user/role (root needs none).",
+      "Works for root, IAM users and federated console sign-ins; for IAM Identity Center use aws configure sso / aws sso login.",
+      "Writes login_session = <arn> to the profile in ~/.aws/config and caches tokens under ~/.aws/login/cache. Credentials refresh automatically for up to the session duration (maximum 12 hours)."
+    ],
+    "relatedCommands": [
+      "aws-sso-login",
+      "aws-configure",
       "aws-sts-get-caller-identity"
     ]
   },
@@ -193,7 +257,7 @@
       },
       {
         "flag": "--output",
-        "description": "Output format: json, text, table, yaml, yaml-stream",
+        "description": "Output format: json, text, table, yaml, yaml-stream, or off (suppress output)",
         "example": "aws iam list-users --output table"
       },
       {
@@ -212,6 +276,14 @@
       {
         "flag": "--debug",
         "description": "Print full request/response debug logs"
+      },
+      {
+        "flag": "--cli-error-format",
+        "description": "Error output style: enhanced (default), json, yaml, text, table, or legacy"
+      },
+      {
+        "flag": "--cli-auto-prompt",
+        "description": "Interactively prompt for command parameters"
       }
     ],
     "examples": [
@@ -226,6 +298,10 @@
       {
         "command": "aws ec2 describe-instances --output table --query 'Reservations[].Instances[].[InstanceId,State.Name]'",
         "description": "Readable table of instance IDs and states"
+      },
+      {
+        "command": "aws --version",
+        "description": "Show the CLI version (aws/2.x)"
       }
     ],
     "notes": [
@@ -235,6 +311,30 @@
     "relatedCommands": [
       "aws-configure",
       "aws-ec2-describe-instances"
+    ]
+  },
+  {
+    "id": "aws-update",
+    "name": "aws update",
+    "description": "Update the AWS CLI v2 to the latest version.",
+    "category": "Configuration",
+    "technologyId": "aws",
+    "examples": [
+      {
+        "command": "aws update",
+        "description": "Download and install the latest AWS CLI version"
+      },
+      {
+        "command": "aws --version",
+        "description": "Confirm the installed version afterwards"
+      }
+    ],
+    "notes": [
+      "Only works for installs made with the official installer, install script, or aws update itself; use brew, your package manager, or a new container image otherwise.",
+      "The downloaded install script is signature-verified; --skip-signature-verification disables that check and is not recommended."
+    ],
+    "relatedCommands": [
+      "aws-global-options"
     ]
   },
   {
@@ -255,6 +355,14 @@
       {
         "flag": "--summarize",
         "description": "Print total object count and size"
+      },
+      {
+        "flag": "--bucket-name-prefix",
+        "description": "Only list buckets whose names start with this prefix"
+      },
+      {
+        "flag": "--bucket-region",
+        "description": "Only list buckets located in this region"
       }
     ],
     "examples": [
@@ -269,6 +377,10 @@
       {
         "command": "aws s3 ls s3://<bucket-name> --recursive --human-readable --summarize",
         "description": "Total size of a bucket"
+      },
+      {
+        "command": "aws s3 ls --bucket-name-prefix logs- --bucket-region eu-west-1",
+        "description": "Filter the bucket list server-side"
       }
     ],
     "relatedCommands": [
@@ -295,7 +407,7 @@
       },
       {
         "flag": "--acl",
-        "description": "Canned ACL such as bucket-owner-full-control"
+        "description": "Canned ACL such as bucket-owner-full-control (ignored/rejected on buckets with ACLs disabled, the default since 2023)"
       },
       {
         "flag": "--content-type",
@@ -313,6 +425,18 @@
       {
         "flag": "--storage-class",
         "description": "e.g. STANDARD_IA, GLACIER_IR, INTELLIGENT_TIERING"
+      },
+      {
+        "flag": "--no-overwrite",
+        "description": "Skip objects that already exist at the destination"
+      },
+      {
+        "flag": "--tags",
+        "description": "Tag uploaded objects; repeat as --tags key value (local to S3 only)"
+      },
+      {
+        "flag": "--checksum-algorithm",
+        "description": "Checksum to calculate on upload, e.g. CRC32, CRC64NVME, SHA256"
       }
     ],
     "examples": [
@@ -331,7 +455,14 @@
       {
         "command": "aws s3 cp s3://<bucket-name>/data.json - | jq .",
         "description": "Stream an object to stdout"
+      },
+      {
+        "command": "aws s3 cp report.csv s3://<bucket-name>/reports/ --no-overwrite --tags team platform",
+        "description": "Upload only if the key does not exist yet, and tag the object"
       }
+    ],
+    "notes": [
+      "Since early 2025 the CLI calculates CRC checksums by default on uploads and no longer sends Content-MD5; some S3-compatible (non-AWS) services need request_checksum_calculation = when_required in ~/.aws/config."
     ],
     "relatedCommands": [
       "aws-s3-sync",
@@ -361,6 +492,10 @@
       {
         "flag": "--size-only",
         "description": "Compare by size only, ignoring timestamps"
+      },
+      {
+        "flag": "--no-overwrite",
+        "description": "Only upload/download files missing at the destination"
       }
     ],
     "examples": [
@@ -464,16 +599,24 @@
       {
         "flag": "--region",
         "description": "Region to create the bucket in"
+      },
+      {
+        "flag": "--tags",
+        "description": "Tag the new bucket; repeat as --tags key value"
       }
     ],
     "examples": [
       {
         "command": "aws s3 mb s3://my-app-assets-123456 --region eu-west-1",
         "description": "Create a bucket in a specific region"
+      },
+      {
+        "command": "aws s3 mb s3://my-app-assets-123456 --tags team platform --tags env prod",
+        "description": "Create a bucket with tags"
       }
     ],
     "notes": [
-      "Bucket names are globally unique, lowercase, 3-63 characters. New buckets block public access and use SSE-S3 encryption by default."
+      "Bucket names are globally unique, lowercase, 3-63 characters. New buckets block public access, disable ACLs (bucket owner enforced) and use SSE-S3 encryption by default."
     ],
     "relatedCommands": [
       "aws-s3-ls",
@@ -617,6 +760,53 @@
       "WARNING: `aws ec2 terminate-instances` permanently deletes instances; there is no undo."
     ],
     "relatedCommands": [
+      "aws-ec2-describe-instances"
+    ]
+  },
+  {
+    "id": "aws-ec2-instance-connect-ssh",
+    "name": "aws ec2-instance-connect ssh",
+    "description": "SSH to an EC2 instance with a one-time key pushed through EC2 Instance Connect, optionally via an Instance Connect Endpoint for private subnets.",
+    "category": "EC2",
+    "technologyId": "aws",
+    "flags": [
+      {
+        "flag": "--instance-id",
+        "description": "Instance to connect to (required)"
+      },
+      {
+        "flag": "--os-user",
+        "description": "Login user (default ec2-user)"
+      },
+      {
+        "flag": "--connection-type",
+        "description": "direct, eice (via EC2 Instance Connect Endpoint) or auto (default)"
+      },
+      {
+        "flag": "--local-forwarding",
+        "description": "OpenSSH -L style forward, e.g. 3336:db.internal:3306"
+      }
+    ],
+    "examples": [
+      {
+        "command": "aws ec2-instance-connect ssh --instance-id i-0123456789abcdef0 --os-user ubuntu",
+        "description": "SSH to an instance without managing key pairs"
+      },
+      {
+        "command": "aws ec2-instance-connect ssh --instance-id i-0123456789abcdef0 --connection-type eice",
+        "description": "Reach an instance in a private subnet through an Instance Connect Endpoint"
+      },
+      {
+        "command": "aws ec2-instance-connect open-tunnel --instance-id i-0123456789abcdef0 --local-port 2222",
+        "description": "Open a local tunnel to the instance's SSH port for other tools"
+      }
+    ],
+    "notes": [
+      "Requires a local OpenSSH client and the EC2 Instance Connect package on the instance (preinstalled on Amazon Linux and Ubuntu AMIs).",
+      "AWS recommends setting --connection-type explicitly because the auto behavior may change."
+    ],
+    "relatedCommands": [
+      "aws-ssm-start-session",
       "aws-ec2-describe-instances"
     ]
   },
@@ -847,6 +1037,10 @@
       {
         "command": "aws logs tail /ecs/my-app --since 30m --filter-pattern ERROR --format short",
         "description": "Errors from the last 30 minutes"
+      },
+      {
+        "command": "aws logs start-live-tail --log-group-identifiers arn:aws:logs:us-east-1:123456789012:log-group:/ecs/my-app",
+        "description": "Interactive Live Tail session (takes log group ARNs; can tail several groups at once)"
       }
     ],
     "relatedCommands": [
@@ -970,7 +1164,8 @@
     ],
     "relatedCommands": [
       "aws-ec2-describe-instances",
-      "aws-secretsmanager-get-secret-value"
+      "aws-secretsmanager-get-secret-value",
+      "aws-ec2-instance-connect-ssh"
     ]
   },
   {

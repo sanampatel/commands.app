@@ -26,6 +26,14 @@
       {
         "flag": "--script",
         "description": "Create a single-file script with inline metadata"
+      },
+      {
+        "flag": "--no-package",
+        "description": "Create a flat, unpackaged project (main.py, no [build-system])"
+      },
+      {
+        "flag": "--bare",
+        "description": "Only create pyproject.toml"
       }
     ],
     "examples": [
@@ -44,7 +52,14 @@
       {
         "command": "uv init --script fetch.py --python 3.12",
         "description": "Create a standalone script with inline dependencies"
+      },
+      {
+        "command": "uv init --no-package my-app",
+        "description": "Create the older flat layout with main.py and no build system"
       }
+    ],
+    "notes": [
+      "Since uv 0.12, uv init creates a packaged project by default: src/<name>/ layout, the uv_build backend and a [project.scripts] entry, so uv run <name> works"
     ],
     "relatedCommands": [
       "uv-add",
@@ -180,6 +195,14 @@
       {
         "flag": "--no-install-project",
         "description": "Install dependencies but not the project itself (Docker layer caching)"
+      },
+      {
+        "flag": "--check",
+        "description": "Exit with an error if the environment is not in sync, without changing it"
+      },
+      {
+        "flag": "--all-groups",
+        "description": "Install every dependency group"
       }
     ],
     "examples": [
@@ -198,10 +221,15 @@
       {
         "command": "uv sync --all-extras",
         "description": "Install with every optional extra"
+      },
+      {
+        "command": "uv sync --check",
+        "description": "Verify the environment matches the lockfile"
       }
     ],
     "notes": [
-      "uv sync removes packages that are not in the lockfile (exact sync) unless you pass --inexact"
+      "uv sync removes packages that are not in the lockfile (exact sync) unless you pass --inexact",
+      "--locked fails if uv.lock is missing or out of date (good for CI); --frozen installs from uv.lock as-is without checking pyproject.toml"
     ],
     "relatedCommands": [
       "uv-lock",
@@ -296,7 +324,8 @@
       }
     ],
     "notes": [
-      "No need to activate .venv; uv run locks and syncs automatically before running"
+      "No need to activate .venv; uv run locks and syncs automatically before running",
+      "Packages passed with --with go into a separate, ephemeral environment layered on top of the project"
     ],
     "relatedCommands": [
       "uv-sync",
@@ -372,6 +401,10 @@
       {
         "flag": "--frozen",
         "description": "Do not update the lockfile first"
+      },
+      {
+        "flag": "--format",
+        "description": "requirements.txt (default), pylock.toml, or cyclonedx1.5"
       }
     ],
     "examples": [
@@ -382,6 +415,10 @@
       {
         "command": "uv export --no-dev --no-hashes -o requirements.txt",
         "description": "Production requirements without hashes"
+      },
+      {
+        "command": "uv export --format pylock.toml -o pylock.toml",
+        "description": "Export to the standard PEP 751 lockfile format"
       }
     ],
     "relatedCommands": [
@@ -428,6 +465,116 @@
     ]
   },
   {
+    "id": "uv-format",
+    "name": "uv format",
+    "description": "Format the project's Python code with Ruff",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--check",
+        "description": "Exit with an error if files would change, without modifying them"
+      },
+      {
+        "flag": "--diff",
+        "description": "Show the formatting changes as a diff"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv format",
+        "description": "Format every Python file in the project"
+      },
+      {
+        "command": "uv format --check",
+        "description": "Fail in CI if anything is unformatted"
+      },
+      {
+        "command": "uv format -- --line-length 100",
+        "description": "Pass extra arguments to ruff format after --"
+      }
+    ],
+    "notes": [
+      "Preview command: prints a warning unless the format-command preview feature is enabled",
+      "Downloads Ruff automatically; behaves like running ruff format in the project root"
+    ],
+    "relatedCommands": [
+      "uv-check"
+    ]
+  },
+  {
+    "id": "uv-check",
+    "name": "uv check",
+    "description": "Type check the project with ty",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--fix",
+        "description": "Apply safe fixes for type-checking errors"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv check",
+        "description": "Type check all Python files using the project environment"
+      },
+      {
+        "command": "uv check --fix",
+        "description": "Apply safe automatic fixes"
+      }
+    ],
+    "notes": [
+      "Preview command: prints a warning unless the check-command preview feature is enabled"
+    ],
+    "relatedCommands": [
+      "uv-format"
+    ]
+  },
+  {
+    "id": "uv-audit",
+    "name": "uv audit",
+    "description": "Audit project dependencies for known vulnerabilities and deprecated or quarantined packages",
+    "category": "Projects",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "--ignore",
+        "description": "Ignore a vulnerability by ID (repeatable)"
+      },
+      {
+        "flag": "--ignore-until-fixed",
+        "description": "Ignore a vulnerability only while no fixed version exists"
+      },
+      {
+        "flag": "--output-format",
+        "description": "Output format, e.g. json"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv audit",
+        "description": "Check all locked dependencies, including every extra and group"
+      },
+      {
+        "command": "uv audit --ignore <VULN-ID>",
+        "description": "Suppress a specific advisory"
+      },
+      {
+        "command": "uv tool audit --all",
+        "description": "Audit globally installed tools"
+      }
+    ],
+    "notes": [
+      "Preview command: prints a warning unless the audit-command preview feature is enabled",
+      "Requires network access; does not work with --offline"
+    ],
+    "relatedCommands": [
+      "uv-lock",
+      "uv-tree"
+    ]
+  },
+  {
     "id": "uv-venv",
     "name": "uv venv",
     "description": "Create a virtual environment",
@@ -442,6 +589,10 @@
       {
         "flag": "--seed",
         "description": "Install pip, setuptools, and wheel into the venv"
+      },
+      {
+        "flag": "-c, --clear",
+        "description": "Remove an existing environment at the path before creating a new one"
       }
     ],
     "examples": [
@@ -456,10 +607,15 @@
       {
         "command": "source .venv/bin/activate",
         "description": "Activate the venv (macOS/Linux)"
+      },
+      {
+        "command": "uv venv --clear",
+        "description": "Recreate .venv from scratch"
       }
     ],
     "notes": [
-      "uv venvs do not include pip by default; use uv pip install or pass --seed"
+      "uv venvs do not include pip by default; use uv pip install or pass --seed",
+      "Since uv 0.10, uv venv errors if the target already exists; pass --clear to replace it"
     ],
     "relatedCommands": [
       "uv-pip-install",
@@ -630,14 +786,48 @@
       {
         "command": "uv python find 3.12",
         "description": "Print the path to a matching interpreter"
+      },
+      {
+        "command": "uv python pin --global 3.14",
+        "description": "Set the default version used outside projects"
+      },
+      {
+        "command": "uv python uninstall 3.12",
+        "description": "Remove a uv-managed Python version"
       }
     ],
     "notes": [
-      "uv downloads managed Python builds automatically when a project needs one"
+      "uv downloads managed Python builds automatically when a project needs one; since uv 0.13 the default for new installs is Python 3.15",
+      "uv python install puts versioned executables (e.g. python3.14) in ~/.local/bin; run uv python update-shell if that directory is not on your PATH"
     ],
     "relatedCommands": [
       "uv-venv",
-      "uv-init"
+      "uv-init",
+      "uv-python-upgrade"
+    ]
+  },
+  {
+    "id": "uv-python-upgrade",
+    "name": "uv python upgrade",
+    "description": "Upgrade uv-managed Python installations to the latest patch release",
+    "category": "Python Versions",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "uv python upgrade",
+        "description": "Upgrade every managed CPython version"
+      },
+      {
+        "command": "uv python upgrade 3.13",
+        "description": "Upgrade only the 3.13 line"
+      }
+    ],
+    "notes": [
+      "Virtual environments created by uv automatically use the upgraded patch version",
+      "Old patch versions are not uninstalled; remove them with uv python uninstall"
+    ],
+    "relatedCommands": [
+      "uv-python"
     ]
   },
   {
@@ -667,8 +857,8 @@
         "description": "Run ruff without installing it"
       },
       {
-        "command": "uvx ruff@0.8.0 check .",
-        "description": "Run a specific version"
+        "command": "uvx ruff@latest check .",
+        "description": "Run the newest version, ignoring any cached one"
       },
       {
         "command": "uvx --from httpie http GET example.com",
@@ -710,6 +900,10 @@
       {
         "command": "uv tool uninstall ruff",
         "description": "Remove a tool"
+      },
+      {
+        "command": "uv tool list --outdated",
+        "description": "Show installed tools that have newer versions"
       }
     ],
     "notes": [
@@ -768,6 +962,14 @@
       {
         "flag": "--publish-url",
         "description": "Upload to a different index URL"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "Perform all checks without uploading"
+      },
+      {
+        "flag": "--trusted-publishing",
+        "description": "automatic (default), always, or never"
       }
     ],
     "examples": [
@@ -789,7 +991,57 @@
       "In GitHub Actions, prefer trusted publishing over long-lived tokens"
     ],
     "relatedCommands": [
-      "uv-build"
+      "uv-build",
+      "uv-auth"
+    ]
+  },
+  {
+    "id": "uv-auth",
+    "name": "uv auth",
+    "description": "Store and manage credentials for package indexes",
+    "category": "Publishing",
+    "technologyId": "uv",
+    "flags": [
+      {
+        "flag": "-u, --username",
+        "description": "Username for the service"
+      },
+      {
+        "flag": "--password",
+        "description": "Password; use - to read it from stdin"
+      },
+      {
+        "flag": "-t, --token",
+        "description": "Token for services that use __token__ or any username"
+      }
+    ],
+    "examples": [
+      {
+        "command": "uv auth login example.com",
+        "description": "Prompt for and save credentials for an index"
+      },
+      {
+        "command": "echo \"$TOKEN\" | uv auth login example.com --token -",
+        "description": "Save a token read from stdin"
+      },
+      {
+        "command": "uv auth token example.com",
+        "description": "Print the stored token"
+      },
+      {
+        "command": "uv auth logout example.com",
+        "description": "Remove stored credentials"
+      },
+      {
+        "command": "uv auth dir",
+        "description": "Show where credentials are stored"
+      }
+    ],
+    "notes": [
+      "Prefer reading secrets from stdin over passing them as arguments, which can end up in shell history"
+    ],
+    "relatedCommands": [
+      "uv-publish"
     ]
   },
   {
@@ -818,6 +1070,10 @@
       {
         "command": "uv cache dir",
         "description": "Print the cache directory"
+      },
+      {
+        "command": "uv cache size",
+        "description": "Show the total size of the cache (preview command)"
       }
     ],
     "notes": [
@@ -841,6 +1097,14 @@
       {
         "command": "uv self version",
         "description": "Show the installed uv version"
+      },
+      {
+        "command": "uv self update --dry-run",
+        "description": "Check what would be updated"
+      },
+      {
+        "command": "uv self update 0.13.0",
+        "description": "Update (or move) to a specific version"
       }
     ],
     "notes": [
@@ -848,6 +1112,30 @@
     ],
     "relatedCommands": [
       "uv-cache"
+    ]
+  },
+  {
+    "id": "uv-generate-shell-completion",
+    "name": "uv generate-shell-completion",
+    "description": "Print a shell completion script for uv (or uvx)",
+    "category": "Maintenance",
+    "technologyId": "uv",
+    "examples": [
+      {
+        "command": "echo 'eval \"$(uv generate-shell-completion zsh)\"' >> ~/.zshrc",
+        "description": "Enable uv completions in zsh"
+      },
+      {
+        "command": "echo 'eval \"$(uv generate-shell-completion bash)\"' >> ~/.bashrc",
+        "description": "Enable uv completions in bash"
+      },
+      {
+        "command": "echo 'eval \"$(uvx --generate-shell-completion zsh)\"' >> ~/.zshrc",
+        "description": "Enable uvx completions in zsh"
+      }
+    ],
+    "relatedCommands": [
+      "uv-self-update"
     ]
   }
 ]

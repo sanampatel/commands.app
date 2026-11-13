@@ -29,6 +29,10 @@
       {
         "flag": "--filter <selector>",
         "description": "Install only for matching workspace projects"
+      },
+      {
+        "flag": "--allow-build=<pkg>",
+        "description": "Allow a dependency to run its build scripts (saved to allowBuilds)"
       }
     ],
     "examples": [
@@ -52,12 +56,41 @@
     "notes": [
       "Alias: pnpm i",
       "In CI, --frozen-lockfile is enabled by default",
-      "Dependencies are hard-linked from a global content-addressable store, saving disk space"
+      "Dependencies are hard-linked from a global content-addressable store, saving disk space",
+      "pnpm 11+: minimumReleaseAge defaults to 1440 minutes, so versions published in the last 24 hours are not resolved",
+      "pnpm 11+: dependency build scripts are blocked and an unapproved one fails the install (strictDepBuilds); approve with pnpm approve-builds",
+      "pnpm 11+: .npmrc is only read for registry and auth; other settings belong in pnpm-workspace.yaml or the global config.yaml"
     ],
     "relatedCommands": [
       "pnpm-add",
+      "pnpm-ci",
       "pnpm-store-prune",
       "pnpm-approve-builds"
+    ]
+  },
+  {
+    "id": "pnpm-ci",
+    "name": "pnpm ci",
+    "description": "Clean install for CI: remove node_modules, then install from the lockfile (pnpm 11+).",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm ci",
+        "description": "Equivalent to pnpm clean followed by pnpm install --frozen-lockfile"
+      },
+      {
+        "command": "pnpm ci --prod",
+        "description": "Clean, production-only install"
+      }
+    ],
+    "notes": [
+      "Aliases: pnpm clean-install, pnpm ic, pnpm install-clean",
+      "Accepts the same options as pnpm install"
+    ],
+    "relatedCommands": [
+      "pnpm-install",
+      "pnpm-clean"
     ]
   },
   {
@@ -69,7 +102,7 @@
     "flags": [
       {
         "flag": "-D, --save-dev",
-        "description": "Add as a devDependency"
+        "description": "Add as a devDependency (pnpm 11+ also accepts -d)"
       },
       {
         "flag": "-O, --save-optional",
@@ -82,6 +115,10 @@
       {
         "flag": "-E, --save-exact",
         "description": "Pin the exact version instead of a range"
+      },
+      {
+        "flag": "--save-catalog",
+        "description": "Add the version to the workspace catalog and reference it as catalog:"
       },
       {
         "flag": "-g, --global",
@@ -116,10 +153,16 @@
       {
         "command": "pnpm add @acme/ui --workspace --filter web",
         "description": "Link a local workspace package into the web app"
+      },
+      {
+        "command": "pnpm add react --save-catalog --filter web",
+        "description": "Add react to the catalog and use catalog: in the web package"
       }
     ],
     "notes": [
-      "In a workspace root you must pass -w to add to the root; otherwise pnpm errors to prevent mistakes"
+      "In a workspace root you must pass -w to add to the root; otherwise pnpm errors to prevent mistakes",
+      "pnpm 11+: -p now means --save-prod (not --parseable) and -d means --save-dev",
+      "pnpm 12+: pnpm add yarn / npm / bun records the project's package manager instead of installing the npm package"
     ],
     "relatedCommands": [
       "pnpm-remove",
@@ -377,6 +420,67 @@
     ]
   },
   {
+    "id": "pnpm-peers-check",
+    "name": "pnpm peers check",
+    "description": "Report unmet or missing peer dependencies from the lockfile (pnpm 11+).",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-r, --recursive",
+        "description": "Check every workspace project"
+      },
+      {
+        "flag": "--json",
+        "description": "Output as JSON"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm peers check",
+        "description": "List peer dependency issues (exit code 1 if any)"
+      },
+      {
+        "command": "pnpm peers check -r",
+        "description": "Check the whole workspace"
+      }
+    ],
+    "notes": [
+      "pnpm 11+ no longer prints the full peer issue tree during install; run this instead"
+    ],
+    "relatedCommands": [
+      "pnpm-install",
+      "pnpm-why"
+    ]
+  },
+  {
+    "id": "pnpm-view",
+    "name": "pnpm view",
+    "description": "Show package metadata from the registry (pnpm 11+).",
+    "category": "Dependencies",
+    "technologyId": "pnpm",
+    "examples": [
+      {
+        "command": "pnpm view express",
+        "description": "Show all metadata"
+      },
+      {
+        "command": "pnpm view express version",
+        "description": "Show a single field"
+      },
+      {
+        "command": "pnpm view express dist-tags",
+        "description": "Show dist-tags"
+      }
+    ],
+    "notes": [
+      "Aliases: pnpm info, pnpm show, pnpm v"
+    ],
+    "relatedCommands": [
+      "pnpm-outdated"
+    ]
+  },
+  {
     "id": "pnpm-run",
     "name": "pnpm run",
     "description": "Run a script defined in package.json.",
@@ -424,7 +528,8 @@
     ],
     "notes": [
       "Any unknown command is treated as a script name, so pnpm test, pnpm lint, etc. work directly",
-      "pnpm does not run pre/post scripts for user-defined scripts unless enable-pre-post-scripts=true"
+      "pnpm does not run pre/post scripts for user-defined scripts unless enablePrePostScripts: true is set in pnpm-workspace.yaml",
+      "pnpm 11+: scripts whose names start with . are hidden and can only be called from other scripts"
     ],
     "relatedCommands": [
       "pnpm-exec",
@@ -472,7 +577,7 @@
   },
   {
     "id": "pnpm-dlx",
-    "name": "pnpm dlx",
+    "name": "pnpm dlx / pnx",
     "description": "Fetch a package temporarily and run its binary without adding it to the project.",
     "category": "Scripts & Execution",
     "technologyId": "pnpm",
@@ -488,8 +593,8 @@
     ],
     "examples": [
       {
-        "command": "pnpm dlx create-vite@latest my-app",
-        "description": "Scaffold a project without global installs"
+        "command": "pnx create-vite@latest my-app",
+        "description": "Scaffold a project without global installs (pnx = pnpm dlx)"
       },
       {
         "command": "pnpm dlx shadcn@latest add button",
@@ -498,10 +603,15 @@
       {
         "command": "pnpm --package=typescript dlx tsc --version",
         "description": "Run a binary from a differently named package"
+      },
+      {
+        "command": "pnx yarn@4 install",
+        "description": "pnpm 12+: run a specific package manager release"
       }
     ],
     "notes": [
-      "pnpm's equivalent of npx for remote packages"
+      "pnpm's equivalent of npx for remote packages; aliases: pnx (pnpm 11+), pnpx",
+      "pnpm 11+: honours minimumReleaseAge and trust policy settings from the project"
     ],
     "relatedCommands": [
       "pnpm-create",
@@ -542,11 +652,26 @@
     "description": "Create a package.json file in the current directory.",
     "category": "Scripts & Execution",
     "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--bare",
+        "description": "Create a package.json with only the required fields"
+      },
+      {
+        "flag": "--init-type <commonjs|module>",
+        "description": "Module system (default module since pnpm 11)"
+      }
+    ],
     "examples": [
       {
         "command": "pnpm init",
         "description": "Create a default package.json"
       }
+    ],
+    "notes": [
+      "pnpm 11+: new projects get \"type\": \"module\"",
+      "pnpm init pins the latest pnpm in devEngines.packageManager",
+      "Fails if package.json already exists"
     ],
     "relatedCommands": [
       "pnpm-create"
@@ -620,7 +745,7 @@
     "flags": [
       {
         "flag": "--workspace-concurrency <n>",
-        "description": "Max projects processed concurrently (default 4)"
+        "description": "Max projects processed concurrently (default: the smaller of 4 and the CPU core count)"
       },
       {
         "flag": "--no-bail",
@@ -656,26 +781,25 @@
   {
     "id": "pnpm-link",
     "name": "pnpm link",
-    "description": "Link a local package into the current project.",
+    "description": "Link a local package directory into the current project.",
     "category": "Workspaces",
     "technologyId": "pnpm",
-    "flags": [
-      {
-        "flag": "-g, --global",
-        "description": "Link the current package into the global node_modules"
-      }
-    ],
     "examples": [
       {
         "command": "pnpm link ../my-lib",
-        "description": "Symlink a local package into node_modules"
+        "description": "Symlink a local package into node_modules (adds a link: override)"
       },
       {
         "command": "pnpm unlink my-lib",
-        "description": "Remove the link and restore the registry version"
+        "description": "Remove the link override and reinstall the declared version"
+      },
+      {
+        "command": "pnpm add -g .",
+        "description": "Make a local package's bins available globally (replaces pnpm link --global)"
       }
     ],
     "notes": [
+      "pnpm 11+: only paths are accepted; pnpm link <name>, pnpm link with no arguments and pnpm link --global were removed",
       "Inside a workspace, prefer the workspace: protocol (\"my-lib\": \"workspace:*\") instead of link"
     ],
     "relatedCommands": [
@@ -709,7 +833,7 @@
       }
     ],
     "notes": [
-      "Patches are stored in patches/ and applied automatically on install"
+      "Patch files are saved to patches/ and registered under patchedDependencies, then applied automatically on install"
     ],
     "relatedCommands": [
       "pnpm-install"
@@ -728,11 +852,23 @@
       },
       {
         "flag": "--fix",
-        "description": "Add overrides to force patched versions"
+        "description": "Add overrides to pnpm-workspace.yaml to force patched versions"
+      },
+      {
+        "flag": "--fix=update",
+        "description": "Fix by updating the vulnerable packages in the lockfile instead of adding overrides"
+      },
+      {
+        "flag": "-i, --interactive",
+        "description": "Pick which advisories to fix"
       },
       {
         "flag": "-P, --prod",
         "description": "Only audit production dependencies"
+      },
+      {
+        "flag": "--ignore <GHSA-id>",
+        "description": "Ignore an advisory (pnpm 11+ uses GHSA IDs, not CVEs)"
       },
       {
         "flag": "--json",
@@ -749,12 +885,21 @@
         "description": "Only fail on high/critical issues"
       },
       {
+        "command": "pnpm audit --fix=update",
+        "description": "Update vulnerable packages in the lockfile"
+      },
+      {
         "command": "pnpm audit --fix",
         "description": "Write overrides for vulnerable transitive deps"
+      },
+      {
+        "command": "pnpm audit signatures",
+        "description": "Verify registry signatures of installed packages"
       }
     ],
     "notes": [
-      "--fix adds pnpm.overrides; run pnpm install afterward and test"
+      "--fix writes overrides to pnpm-workspace.yaml; run pnpm install afterward and test",
+      "--fix also adds the patched versions to minimumReleaseAgeExclude so they can install immediately"
     ],
     "relatedCommands": [
       "pnpm-outdated"
@@ -766,15 +911,33 @@
     "description": "Choose which dependencies are allowed to run install (postinstall) scripts.",
     "category": "Security & Maintenance",
     "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--all",
+        "description": "Approve every pending build without prompting"
+      },
+      {
+        "flag": "-g, --global",
+        "description": "Approve builds for globally installed packages"
+      }
+    ],
     "examples": [
       {
         "command": "pnpm approve-builds",
         "description": "Interactively approve packages like esbuild or sharp"
+      },
+      {
+        "command": "pnpm approve-builds esbuild sharp !core-js",
+        "description": "Approve two packages and deny one without prompting"
+      },
+      {
+        "command": "pnpm approve-builds --all",
+        "description": "Approve everything that is pending"
       }
     ],
     "notes": [
-      "Since pnpm 10, dependency lifecycle scripts are blocked by default",
-      "Approved packages are recorded in onlyBuiltDependencies (pnpm-workspace.yaml / package.json)"
+      "Dependency lifecycle scripts are blocked by default (since pnpm 10)",
+      "pnpm 11+: decisions are written to the allowBuilds map in pnpm-workspace.yaml (true = allow, false = deny); onlyBuiltDependencies and neverBuiltDependencies were removed"
     ],
     "relatedCommands": [
       "pnpm-install",
@@ -795,10 +958,55 @@
       {
         "command": "pnpm rebuild sharp",
         "description": "Rebuild one native package"
+      },
+      {
+        "command": "pnpm rebuild --pending",
+        "description": "Build only packages skipped during install (e.g. after --ignore-scripts)"
       }
+    ],
+    "notes": [
+      "Alias: pnpm rb"
     ],
     "relatedCommands": [
       "pnpm-approve-builds"
+    ]
+  },
+  {
+    "id": "pnpm-sbom",
+    "name": "pnpm sbom",
+    "description": "Generate a Software Bill of Materials in CycloneDX or SPDX format (pnpm 11+).",
+    "category": "Security & Maintenance",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "--sbom-format <cyclonedx|spdx>",
+        "description": "Output format"
+      },
+      {
+        "flag": "--prod",
+        "description": "Only include production dependencies"
+      },
+      {
+        "flag": "--out <path>",
+        "description": "Write to a file instead of stdout"
+      },
+      {
+        "flag": "--lockfile-only",
+        "description": "Build from the lockfile without node_modules"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm sbom --sbom-format cyclonedx --out sbom.cdx.json",
+        "description": "CycloneDX SBOM"
+      },
+      {
+        "command": "pnpm sbom --sbom-format spdx --prod",
+        "description": "SPDX SBOM of production dependencies"
+      }
+    ],
+    "relatedCommands": [
+      "pnpm-audit"
     ]
   },
   {
@@ -845,9 +1053,43 @@
     ]
   },
   {
+    "id": "pnpm-clean",
+    "name": "pnpm clean",
+    "description": "Safely remove node_modules from every workspace project (pnpm 11+).",
+    "category": "Store & Cache",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-l, --lockfile",
+        "description": "Also remove pnpm-lock.yaml"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm clean",
+        "description": "Delete node_modules in the root and all workspace packages"
+      },
+      {
+        "command": "pnpm clean --lockfile",
+        "description": "Also delete the lockfile for a fresh resolve"
+      },
+      {
+        "command": "pnpm purge",
+        "description": "Always run the built-in command, even if a clean script exists"
+      }
+    ],
+    "notes": [
+      "A clean script in package.json takes precedence over the built-in pnpm clean; pnpm purge always runs the built-in"
+    ],
+    "relatedCommands": [
+      "pnpm-ci",
+      "pnpm-store-prune"
+    ]
+  },
+  {
     "id": "pnpm-env-use",
     "name": "pnpm env use",
-    "description": "Install and activate a Node.js version via pnpm.",
+    "description": "Install and activate a Node.js version via pnpm (deprecated; use pnpm runtime).",
     "category": "Environment",
     "technologyId": "pnpm",
     "flags": [
@@ -858,19 +1100,67 @@
     ],
     "examples": [
       {
+        "command": "pnpm runtime set node lts -g",
+        "description": "Current replacement: install and use the latest LTS"
+      },
+      {
         "command": "pnpm env use --global lts",
-        "description": "Install and use the latest LTS"
+        "description": "Deprecated form"
       },
       {
         "command": "pnpm env use --global 22",
-        "description": "Use the latest Node 22.x"
-      },
-      {
-        "command": "pnpm env list --remote",
-        "description": "List available Node.js versions"
+        "description": "Deprecated form: use the latest Node 22.x"
       }
     ],
+    "notes": [
+      "DEPRECATED in pnpm 11: pnpm env is replaced by pnpm runtime (pnpm env use --global lts becomes pnpm runtime set node lts -g)"
+    ],
     "relatedCommands": [
+      "pnpm-runtime",
+      "pnpm-self-update"
+    ]
+  },
+  {
+    "id": "pnpm-runtime",
+    "name": "pnpm runtime set",
+    "description": "Install a Node.js, Deno or Bun runtime globally or pin it for the project (pnpm 11+).",
+    "category": "Environment",
+    "technologyId": "pnpm",
+    "flags": [
+      {
+        "flag": "-g, --global",
+        "description": "Install and activate the runtime globally"
+      },
+      {
+        "flag": "-P, --save-prod",
+        "description": "Pin in engines.runtime instead of devEngines.runtime"
+      }
+    ],
+    "examples": [
+      {
+        "command": "pnpm runtime set node lts -g",
+        "description": "Install and use the latest Node.js LTS"
+      },
+      {
+        "command": "pnpm runtime set node 22 -g",
+        "description": "Use the latest Node.js 22.x"
+      },
+      {
+        "command": "pnpm runtime set node 24",
+        "description": "Pin Node.js 24 for this project in devEngines.runtime"
+      },
+      {
+        "command": "pnpm runtime set bun latest -g",
+        "description": "Install Bun"
+      }
+    ],
+    "notes": [
+      "Alias: pnpm rt",
+      "Replaces the deprecated pnpm env use",
+      "Installed Node.js runtimes do not include npm, npx or corepack"
+    ],
+    "relatedCommands": [
+      "pnpm-env-use",
       "pnpm-self-update"
     ]
   },
@@ -883,16 +1173,21 @@
     "examples": [
       {
         "command": "pnpm self-update",
-        "description": "Update to the latest pnpm"
+        "description": "Update to the latest pnpm (never downgrades)"
       },
       {
-        "command": "pnpm self-update 10",
-        "description": "Update to the latest 10.x"
+        "command": "pnpm self-update 11",
+        "description": "Install the latest 11.x"
       },
       {
         "command": "corepack use pnpm@latest",
         "description": "Alternative: pin pnpm via Corepack's packageManager field"
       }
+    ],
+    "notes": [
+      "In a project that pins pnpm (packageManager or devEngines.packageManager), the pin is updated too",
+      "If Homebrew installed pnpm, use brew upgrade pnpm instead",
+      "Corepack is not bundled with Node.js 25+; install it with npm i -g corepack if you use it"
     ],
     "relatedCommands": [
       "pnpm-env-use"
@@ -907,26 +1202,34 @@
     "flags": [
       {
         "flag": "--location <project|global>",
-        "description": "Where to write the setting"
+        "description": "Where to write the setting (default global)"
       },
       {
         "flag": "--json",
-        "description": "Output as JSON"
+        "description": "Parse / print values as JSON"
       }
     ],
     "examples": [
       {
         "command": "pnpm config list",
-        "description": "Show effective config"
+        "description": "Show effective config (as JSON)"
       },
       {
-        "command": "pnpm config set store-dir ~/.pnpm-store",
-        "description": "Change the store location"
+        "command": "pnpm config set storeDir ~/.pnpm-store",
+        "description": "Change the store location in the global config.yaml"
+      },
+      {
+        "command": "pnpm config set --location=project minimumReleaseAge 4320",
+        "description": "Write a setting to pnpm-workspace.yaml"
       },
       {
         "command": "pnpm config get registry",
         "description": "Show the configured registry"
       }
+    ],
+    "notes": [
+      "pnpm 11+: pnpm-specific settings use camelCase keys and live in pnpm-workspace.yaml or ~/.config/pnpm/config.yaml; .npmrc holds only registry/auth settings",
+      "Environment variables use the pnpm_config_* prefix (npm_config_* is no longer read)"
     ],
     "relatedCommands": [
       "pnpm-store-path"
@@ -958,6 +1261,10 @@
       {
         "flag": "-r, --recursive",
         "description": "Publish all workspace packages whose version is not yet published"
+      },
+      {
+        "flag": "--provenance",
+        "description": "Generate provenance statements (supported CI)"
       }
     ],
     "examples": [
@@ -975,7 +1282,8 @@
       }
     ],
     "notes": [
-      "workspace: ranges are replaced with real versions in the published package.json",
+      "workspace: and catalog: ranges are replaced with real versions in the published package.json",
+      "pnpm 11+: publishes natively (no npm CLI needed); pass OTPs via --otp or PNPM_CONFIG_OTP",
       "Published versions cannot be reused; unpublishing is restricted by the npm registry"
     ],
     "relatedCommands": [
@@ -992,12 +1300,24 @@
       {
         "flag": "--pack-destination <dir>",
         "description": "Directory to write the tarball to"
+      },
+      {
+        "flag": "--out <path>",
+        "description": "Exact output path for the tarball"
+      },
+      {
+        "flag": "--dry-run",
+        "description": "List files without writing the tarball"
       }
     ],
     "examples": [
       {
         "command": "pnpm pack",
         "description": "Produce my-pkg-1.0.0.tgz in the current directory"
+      },
+      {
+        "command": "pnpm pack --dry-run",
+        "description": "Preview the files that would be packed"
       }
     ],
     "relatedCommands": [

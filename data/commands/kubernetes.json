@@ -8,7 +8,7 @@
     "flags": [
       {
         "flag": "-o",
-        "description": "Output format (json, yaml, wide, name)"
+        "description": "Output format (json, yaml, kyaml, wide, name, jsonpath=..., custom-columns=...)"
       },
       {
         "flag": "-n",
@@ -67,6 +67,10 @@
       {
         "command": "kubectl get pods --field-selector=status.phase!=Running -A",
         "description": "Find pods that are not running across all namespaces"
+      },
+      {
+        "command": "kubectl get deploy myapp -o kyaml",
+        "description": "KYAML output: a stricter, less error-prone YAML style (kubectl 1.34+)"
       }
     ],
     "notes": [
@@ -98,7 +102,8 @@
       }
     ],
     "notes": [
-      "Shows events, conditions, and detailed state"
+      "Shows events, conditions, and detailed state",
+      "Since kubectl 1.36, related events are shown only when describing a single object; pass --show-events to include them for multiple objects."
     ],
     "relatedCommands": [
       "kubectl-get",
@@ -586,7 +591,7 @@
       }
     ],
     "notes": [
-      "Use -- to separate kubectl args from command",
+      "Use -- to separate kubectl args from the command; since kubectl 1.35 the -- is required (the old kubectl exec POD COMMAND form was removed).",
       "Distroless images have no shell; use 'kubectl debug' with an ephemeral container instead"
     ],
     "relatedCommands": [
@@ -671,7 +676,15 @@
       },
       {
         "flag": "--profile",
-        "description": "Security profile: legacy, general, baseline, restricted, netadmin, sysadmin"
+        "description": "Security profile: general (default), baseline, restricted, netadmin, sysadmin; legacy is deprecated"
+      },
+      {
+        "flag": "--custom",
+        "description": "JSON/YAML file with a partial container spec to customize the profile (e.g. env, securityContext)"
+      },
+      {
+        "flag": "--set-image",
+        "description": "With --copy-to, change container images in the copy, e.g. *=busybox"
       }
     ],
     "examples": [
@@ -694,7 +707,8 @@
     ],
     "notes": [
       "Ephemeral containers cannot be removed from a pod once added; they exit when you quit the shell",
-      "Delete pods created with --copy-to or for node debugging when done"
+      "Delete pods created with --copy-to or for node debugging when done",
+      "--profile=legacy is deprecated and planned for removal in kubectl 1.39; use general, or sysadmin when you need privileged access."
     ],
     "relatedCommands": [
       "kubectl-exec",
@@ -986,6 +1000,10 @@
       {
         "command": "kubectl wait --for=jsonpath='{.status.phase}'=Running pod/mypod",
         "description": "Wait for a field to have a value"
+      },
+      {
+        "command": "kubectl wait --for=create --for=condition=Ready pod/mypod --timeout=2m",
+        "description": "Wait for a pod to exist and then become ready (multiple --for conditions are ANDed, kubectl 1.36+)"
       }
     ],
     "notes": [
@@ -1035,13 +1053,15 @@
     ],
     "notes": [
       "Config file: ~/.kube/config (override with KUBECONFIG, which can list multiple files separated by :)",
-      "kubectl config view redacts credentials; add --raw to see them (avoid sharing the output)"
+      "kubectl config view redacts credentials; add --raw to see them (avoid sharing the output)",
+      "User preferences such as aliases and default flags now belong in a separate kuberc file, not kubeconfig (the kubeconfig preferences field is deprecated)."
     ],
     "relatedCommands": [
       "kubectl-config-get-contexts",
       "kubectl-config-use-context",
       "kubectl-config-set-context",
-      "kubectl-cluster-info"
+      "kubectl-cluster-info",
+      "kubernetes-kuberc"
     ]
   },
   {
@@ -1136,6 +1156,92 @@
     ]
   },
   {
+    "id": "kubernetes-kuberc",
+    "name": "kubectl kuberc",
+    "description": "Configure kubectl aliases and default flags in a kuberc preferences file, separate from kubeconfig.",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--section",
+        "description": "Section to modify: defaults, aliases, or credentialplugin"
+      },
+      {
+        "flag": "--command",
+        "description": "kubectl command the entry applies to, e.g. get or \"set env\""
+      },
+      {
+        "flag": "--option",
+        "description": "Flag default in the form flag=value (repeatable)"
+      },
+      {
+        "flag": "--name",
+        "description": "Alias name (aliases section)"
+      },
+      {
+        "flag": "--overwrite",
+        "description": "Replace an existing entry"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl kuberc set --section defaults --command delete --option interactive=true",
+        "description": "Always ask for confirmation before deleting"
+      },
+      {
+        "command": "kubectl kuberc set --section aliases --name getn --command get --prependarg nodes --option output=wide",
+        "description": "Create an alias so kubectl getn runs kubectl get nodes -o wide"
+      },
+      {
+        "command": "kubectl kuberc view",
+        "description": "Print the current kuberc file"
+      },
+      {
+        "command": "apiVersion: kubectl.config.k8s.io/v1beta1\nkind: Preference\ndefaults:\n- command: apply\n  options:\n  - name: server-side\n    default: \"true\"\naliases:\n- name: getn\n  command: get\n  prependArgs:\n  - nodes\n  options:\n  - name: output\n    default: wide",
+        "description": "Equivalent ~/.kube/kuberc written by hand"
+      },
+      {
+        "command": "KUBERC=off kubectl get pods",
+        "description": "Run one command with kuberc disabled (for troubleshooting)"
+      }
+    ],
+    "notes": [
+      "kuberc is beta since Kubernetes 1.34 and the kuberc set/view commands are beta since 1.36. The default file is ~/.kube/kuberc; use --kuberc or the KUBERC environment variable for another path.",
+      "kuberc can also restrict which exec credential plugins kubectl may run (--section credentialplugin --policy Allowlist)."
+    ],
+    "relatedCommands": [
+      "kubectl-config"
+    ]
+  },
+  {
+    "id": "kubernetes-plugin-list",
+    "name": "kubectl plugin list",
+    "description": "List kubectl plugins (executables named kubectl-* on your PATH).",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "examples": [
+      {
+        "command": "kubectl plugin list",
+        "description": "Show all plugins kubectl can find and warn about shadowed or non-executable ones"
+      },
+      {
+        "command": "kubectl plugin list --name-only",
+        "description": "Print only plugin names"
+      },
+      {
+        "command": "kubectl krew install ctx ns",
+        "description": "Install the kubectx/kubens plugins via the Krew plugin manager (requires Krew)"
+      }
+    ],
+    "notes": [
+      "Any executable named kubectl-foo on your PATH becomes kubectl foo.",
+      "Krew is a separate, community-maintained plugin manager (krew.sigs.k8s.io), not part of kubectl."
+    ],
+    "relatedCommands": [
+      "kubernetes-kuberc"
+    ]
+  },
+  {
     "id": "kubectl-create-secret",
     "name": "kubectl create secret",
     "description": "Create a Secret from literals, files, or TLS certificates",
@@ -1205,6 +1311,49 @@
     "relatedCommands": [
       "kubectl-create-secret",
       "kubectl-rollout-restart"
+    ]
+  },
+  {
+    "id": "kubernetes-create-token",
+    "name": "kubectl create token",
+    "description": "Request a short-lived, bound token for a ServiceAccount (TokenRequest API).",
+    "category": "Configuration",
+    "technologyId": "kubernetes",
+    "flags": [
+      {
+        "flag": "--duration",
+        "description": "Requested lifetime, e.g. 10m or 1h (the server may adjust it)"
+      },
+      {
+        "flag": "--audience",
+        "description": "Intended audience of the token (repeatable)"
+      },
+      {
+        "flag": "--bound-object-kind / --bound-object-name",
+        "description": "Bind the token to an object (Pod, Secret, Node) so it is invalidated when the object is deleted"
+      }
+    ],
+    "examples": [
+      {
+        "command": "kubectl create token my-sa -n myns",
+        "description": "Get a token for a ServiceAccount"
+      },
+      {
+        "command": "kubectl create token my-sa -n myns --duration=1h",
+        "description": "Request a one-hour token"
+      },
+      {
+        "command": "kubectl create token my-sa --audience=https://example.com",
+        "description": "Token for an external audience"
+      }
+    ],
+    "notes": [
+      "Since Kubernetes 1.24, ServiceAccounts no longer get long-lived token Secrets automatically; use this command or projected volume tokens instead.",
+      "Treat the printed token as a credential; avoid saving it in shell history or logs."
+    ],
+    "relatedCommands": [
+      "kubectl-create-secret",
+      "kubectl-auth-can-i"
     ]
   },
   {
@@ -1331,23 +1480,35 @@
       },
       {
         "flag": "--max",
-        "description": "Maximum replicas"
+        "description": "Maximum replicas (required)"
       },
       {
-        "flag": "--cpu-percent",
-        "description": "Target CPU utilization"
+        "flag": "--cpu",
+        "description": "CPU target: a percentage of requests (e.g. 70%) or an average quantity (e.g. 500m) (kubectl 1.34+)"
+      },
+      {
+        "flag": "--memory",
+        "description": "Memory target: a percentage (e.g. 70%) or a quantity (e.g. 200Mi) (kubectl 1.34+)"
       }
     ],
     "examples": [
       {
-        "command": "kubectl autoscale deployment myapp --min=2 --max=10 --cpu-percent=80",
-        "description": "Create HPA with CPU target"
+        "command": "kubectl autoscale deployment myapp --min=2 --max=10 --cpu=80%",
+        "description": "Create an HPA targeting 80% average CPU utilization"
+      },
+      {
+        "command": "kubectl autoscale deployment myapp --min=2 --max=8 --cpu=60% --memory=70%",
+        "description": "Scale on both CPU and memory utilization"
+      },
+      {
+        "command": "kubectl get hpa",
+        "description": "Check current and target metrics"
       }
     ],
     "notes": [
-      "Creates HorizontalPodAutoscaler",
-      "Requires metrics-server and CPU requests set on the containers",
-      "Recent kubectl versions add --cpu/--memory targets and deprecate --cpu-percent; check 'kubectl autoscale --help' for your version"
+      "Creates an autoscaling/v2 HorizontalPodAutoscaler",
+      "Requires metrics-server and resource requests set on the containers",
+      "--cpu-percent is deprecated since kubectl 1.34; use --cpu=80% instead"
     ],
     "relatedCommands": [
       "kubectl-scale",
@@ -1376,6 +1537,14 @@
       {
         "command": "kubectl top pods -l app=nginx",
         "description": "Show usage for labeled pods"
+      },
+      {
+        "command": "kubectl top pods -A --sort-by=memory",
+        "description": "Find the most memory-hungry pods in the cluster"
+      },
+      {
+        "command": "kubectl top pods --show-swap",
+        "description": "Include swap usage (kubectl 1.34+)"
       }
     ],
     "notes": [
@@ -1575,7 +1744,7 @@
       },
       {
         "command": "kubectl version",
-        "description": "Show client and server versions"
+        "description": "Show client and server versions (warns if the skew is outside the supported range)"
       },
       {
         "command": "kubectl get --raw='/readyz?verbose'",
@@ -1612,6 +1781,10 @@
       {
         "command": "kubectl api-resources -o wide",
         "description": "Show with verbs and versions"
+      },
+      {
+        "command": "kubectl api-resources --api-group=apps -o json",
+        "description": "Machine-readable list for one API group (-o json/yaml since kubectl 1.34)"
       }
     ],
     "notes": [
@@ -1644,6 +1817,10 @@
       {
         "command": "kubectl explain pods --recursive",
         "description": "Show all fields"
+      },
+      {
+        "command": "kubectl explain deployment.spec --recursive --max-depth=2",
+        "description": "Limit recursive output depth (kubectl 1.37+)"
       }
     ],
     "notes": [

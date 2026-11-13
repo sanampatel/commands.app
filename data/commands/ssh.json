@@ -148,6 +148,10 @@
         "description": "List forwarded connections"
       },
       {
+        "command": "~I",
+        "description": "Show information about the current connection (OpenSSH 10.3+)"
+      },
+      {
         "command": "~^Z",
         "description": "Suspend ssh and return to the local shell (resume with fg)"
       }
@@ -170,11 +174,11 @@
     "flags": [
       {
         "flag": "-t",
-        "description": "Key type: ed25519 (recommended), ecdsa, rsa"
+        "description": "Key type: ed25519 (default since OpenSSH 9.5), ecdsa, rsa, ed25519-sk/ecdsa-sk (FIDO hardware keys), mldsa44-ed25519 (post-quantum hybrid, OpenSSH 10.6+)"
       },
       {
         "flag": "-b",
-        "description": "Key size in bits (RSA: use 3072 or 4096)"
+        "description": "Key size in bits (RSA only in practice: default 3072, 4096 also common; ignored for Ed25519)"
       },
       {
         "flag": "-C",
@@ -199,19 +203,25 @@
         "description": "Generate a key with a custom filename"
       },
       {
+        "command": "ssh-keygen -t ed25519-sk -C \"yubikey\"",
+        "description": "Generate a key backed by a FIDO2 security key (touch required to use it)"
+      },
+      {
         "command": "ssh-keygen -t rsa -b 4096 -C \"user@example.com\"",
         "description": "Generate an RSA key for legacy systems that don't support Ed25519"
       }
     ],
     "notes": [
       "Protect keys with a passphrase and use ssh-agent so you only type it once.",
-      "Never share the private key (the file without .pub)."
+      "Never share the private key (the file without .pub).",
+      "DSA keys are no longer supported (removed in OpenSSH 10.0); replace any old id_dsa keys."
     ],
     "relatedCommands": [
       "ssh-copy-id",
       "ssh-add",
       "ssh-keygen-fingerprint",
-      "ssh-keygen-passphrase"
+      "ssh-keygen-passphrase",
+      "ssh-keygen-sign"
     ]
   },
   {
@@ -265,6 +275,128 @@
     ]
   },
   {
+    "id": "ssh-keygen-sign",
+    "name": "ssh-keygen -Y sign",
+    "description": "Sign and verify files (or Git commits) with an SSH key instead of GPG.",
+    "category": "Keys",
+    "technologyId": "ssh",
+    "flags": [
+      {
+        "flag": "-Y sign",
+        "description": "Sign the given files (writes file.sig) or stdin"
+      },
+      {
+        "flag": "-Y verify",
+        "description": "Verify a signature against an allowed signers file"
+      },
+      {
+        "flag": "-n",
+        "description": "Signature namespace, e.g. file, email or git (required)"
+      },
+      {
+        "flag": "-f",
+        "description": "Key file when signing; allowed signers file when verifying"
+      },
+      {
+        "flag": "-I",
+        "description": "Signer identity to check when verifying"
+      },
+      {
+        "flag": "-s",
+        "description": "Signature file to verify"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ssh-keygen -Y sign -f ~/.ssh/id_ed25519 -n file release.tar.gz",
+        "description": "Sign a file, producing release.tar.gz.sig"
+      },
+      {
+        "command": "ssh-keygen -Y verify -f allowed_signers -I user@example.com -n file -s release.tar.gz.sig < release.tar.gz",
+        "description": "Verify the signature (exit status 0 on success)"
+      },
+      {
+        "command": "echo 'user@example.com ssh-ed25519 AAAA...' > allowed_signers",
+        "description": "Allowed signers file format: identity followed by the public key"
+      },
+      {
+        "command": "git config --global gpg.format ssh && git config --global user.signingkey ~/.ssh/id_ed25519.pub",
+        "description": "Use your SSH key to sign Git commits and tags"
+      }
+    ],
+    "notes": [
+      "The namespace used for signing must match the one used for verifying; Git uses the git namespace automatically."
+    ],
+    "relatedCommands": [
+      "ssh-keygen",
+      "ssh-keygen-fingerprint"
+    ]
+  },
+  {
+    "id": "ssh-certificates",
+    "name": "ssh-keygen -s",
+    "description": "Sign user or host keys with an SSH certificate authority (CA) for short-lived, centrally trusted access.",
+    "category": "Keys",
+    "technologyId": "ssh",
+    "flags": [
+      {
+        "flag": "-s",
+        "description": "CA private key used to sign"
+      },
+      {
+        "flag": "-I",
+        "description": "Key identity, recorded in server logs"
+      },
+      {
+        "flag": "-n",
+        "description": "Principals: user names (or host names with -h) the certificate is valid for"
+      },
+      {
+        "flag": "-V",
+        "description": "Validity interval, e.g. +52w or +1h"
+      },
+      {
+        "flag": "-h",
+        "description": "Create a host certificate instead of a user certificate"
+      },
+      {
+        "flag": "-L",
+        "description": "Print the contents of a certificate"
+      }
+    ],
+    "examples": [
+      {
+        "command": "ssh-keygen -t ed25519 -f user_ca -C \"user CA\"",
+        "description": "Create a CA key pair (keep user_ca offline and protected)"
+      },
+      {
+        "command": "ssh-keygen -s user_ca -I alice -n alice,deploy -V +8h ~/.ssh/id_ed25519.pub",
+        "description": "Issue an 8-hour certificate, written to ~/.ssh/id_ed25519-cert.pub"
+      },
+      {
+        "command": "ssh-keygen -L -f ~/.ssh/id_ed25519-cert.pub",
+        "description": "Inspect principals and validity of a certificate"
+      },
+      {
+        "command": "TrustedUserCAKeys /etc/ssh/user_ca.pub",
+        "description": "sshd_config line that makes the server trust certificates signed by the CA"
+      },
+      {
+        "command": "ssh-keygen -s host_ca -I web01 -h -n web01.example.com /etc/ssh/ssh_host_ed25519_key.pub",
+        "description": "Sign a host key; clients trust it with a @cert-authority line in known_hosts"
+      }
+    ],
+    "notes": [
+      "ssh automatically uses id_ed25519-cert.pub when it sits next to id_ed25519.",
+      "WARNING: anyone holding the CA private key can log in as any principal it trusts; store it offline or in a hardware token."
+    ],
+    "relatedCommands": [
+      "ssh-keygen",
+      "ssh-sshd-config",
+      "ssh-known-hosts"
+    ]
+  },
+  {
     "id": "ssh-copy-id",
     "name": "ssh-copy-id",
     "description": "Install your public key in a remote host's authorized_keys for passwordless login.",
@@ -290,7 +422,8 @@
     ],
     "relatedCommands": [
       "ssh-keygen",
-      "ssh-connect"
+      "ssh-connect",
+      "ssh-authorized-keys"
     ]
   },
   {
@@ -314,7 +447,8 @@
       }
     ],
     "notes": [
-      "macOS and most Linux desktops start an agent automatically; you usually only need ssh-add."
+      "macOS and most Linux desktops start an agent automatically; you usually only need ssh-add.",
+      "Since OpenSSH 10.1 the agent socket lives under ~/.ssh/agent/ instead of /tmp; ssh-agent -T restores the old /tmp location."
     ],
     "relatedCommands": [
       "ssh-add"
@@ -348,8 +482,12 @@
         "description": "Lifetime for the key"
       },
       {
+        "flag": "-K",
+        "description": "Load resident keys from a FIDO security key"
+      },
+      {
         "flag": "--apple-use-keychain",
-        "description": "macOS only: save the passphrase in Keychain (replaces deprecated -K)"
+        "description": "macOS only: save the passphrase in Keychain (replaces Apple's deprecated -K; upstream -K loads FIDO resident keys)"
       }
     ],
     "examples": [
@@ -546,12 +684,16 @@
     "technologyId": "ssh",
     "examples": [
       {
-        "command": "Host *\n    ControlMaster auto\n    ControlPath ~/.ssh/cm-%r@%h:%p\n    ControlPersist 10m",
-        "description": "Enable multiplexing in ~/.ssh/config, keeping the master open 10 minutes after the last session"
+        "command": "Host *\n    ControlMaster auto\n    ControlPath ~/.ssh/cm-%C\n    ControlPersist 10m",
+        "description": "Enable multiplexing in ~/.ssh/config, keeping the master open 10 minutes after the last session (%C is a short hash of user, host and port)"
       },
       {
         "command": "ssh -O check myserver",
         "description": "Check whether a master connection is running"
+      },
+      {
+        "command": "ssh -O conninfo myserver",
+        "description": "Show details of the master connection (OpenSSH 10.3+; -O channels lists open channels)"
       },
       {
         "command": "ssh -O exit myserver",
@@ -564,6 +706,82 @@
     ],
     "relatedCommands": [
       "ssh-config-host"
+    ]
+  },
+  {
+    "id": "ssh-authorized-keys",
+    "name": "~/.ssh/authorized_keys",
+    "description": "Control which public keys may log in to an account, optionally restricting what each key can do.",
+    "category": "Config",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "ssh-ed25519 AAAA... alice@laptop",
+        "description": "Basic entry: one public key per line"
+      },
+      {
+        "command": "from=\"203.0.113.0/24\" ssh-ed25519 AAAA... ci@example.com",
+        "description": "Only accept this key from a given network"
+      },
+      {
+        "command": "restrict,command=\"/usr/local/bin/backup.sh\" ssh-ed25519 AAAA... backup@example.com",
+        "description": "Lock a key down to one forced command with no forwarding or PTY"
+      },
+      {
+        "command": "restrict,port-forwarding,permitopen=\"localhost:5432\" ssh-ed25519 AAAA... tunnel@example.com",
+        "description": "Allow only a tunnel to one port"
+      },
+      {
+        "command": "expiry-time=\"20271231\" ssh-ed25519 AAAA... contractor@example.com",
+        "description": "Key stops working after a date"
+      }
+    ],
+    "notes": [
+      "restrict disables all forwarding, PTY allocation and ~/.ssh/rc; re-enable individual features after it.",
+      "The file must not be writable by others (chmod 600, ~/.ssh 700) or sshd ignores it with StrictModes."
+    ],
+    "relatedCommands": [
+      "ssh-copy-id",
+      "ssh-sshd-config"
+    ]
+  },
+  {
+    "id": "ssh-sshd-config",
+    "name": "/etc/ssh/sshd_config",
+    "description": "Harden the SSH server: disable passwords and root login, and restrict who can connect.",
+    "category": "Config",
+    "technologyId": "ssh",
+    "examples": [
+      {
+        "command": "PasswordAuthentication no\nKbdInteractiveAuthentication no\nPermitRootLogin no",
+        "description": "Key-only logins and no direct root login"
+      },
+      {
+        "command": "AllowUsers deploy alice",
+        "description": "Only allow specific accounts to log in"
+      },
+      {
+        "command": "Match Address 10.0.0.0/8\n    PasswordAuthentication yes",
+        "description": "Relax a setting only for an internal network (Match blocks go at the end)"
+      },
+      {
+        "command": "sudo nano /etc/ssh/sshd_config.d/50-hardening.conf",
+        "description": "Many distros Include /etc/ssh/sshd_config.d/*.conf; put overrides there"
+      },
+      {
+        "command": "sudo sshd -t && sudo systemctl reload ssh",
+        "description": "Validate, then apply (service is sshd on RHEL/Fedora)"
+      }
+    ],
+    "notes": [
+      "The first value found for an option wins, so a drop-in in sshd_config.d read before the main file overrides it.",
+      "PermitRootLogin defaults to prohibit-password (key-based root login allowed).",
+      "WARNING: keep an existing session open and test a new login before closing it, or a mistake can lock you out."
+    ],
+    "relatedCommands": [
+      "ssh-sshd",
+      "ssh-authorized-keys",
+      "ssh-certificates"
     ]
   },
   {
@@ -614,7 +832,8 @@
     ],
     "notes": [
       "Since OpenSSH 9.0, scp uses the SFTP protocol by default; use -O for old servers without SFTP.",
-      "For large or repeated syncs, rsync is faster and resumable."
+      "For large or repeated syncs, rsync is faster and resumable.",
+      "scp -R (remote-to-remote copy run on the origin host) is deprecated since OpenSSH 10.6 and prints a warning; plain remote-to-remote copies already go through the local host."
     ],
     "relatedCommands": [
       "ssh-sftp",
@@ -643,6 +862,14 @@
       {
         "command": "get /var/log/app.log",
         "description": "Download a file (inside sftp)"
+      },
+      {
+        "command": "reget /backups/db.tar.gz",
+        "description": "Resume an interrupted download (inside sftp; reput resumes uploads)"
+      },
+      {
+        "command": "mkdir -p /var/www/app/releases/v2",
+        "description": "Create nested remote directories (inside sftp, OpenSSH 10.6+)"
       }
     ],
     "notes": [
@@ -702,12 +929,17 @@
         "description": "Filter debug output for authentication details"
       },
       {
+        "command": "ssh -Z user@example.com",
+        "description": "List the public keys ssh would try, in order, and exit (OpenSSH 10.5+)"
+      },
+      {
         "command": "ssh -T git@github.com",
         "description": "Test GitHub SSH authentication"
       }
     ],
     "notes": [
-      "Server-side details are in the auth log: journalctl -u ssh (Debian/Ubuntu, sshd on RHEL) or /var/log/auth.log."
+      "Server-side details are in the auth log: journalctl -u ssh (Debian/Ubuntu, sshd on RHEL) or /var/log/auth.log.",
+      "OpenSSH 10.1+ warns when the connection does not use a post-quantum key exchange (usually an outdated server). Upgrade the server; WarnWeakCrypto no-pq-kex in ssh_config silences only that warning."
     ],
     "relatedCommands": [
       "ssh-connect",
@@ -764,16 +996,22 @@
         "description": "Print the effective server setting for an option"
       },
       {
+        "command": "sudo sshd -T -C user=deploy,host=example.com,addr=203.0.113.5 | grep -i permitrootlogin",
+        "description": "Print the effective config for a specific connection, applying Match blocks"
+      },
+      {
         "command": "sudo systemctl reload ssh",
         "description": "Apply config changes (service is sshd on RHEL/Fedora)"
       }
     ],
     "notes": [
       "Keep an existing session open while changing sshd_config (e.g. disabling PasswordAuthentication) so a mistake can't lock you out.",
-      "Run sshd -t before reloading."
+      "Run sshd -t before reloading.",
+      "Since OpenSSH 9.8 each connection runs in a separate sshd-session process (sshd-auth handles authentication since 10.0), so process names in ps differ from older releases."
     ],
     "relatedCommands": [
-      "ssh-verbose"
+      "ssh-verbose",
+      "ssh-sshd-config"
     ]
   }
 ]
