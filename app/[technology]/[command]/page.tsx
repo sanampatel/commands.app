@@ -118,7 +118,7 @@ export default async function CommandPage({ params }: CommandPageProps) {
               <div key={index} className="space-y-2">
                 <p className="text-sm font-medium">{example.description}</p>
                 <div className="bg-muted flex items-start gap-2 rounded-lg py-2 pr-2 pl-4">
-                  <pre className="min-w-0 flex-1 overflow-x-auto py-1.5 font-mono text-sm">
+                  <pre className="min-w-0 flex-1 py-1.5 font-mono text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">
                     <code>{example.command}</code>
                   </pre>
                   <CopyButton text={example.command} />
@@ -158,7 +158,7 @@ export default async function CommandPage({ params }: CommandPageProps) {
                       <p>{flag.description}</p>
                       {flag.example && (
                         <div className="bg-muted/60 flex items-center gap-2 rounded-md py-1 pr-1 pl-3">
-                          <code className="min-w-0 flex-1 overflow-x-auto font-mono text-xs whitespace-pre">{flag.example}</code>
+                          <code className="min-w-0 flex-1 font-mono text-xs whitespace-pre-wrap [overflow-wrap:anywhere]">{flag.example}</code>
                           <CopyButton text={flag.example} iconOnly />
                         </div>
                       )}

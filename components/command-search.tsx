@@ -237,7 +237,7 @@ export function CommandSearch({ commands, technologyId, technologyName }: Comman
                 </div>
                 {example && (
                   <div className="bg-muted relative z-10 mt-3 flex items-center gap-2 rounded-md py-1.5 pr-1.5 pl-3">
-                    <code className="min-w-0 flex-1 overflow-x-auto font-mono text-sm whitespace-pre">{example.command}</code>
+                    <code className="min-w-0 flex-1 font-mono text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">{example.command}</code>
                     <CopyButton text={example.command} iconOnly />
                   </div>
                 )}
