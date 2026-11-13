@@ -7,8 +7,12 @@
     "technologyId": "filament",
     "examples": [
       {
+        "command": "composer require filament/filament:\"^5.0\"",
+        "description": "Install Filament v5 (current)"
+      },
+      {
         "command": "composer require filament/filament:\"^4.0\" -W",
-        "description": "Install Filament v4"
+        "description": "Install Filament v4 (Livewire 3 projects)"
       },
       {
         "command": "composer require filament/filament:\"^3.3\" -W",
@@ -16,14 +20,14 @@
       }
     ],
     "notes": [
-      "Filament v4 is the current major version (released August 2025)",
-      "v4 requires PHP 8.2+, Laravel 11.28+ and Tailwind CSS v4 for custom themes",
-      "-W allows Composer to update dependencies Filament needs",
+      "Filament v5 is the current major version (released January 2026); it is mainly a Livewire 4 compatibility release with the same features as v4",
+      "v5 requires PHP 8.2+, Laravel 11.28+ and Livewire 4; Tailwind CSS 4.1+ is only needed for a custom theme",
+      "-W lets Composer update dependencies Filament needs; on Windows PowerShell use \"~5.0\" instead of \"^5.0\"",
       "Then run php artisan filament:install --panels"
     ],
     "relatedCommands": [
       "filament-panel",
-      "filament-v4-upgrade"
+      "filament-v5-upgrade"
     ]
   },
   {
@@ -40,6 +44,14 @@
       {
         "flag": "--scaffold",
         "description": "Set up standalone Filament packages (forms, tables, etc.) in Livewire components without a panel"
+      },
+      {
+        "flag": "--notifications",
+        "description": "With --scaffold, add flash notifications to the scaffolded layout"
+      },
+      {
+        "flag": "-F, --force",
+        "description": "Overwrite existing files"
       }
     ],
     "examples": [
@@ -135,23 +147,35 @@
     "technologyId": "filament",
     "flags": [
       {
-        "flag": "--generate",
-        "description": "Auto-generate form and table fields from database"
+        "flag": "-G, --generate",
+        "description": "Generate form fields and table columns from the database table"
       },
       {
         "flag": "--view",
-        "description": "Add view page to resource"
+        "description": "Add a View page"
       },
       {
-        "flag": "--simple",
-        "description": "Create simple resource (modal-based)"
+        "flag": "-S, --simple",
+        "description": "Single page that creates and edits in modals"
       },
       {
         "flag": "--soft-deletes",
         "description": "Add soft-delete filters and actions"
       },
       {
-        "flag": "--panel=ID",
+        "flag": "--model --migration --factory",
+        "description": "Also create the model, migration and factory"
+      },
+      {
+        "flag": "-N, --nested",
+        "description": "Create a resource nested under a parent resource"
+      },
+      {
+        "flag": "-C, --cluster",
+        "description": "Put the resource in a cluster"
+      },
+      {
+        "flag": "--panel",
         "description": "Create the resource in a specific panel"
       },
       {
@@ -175,13 +199,20 @@
       {
         "command": "php artisan make:filament-resource Post --generate --view --soft-deletes",
         "description": "Full CRUD with a view page and soft deletes"
+      },
+      {
+        "command": "php artisan make:filament-resource Customer --model --migration --factory",
+        "description": "Create the resource plus its model, migration and factory"
+      },
+      {
+        "command": "php artisan make:filament-resource Lesson --nested",
+        "description": "Nested resource (e.g. lessons inside a course)"
       }
     ],
     "notes": [
-      "Creates resource class, pages, and navigation items",
-      "Manages CRUD operations for Eloquent models",
-      "v4 creates a folder per resource (e.g. app/Filament/Resources/Posts/) with separate Schemas/PostForm and Tables/PostsTable classes; v3 kept everything in PostResource.php",
-      "--generate needs doctrine/dbal on Laravel 10 only; on Laravel 11+ it reads the schema natively"
+      "Creates the resource class, its pages and navigation item",
+      "v4 and v5 create a folder per resource (e.g. app/Filament/Resources/Posts/) with separate Schemas/PostForm and Tables/PostsTable classes; v3 kept everything in PostResource.php",
+      "--generate reads the database schema, so run your migrations first"
     ],
     "relatedCommands": [
       "filament-page"
@@ -196,27 +227,42 @@
     "flags": [
       {
         "flag": "--resource",
-        "description": "Specify resource to attach page to"
+        "description": "Resource to attach the page to"
       },
       {
         "flag": "--type",
-        "description": "Page type (e.g., ManageRecords, ViewRecord)"
+        "description": "Resource page type: custom, CreateRecord, EditRecord, ViewRecord or ManageRelatedRecords"
+      },
+      {
+        "flag": "-C, --cluster",
+        "description": "Put the page in a cluster"
+      },
+      {
+        "flag": "--panel",
+        "description": "Panel to create the page in"
+      },
+      {
+        "flag": "-F, --force",
+        "description": "Overwrite existing files"
       }
     ],
     "examples": [
       {
         "command": "php artisan make:filament-page Settings",
-        "description": "Create Settings page"
+        "description": "Create a standalone Settings page"
       },
       {
-        "command": "php artisan make:filament-page ManageUsers --resource=UserResource --type=ManageRecords",
-        "description": "Create custom resource page"
+        "command": "php artisan make:filament-page ManageCourseLessons --resource=CourseResource --type=ManageRelatedRecords",
+        "description": "Manage a relationship on its own resource page"
+      },
+      {
+        "command": "php artisan make:filament-page SortUsers --resource=UserResource --type=custom",
+        "description": "Custom page that belongs to a resource"
       }
     ],
     "notes": [
-      "Custom pages for admin panel",
-      "Can be standalone or attached to resources",
       "Without --resource the page is standalone and appears in the navigation",
+      "ManageRecords is not a --type value; that page type is created by make:filament-resource --simple",
       "Run without options to be prompted for the page type"
     ],
     "relatedCommands": [
@@ -266,6 +312,14 @@
       {
         "flag": "--stats-overview",
         "description": "Create stats overview widget"
+      },
+      {
+        "flag": "--react / --vue / --svelte / --js",
+        "description": "Render the widget with a JavaScript framework instead of Blade (v5.11+)"
+      },
+      {
+        "flag": "--ts",
+        "description": "Use TypeScript for the JavaScript component (v5.11+)"
       }
     ],
     "examples": [
@@ -280,6 +334,10 @@
       {
         "command": "php artisan make:filament-widget LatestOrders --table",
         "description": "Create table widget"
+      },
+      {
+        "command": "php artisan make:filament-widget RevenueOverview --react --ts",
+        "description": "Widget rendered by a React + TypeScript component (v5.11+)"
       }
     ],
     "notes": [
@@ -297,6 +355,28 @@
     "description": "Create a relation manager for resource",
     "category": "Resources",
     "technologyId": "filament",
+    "flags": [
+      {
+        "flag": "--attach",
+        "description": "Add attach/detach actions (many-to-many)"
+      },
+      {
+        "flag": "--associate",
+        "description": "Add associate/dissociate actions (has-many)"
+      },
+      {
+        "flag": "--view",
+        "description": "Add a view action"
+      },
+      {
+        "flag": "--soft-deletes",
+        "description": "Add soft-delete filters and actions"
+      },
+      {
+        "flag": "-G, --generate",
+        "description": "Generate fields and columns from the related table"
+      }
+    ],
     "examples": [
       {
         "command": "php artisan make:filament-relation-manager PostResource comments title",
@@ -305,6 +385,10 @@
       {
         "command": "php artisan make:filament-relation-manager UserResource posts title",
         "description": "Manage posts relation on User"
+      },
+      {
+        "command": "php artisan make:filament-relation-manager CategoryResource posts title --attach",
+        "description": "Relation manager with attach/detach actions"
       }
     ],
     "notes": [
@@ -325,15 +409,19 @@
     "examples": [
       {
         "command": "php artisan make:filament-theme",
-        "description": "Generate custom theme files"
+        "description": "Create a custom theme for the default panel"
       },
       {
-        "command": "php artisan make:filament-theme admin",
-        "description": "Create a theme for the panel with ID 'admin'"
+        "command": "php artisan make:filament-theme admin --skip-install --skip-build",
+        "description": "Theme for the admin panel, without running npm"
+      },
+      {
+        "command": "php artisan make:filament-theme --pm=bun",
+        "description": "Use bun instead of npm"
       }
     ],
     "notes": [
-      "v4 themes use Tailwind CSS v4 and create resources/css/filament/<panel>/theme.css",
+      "v4/v5 themes use Tailwind CSS v4 and create resources/css/filament/<panel>/theme.css",
       "Add the CSS file to the input array in vite.config.js, register it with ->viteTheme() on the panel, then run npm run build"
     ],
     "relatedCommands": [
@@ -358,12 +446,13 @@
     ],
     "notes": [
       "Normally runs automatically from the post-autoload-dump script in composer.json",
-      "It does not perform a major-version upgrade; for v3 to v4 see the upgrade script (vendor/bin/filament-v4)"
+      "Runs filament:assets plus config:clear, route:clear and view:clear",
+      "It does not do a major-version upgrade; for v4 to v5 use vendor/bin/filament-v5 (v3 to v4: vendor/bin/filament-v4)"
     ],
     "relatedCommands": [
       "filament-install",
       "filament-assets",
-      "filament-v4-upgrade"
+      "filament-v5-upgrade"
     ]
   },
   {
@@ -389,7 +478,7 @@
   {
     "id": "filament-v4-upgrade",
     "name": "vendor/bin/filament-v4",
-    "description": "Automated upgrade script from Filament v3 to v4",
+    "description": "Automated upgrade script from Filament v3 to v4 (legacy)",
     "category": "Maintenance",
     "technologyId": "filament",
     "examples": [
@@ -407,12 +496,13 @@
       }
     ],
     "notes": [
+      "Only for v3 apps; upgrade to v4 first, then use vendor/bin/filament-v5",
       "Commit first and review the diff; the script doesn't cover every breaking change, so read the v4 upgrade guide",
       "Remove filament/upgrade afterwards with composer remove filament/upgrade --dev"
     ],
     "relatedCommands": [
-      "filament-upgrade",
-      "filament-install"
+      "filament-v5-upgrade",
+      "filament-upgrade"
     ]
   },
   {
@@ -456,25 +546,6 @@
     ]
   },
   {
-    "id": "filament-make-page-action",
-    "name": "php artisan make:filament-page-action",
-    "description": "Create a custom page action (not a Filament v3/v4 command)",
-    "category": "Actions",
-    "technologyId": "filament",
-    "examples": [
-      {
-        "command": "php artisan make:filament-page-action ExportUsers",
-        "description": "Create export action"
-      }
-    ],
-    "notes": [
-      "DEPRECATED/UNSUPPORTED: Filament v3 and v4 don't ship this generator. Define actions inline with Action::make('name') in a page's getHeaderActions() or a table's recordActions()/toolbarActions() (v3: actions()/bulkActions()), or extract a reusable Action subclass by hand"
-    ],
-    "relatedCommands": [
-      "filament-page"
-    ]
-  },
-  {
     "id": "filament-optimize",
     "name": "php artisan filament:optimize",
     "description": "Optimize Filament for production",
@@ -513,25 +584,6 @@
     "relatedCommands": [
       "filament-optimize",
       "filament-clear-cached-components"
-    ]
-  },
-  {
-    "id": "filament-make-table-action",
-    "name": "php artisan make:filament-table-action",
-    "description": "Create a custom table action (not a Filament v3/v4 command)",
-    "category": "Actions",
-    "technologyId": "filament",
-    "examples": [
-      {
-        "command": "php artisan make:filament-table-action ArchivePost",
-        "description": "Create archive action for tables"
-      }
-    ],
-    "notes": [
-      "DEPRECATED/UNSUPPORTED: Filament v3 and v4 don't ship this generator. Define actions inline with Action::make('name') in a page's getHeaderActions() or a table's recordActions()/toolbarActions() (v3: actions()/bulkActions()), or extract a reusable Action subclass by hand"
-    ],
-    "relatedCommands": [
-      "filament-resource"
     ]
   },
   {
@@ -584,6 +636,277 @@
     "relatedCommands": [
       "filament-make-exporter",
       "filament-resource"
+    ]
+  },
+  {
+    "id": "filament-v5-upgrade",
+    "name": "vendor/bin/filament-v5",
+    "description": "Automated upgrade script from Filament v4 to v5",
+    "category": "Maintenance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "composer require filament/upgrade:\"^5.0\" -W --dev",
+        "description": "Install the upgrade tool"
+      },
+      {
+        "command": "vendor/bin/filament-v5",
+        "description": "Rewrite code for v5 and print the Composer commands to run next"
+      },
+      {
+        "command": "composer require filament/filament:\"^5.0\" -W --no-update && composer update",
+        "description": "Typical follow-up commands the script prints"
+      }
+    ],
+    "notes": [
+      "Commit first and review the diff",
+      "v5 moves to Livewire 4, so also follow the Livewire v4 upgrade guide",
+      "Pass directories to scan as a comma-separated list, e.g. vendor/bin/filament-v5 app,src (default: app)",
+      "Remove the tool afterwards with composer remove filament/upgrade --dev"
+    ],
+    "relatedCommands": [
+      "filament-upgrade",
+      "filament-v4-upgrade",
+      "filament-install"
+    ]
+  },
+  {
+    "id": "filament-about",
+    "name": "php artisan filament:about",
+    "description": "Show the installed Filament packages and versions",
+    "category": "Maintenance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:about",
+        "description": "List Filament packages and versions"
+      }
+    ],
+    "relatedCommands": [
+      "filament-issue"
+    ]
+  },
+  {
+    "id": "filament-issue",
+    "name": "php artisan make:filament-issue",
+    "description": "Open a pre-filled GitHub bug report with your Filament, Laravel and PHP versions",
+    "category": "Maintenance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-issue",
+        "description": "Start a bug report"
+      }
+    ],
+    "relatedCommands": [
+      "filament-about"
+    ]
+  },
+  {
+    "id": "filament-check-translations",
+    "name": "php artisan filament:check-translations",
+    "description": "Find missing and unused Filament translation keys for a locale",
+    "category": "Maintenance",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan filament:check-translations nl",
+        "description": "Check the Dutch translations"
+      },
+      {
+        "command": "php artisan filament:check-translations nl fr --source=app",
+        "description": "Check your app's published translations"
+      }
+    ],
+    "notes": [
+      "--source defaults to vendor (Filament's own translations)"
+    ]
+  },
+  {
+    "id": "filament-make-form-field",
+    "name": "php artisan make:filament-form-field",
+    "description": "Create a custom form field class and its view",
+    "category": "Custom Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-form-field LocationPicker",
+        "description": "Blade-based custom field"
+      },
+      {
+        "command": "php artisan make:filament-form-field LocationPicker --react --ts",
+        "description": "Field rendered by React + TypeScript (v5.11+)"
+      }
+    ],
+    "relatedCommands": [
+      "filament-make-table-column",
+      "filament-make-infolist-entry",
+      "filament-make-schema-component"
+    ]
+  },
+  {
+    "id": "filament-make-table-column",
+    "name": "php artisan make:filament-table-column",
+    "description": "Create a custom table column class and its cell view",
+    "category": "Custom Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-table-column AudioPlayerColumn",
+        "description": "Create a custom column"
+      },
+      {
+        "command": "php artisan make:filament-table-column AudioPlayerColumn --embedded-view",
+        "description": "Use an embedded view"
+      }
+    ],
+    "relatedCommands": [
+      "filament-make-form-field",
+      "filament-make-infolist-entry"
+    ]
+  },
+  {
+    "id": "filament-make-infolist-entry",
+    "name": "php artisan make:filament-infolist-entry",
+    "description": "Create a custom infolist entry class and its view",
+    "category": "Custom Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-infolist-entry AudioPlayerEntry",
+        "description": "Create a custom entry"
+      }
+    ],
+    "relatedCommands": [
+      "filament-make-table-column",
+      "filament-make-form-field"
+    ]
+  },
+  {
+    "id": "filament-make-schema-component",
+    "name": "php artisan make:filament-schema-component",
+    "description": "Create a custom schema (layout) component",
+    "category": "Custom Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-schema-component Chart",
+        "description": "Blade-based layout component"
+      },
+      {
+        "command": "php artisan make:filament-schema-component Chart --react --ts",
+        "description": "Rendered by React + TypeScript (v5.11+)"
+      }
+    ],
+    "relatedCommands": [
+      "filament-make-schema",
+      "filament-make-form-field"
+    ]
+  },
+  {
+    "id": "filament-make-schema",
+    "name": "php artisan make:filament-schema",
+    "description": "Create a reusable schema class (form or infolist layout)",
+    "category": "Custom Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-schema Products/ProductInfolist",
+        "description": "Reusable infolist schema"
+      },
+      {
+        "command": "php artisan make:filament-form Products/ProductForm Product",
+        "description": "Standalone form schema for a model"
+      },
+      {
+        "command": "php artisan make:filament-table Products/ProductsTable Product --generate",
+        "description": "Standalone table class generated from the database"
+      }
+    ],
+    "relatedCommands": [
+      "filament-make-schema-component",
+      "filament-make-livewire-form"
+    ]
+  },
+  {
+    "id": "filament-make-rich-content-block",
+    "name": "php artisan make:filament-rich-content-custom-block",
+    "description": "Create a custom block for the RichEditor",
+    "category": "Custom Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-rich-content-custom-block HeroBlock",
+        "description": "Create a HeroBlock class and view"
+      }
+    ]
+  },
+  {
+    "id": "filament-make-livewire-form",
+    "name": "php artisan make:filament-livewire-form",
+    "description": "Create a Livewire component containing a Filament form (outside a panel)",
+    "category": "Livewire Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-livewire-form Products/CreateProduct --generate",
+        "description": "Create form generated from the Product table"
+      },
+      {
+        "command": "php artisan make:filament-livewire-form Products/EditProduct --edit",
+        "description": "Form that edits an existing record"
+      }
+    ],
+    "notes": [
+      "Needs the filament:install --scaffold setup when used outside a panel"
+    ],
+    "relatedCommands": [
+      "filament-make-livewire-table",
+      "filament-panel"
+    ]
+  },
+  {
+    "id": "filament-make-livewire-table",
+    "name": "php artisan make:filament-livewire-table",
+    "description": "Create a Livewire component containing a Filament table (outside a panel)",
+    "category": "Livewire Components",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-livewire-table Products/ListProducts --generate",
+        "description": "Table generated from the Product table"
+      },
+      {
+        "command": "php artisan make:filament-livewire-schema Products/ViewProduct",
+        "description": "Related: Livewire component with an infolist/schema"
+      }
+    ],
+    "relatedCommands": [
+      "filament-make-livewire-form"
+    ]
+  },
+  {
+    "id": "filament-make-settings-page",
+    "name": "php artisan make:filament-settings-page",
+    "description": "Create a settings page backed by spatie/laravel-settings",
+    "category": "Pages",
+    "technologyId": "filament",
+    "examples": [
+      {
+        "command": "php artisan make:filament-settings-page ManageFooter FooterSettings",
+        "description": "Settings page for a FooterSettings class"
+      },
+      {
+        "command": "php artisan make:filament-settings-page ManageFooter FooterSettings --generate --cluster=Settings",
+        "description": "Generate fields and put the page in a cluster"
+      }
+    ],
+    "notes": [
+      "Requires composer require filament/spatie-laravel-settings-plugin:\"^5.0\""
+    ],
+    "relatedCommands": [
+      "filament-page",
+      "filament-make-cluster"
     ]
   }
 ]

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CopyButton } from "@/components/copy-button";
+import { CommandText } from "@/components/command-text";
 import { TechIcon } from "@/components/tech-icon";
 import { loadSearchIndex } from "@/lib/search-index";
 import { cn } from "@/lib/utils";
@@ -281,7 +282,9 @@ export function CommandComparison({ technologies }: CommandComparisonProps) {
                     <div>
                       <h3 className="mb-2 text-sm font-semibold">Example</h3>
                       <div className="bg-muted flex items-start gap-2 rounded-md py-1 pr-1 pl-3">
-                        <code className="min-w-0 flex-1 py-1.5 font-mono text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">{cmd.examples[0].command}</code>
+                        <code className="min-w-0 flex-1 py-1.5 font-mono text-sm whitespace-pre-wrap">
+                          <CommandText text={cmd.examples[0].command} />
+                        </code>
                         <CopyButton text={cmd.examples[0].command} iconOnly />
                       </div>
                     </div>

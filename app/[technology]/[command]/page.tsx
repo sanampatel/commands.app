@@ -6,6 +6,7 @@ import { commands, getCommand, getCommandsByTechnology, getTechnology } from "@/
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/copy-button";
+import { CommandText } from "@/components/command-text";
 import { ExportButtons } from "@/components/export-buttons";
 import { FavoriteButton } from "@/components/favorite-button";
 import { TechIcon } from "@/components/tech-icon";
@@ -119,7 +120,9 @@ export default async function CommandPage({ params }: CommandPageProps) {
                 <p className="text-sm font-medium">{example.description}</p>
                 <div className="bg-muted flex items-start gap-2 rounded-lg py-2 pr-2 pl-4">
                   <pre className="min-w-0 flex-1 py-1.5 font-mono text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">
-                    <code>{example.command}</code>
+                    <code>
+                      <CommandText text={example.command} />
+                    </code>
                   </pre>
                   <CopyButton text={example.command} />
                 </div>
@@ -158,7 +161,9 @@ export default async function CommandPage({ params }: CommandPageProps) {
                       <p>{flag.description}</p>
                       {flag.example && (
                         <div className="bg-muted/60 flex items-center gap-2 rounded-md py-1 pr-1 pl-3">
-                          <code className="min-w-0 flex-1 font-mono text-xs whitespace-pre-wrap [overflow-wrap:anywhere]">{flag.example}</code>
+                          <code className="min-w-0 flex-1 font-mono text-xs whitespace-pre-wrap">
+                            <CommandText text={flag.example} />
+                          </code>
                           <CopyButton text={flag.example} iconOnly />
                         </div>
                       )}

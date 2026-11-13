@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/copy-button";
+import { CommandText } from "@/components/command-text";
 import { useFavorites } from "@/lib/favorites";
 import { isEditableTarget } from "@/lib/keyboard";
 import { createCommandSearch } from "@/lib/search";
@@ -234,7 +235,9 @@ export function CommandSearch({ commands, technologyId, technologyName }: Comman
                 </div>
                 {example && (
                   <div className="bg-muted relative z-10 mt-3 flex items-center gap-2 rounded-md py-1.5 pr-1.5 pl-3">
-                    <code className="min-w-0 flex-1 font-mono text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">{example.command}</code>
+                    <code className="min-w-0 flex-1 font-mono text-sm whitespace-pre-wrap">
+                      <CommandText text={example.command} />
+                    </code>
                     <CopyButton text={example.command} iconOnly />
                   </div>
                 )}
